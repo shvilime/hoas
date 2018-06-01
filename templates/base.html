@@ -1,4 +1,5 @@
 {% load static %}
+{% load widget_tweaks %}
 <!DOCTYPE html>
 <html dir="ltr" lang="en-US">
 <head>
@@ -42,21 +43,19 @@
                                 <li><a href="{% url 'home' %}">Войти</a>
                                     <div class="top-link-section">
                                         {# Форма входа #}
-                                        <form id="top-login" role="form" metod="POST" action="{% url 'home' %}">
+                                        <form id="top-login" role="form" method="post" action="{% url 'home' %}">
                                             {% csrf_token %}
                                             <div class="input-group" id="top-login-username">
                                                 <div class="input-group-prepend">
                                                     <div class="input-group-text"><i class="icon-user"></i></div>
                                                 </div>
-                                                <input name="username" type="text" class="form-control"
-                                                       placeholder="Имя пользователя" required="">
+                                                {% render_field TopLoginForm.username placeholder="Имя пользователя" class="form-control" %}
                                             </div>
                                             <div class="input-group" id="top-login-password">
                                                 <div class="input-group-prepend">
                                                     <div class="input-group-text"><i class="icon-key"></i></div>
                                                 </div>
-                                                <input name="password" type="password" class="form-control"
-                                                       placeholder="Пароль" required="">
+                                                {% render_field TopLoginForm.password placeholder="Пароль" class="form-control" %}
                                             </div>
                                             <label class="checkbox">
                                                 <input type="checkbox" value="remember-me"> Запомнить меня

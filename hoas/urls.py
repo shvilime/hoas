@@ -20,7 +20,7 @@ from main.urls import main_urlpatterns
 from systemapps.accounts.urls import accounts_urlpatterns
 
 urlpatterns = [
-    re_path('^$', include(main_urlpatterns)),
+    re_path('^', include(main_urlpatterns)),
     re_path('^', include(accounts_urlpatterns)),
     path('admin/', admin.site.urls),
 ]

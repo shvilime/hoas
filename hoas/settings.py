@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
-
 from decouple import config, Csv
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -69,6 +68,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'main.context_processors.toploginform_processor',
             ],
         },
     },
@@ -83,10 +83,10 @@ WSGI_APPLICATION = 'hoas.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'hoas',
-        'USER': 'django',
-        'PASSWORD': 'testpassword',
-        'HOST': 'localhost',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
         'PORT': '',
     }
 }
@@ -132,7 +132,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
-LOGIN_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 LOGIN_REDIRECT_URL = 'home'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
