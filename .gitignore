@@ -1,0 +1,9 @@
+# Intelli files
+*.iml
+.idea
+out
+
+#Project files
+__pycache__/
+*.py[cod]
+.env
