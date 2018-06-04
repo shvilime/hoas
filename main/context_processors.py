@@ -7,6 +7,8 @@ def toploginform_processor(request):
         TopLoginForm = AuthenticationForm(data=request.POST)
         if TopLoginForm.is_valid():
             user = TopLoginForm.get_user()
+            if request.POST.get('rememberme', False):
+                request.session.set_expiry(0)
             login(request, user)
     else:
         TopLoginForm = AuthenticationForm()
