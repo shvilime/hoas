@@ -31,7 +31,7 @@
 {% block body %}
     <div id="wrapper" class="clearfix">
         <!-- Top Bar ============================================= -->
-                <div id="top-bar">
+        <div id="top-bar">
             <div class="container clearfix">
                 <div class="col_half nobottommargin">
                     <div class="top-links">
@@ -49,13 +49,13 @@
                                                 <div class="input-group-prepend">
                                                     <div class="input-group-text"><i class="icon-user"></i></div>
                                                 </div>
-                                                {% render_field TopLoginForm.username placeholder="Имя пользователя" class="form-control" %}
+                                                {% render_field toploginform.username placeholder="Имя пользователя" class="form-control" %}
                                             </div>
                                             <div class="input-group" id="top-login-password">
                                                 <div class="input-group-prepend">
                                                     <div class="input-group-text"><i class="icon-key"></i></div>
                                                 </div>
-                                                {% render_field TopLoginForm.password placeholder="Пароль" class="form-control" %}
+                                                {% render_field toploginform.password placeholder="Пароль" class="form-control" %}
                                             </div>
                                             <label class="checkbox">
                                                 <input type="checkbox" name="rememberme"> Запомнить меня
@@ -70,6 +70,22 @@
                         </ul>
                     </div>
                 </div>
+
+                <div class="col_half fright col_last nobottommargin">
+                    <div id="top-social">
+                        <ul>
+                            {% for sociallink in topsociallinks %}
+                                <li>
+                                    <a href="{{ sociallink.link }}" class="{{ sociallink.hrefclass }}">
+                                        <span class="ts-icon"><i class="{{ sociallink.iconclass }}"></i></span>
+                                        <span class="ts-text">{{ sociallink.name }}</span>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
             </div>
         </div>
 
