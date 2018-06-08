@@ -28,17 +28,25 @@
 </head>
 
 <body class="stretched">
-{% block body %}
+
+	<!-- Document Wrapper
+	============================================= -->
     <div id="wrapper" class="clearfix">
         <!-- Top Bar ============================================= -->
         <div id="top-bar">
             <div class="container clearfix">
+
                 <div class="col_half nobottommargin">
                     <div class="top-links">
                         <ul>
                             <li><a href="{% url 'home' %}">Домой</a></li>
                             {% if user.is_authenticated %}
-                                <li><a href="{% url 'home' %}"> {{ user.username }} </a></li>
+                                <li><a href="{% url 'home' %}"> {{ user.username }} </a>
+                                    <ul>
+                                        <li><a href="#"><i class="icon-user2"></i> Мой профиль</a></li>
+                                        <li><a href="{% url 'logout' %} "><i class="icon-line2-logout"></i> Выйти</a></li>
+                                    </ul>
+                                </li>
                             {% else %}
                                 <li><a href="{% url 'home' %}">Войти</a>
                                     <div class="top-link-section">
@@ -61,7 +69,7 @@
                                                 <input type="checkbox" name="rememberme"> Запомнить меня
                                             </label>
                                             <button class="btn btn-danger btn-block" type="submit">Войти</button>
-                                            <input type="hidden" name="next" value="{{ next }}" />
+                                            <input type="hidden" name="next" value="{{ next }}"/>
                                         </form>
                                     </div>
                                 </li>
@@ -87,9 +95,69 @@
                 </div>
 
             </div>
-        </div>
+        </div><!-- #top-bar end -->
 
+        <!-- Header
+		============================================= -->
+   		<header id="header" class="sticky-style-2">
+			<div class="container clearfix">
+				<!-- Logo
+				============================================= -->
+				<div id="logo">
+					<a href="{% url 'home' %}" class="standard-logo"><img src={% static '/img/logo.png' %} alt="Logo"></a>
+					<a href="{% url 'home' %}" class="retina-logo"><img src={% static '/img/logo@2x.png' %} alt="Logo"></a>
+				</div><!-- #logo end -->
 
+				<ul class="header-extras">
+					<li>
+						<i class="i-plain icon-call nomargin"></i>
+						<div class="he-text">
+							Call Us
+							<span>(91) 22 54215821</span>
+						</div>
+					</li>
+					<li>
+						<i class="i-plain icon-line2-envelope nomargin"></i>
+						<div class="he-text">
+							Email Us
+							<span>info@canvas.com</span>
+						</div>
+					</li>
+					<li>
+						<i class="i-plain icon-line-clock nomargin"></i>
+						<div class="he-text">
+							We'are Open
+							<span>Mon - Sat, 10AM to 6PM</span>
+						</div>
+					</li>
+				</ul>
+			</div>
+
+   			<div id="header-wrap">
+   				<!-- Primary Navigation
+				============================================= -->
+				<nav id="primary-menu" class="style-2">
+                    <div class="container clearfix">
+                        <div id="primary-menu-trigger"><i class="icon-reorder"></i></div>
+                        <ul>
+                            <li><a href="#"><div>Новости</div></a></li>
+                            <li><a href="#"><div>Документы</div></a></li>
+                            <li><a href="#"><div>Голосование</div></a></li>
+                            <li><a href="#"><div>О нас</div></a></li>
+                        </ul>
+   						<!-- Top Search
+						============================================= -->
+						<div id="top-search">
+							<a href="#" id="top-search-trigger"><i class="icon-search3"></i><i class="icon-line-cross"></i></a>
+							<form action="search.html" method="get">
+								<input type="text" name="q" class="form-control" value="" placeholder="Напечатайте &amp; нажмите Enter..">
+							</form>
+						</div><!-- #top-search end -->
+                    </div>
+                </nav>
+            </div>
+
+		</header><!-- #header end -->
 
         <div class="container">
             {% block content %}{% endblock %}
@@ -97,8 +165,6 @@
 
     </div>
 
-
-{% endblock %}
 
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script
