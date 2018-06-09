@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'widget_tweaks',    #External django package django-widget-tweaks
 
     'systemapps.accounts',
+    'systemapps.menu',
     'main',         #Main page
 ]
 
