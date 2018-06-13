@@ -24,9 +24,11 @@ class MenuItem(models.Model):
                                verbose_name='Родительское меню',
                                blank=True,
                                on_delete=models.CASCADE)
-    name = models.CharField(max_length=150,
-                            verbose_name='Наименование')
-
+    title = models.CharField(max_length=150,
+                             verbose_name='Заголовок')
+    active = models.BooleanField(default=True,
+                                 verbose_name='Активность',
+                                 help_text='Включить/Выключить пункт меню')
     login_required = models.BooleanField(blank=True,
                                          default=False,
                                          verbose_name='Авторизация',
