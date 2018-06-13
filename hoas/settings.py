@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'widget_tweaks',    #External django package django-widget-tweaks
+    'mptt',             #External package for Tree
 
     'systemapps.accounts',
     'systemapps.menu',

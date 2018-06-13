@@ -1,4 +1,5 @@
 from django.db import models
+from mptt.models import MPTTModel, TreeForeignKey
 
 # Create your models here.
 #<=================================================>
@@ -16,14 +17,16 @@ class Menu(models.Model):
         verbose_name_plural = 'Меню'
 
 #<=================================================>
-class MenuItem(models.Model):
+class MenuItem(MPTTModel):
     menu = models.ForeignKey(Menu,
                              verbose_name='Меню',
                              on_delete=models.CASCADE)
-    parent = models.ForeignKey('self',
-                               verbose_name='Родительское меню',
-                               blank=True,
-                               on_delete=models.CASCADE)
+    parent = TreeForeignKey('self',
+                            verbose_name='Родительское меню',
+                            blank=True,
+                            on_delete=models.CASCADE,
+                            db_index=True,
+                            related_name='child')
     title = models.CharField(max_length=150,
                              verbose_name='Заголовок')
     active = models.BooleanField(default=True,
@@ -35,7 +38,7 @@ class MenuItem(models.Model):
                                          help_text='Показывать пункт меню только для авторизованных пользователей')
 
     def __str__(self):
-        return "%s" % self.name
+        return "%s" % self.title
 
     class Meta:
         verbose_name = 'Пункт меню'
