@@ -20,15 +20,19 @@ class Menu(models.Model):
 class MenuItem(MPTTModel):
     menu = models.ForeignKey(Menu,
                              verbose_name='Меню',
-                             on_delete=models.CASCADE)
+                             on_delete=models.CASCADE,
+                             related_name='menuitems')
     parent = TreeForeignKey('self',
                             verbose_name='Родительское меню',
+                            null=True,
                             blank=True,
                             on_delete=models.CASCADE,
-                            db_index=True,
                             related_name='child')
-    title = models.CharField(max_length=150,
+    title = models.CharField(max_length=50,
                              verbose_name='Заголовок')
+    url = models.CharField(max_length=100,
+                           verbose_name='Cсылка',
+                           help_text='Ссылка /faq/ или http://google.com')
     active = models.BooleanField(default=True,
                                  verbose_name='Активность',
                                  help_text='Включить/Выключить пункт меню')
@@ -43,3 +47,6 @@ class MenuItem(MPTTModel):
     class Meta:
         verbose_name = 'Пункт меню'
         verbose_name_plural = 'Пункты меню'
+
+    class MPTTMeta:
+        order_insertion_by = ['title']
