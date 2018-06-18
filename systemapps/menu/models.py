@@ -4,13 +4,13 @@ from mptt.models import MPTTModel, TreeForeignKey
 # Create your models here.
 #<=================================================>
 class Menu(models.Model):
-    name = models.CharField(max_length=80,
+    name = models.CharField(max_length=20,
                             verbose_name='Наименование')
-    description = models.TextField(verbose_name='Описание',
-                                   blank=True)
+    description = models.CharField(max_length=50,
+                                   verbose_name='Описание')
 
     def __str__(self):
-        return "%s" % self.name
+        return "%s" % self.description
 
     class Meta:
         verbose_name = 'Меню'
@@ -20,10 +20,9 @@ class Menu(models.Model):
 class MenuItem(MPTTModel):
     menu = models.ForeignKey(Menu,
                              verbose_name='Меню',
-                             on_delete=models.CASCADE,
-                             related_name='menuitems')
+                             on_delete=models.CASCADE)
     parent = TreeForeignKey('self',
-                            verbose_name='Родительское меню',
+                            verbose_name='Родительский пункт',
                             null=True,
                             blank=True,
                             on_delete=models.CASCADE,
@@ -40,13 +39,21 @@ class MenuItem(MPTTModel):
                                          default=False,
                                          verbose_name='Авторизация',
                                          help_text='Показывать пункт меню только для авторизованных пользователей')
+    iconclass = models.CharField(max_length=16,
+                                 verbose_name='Класс иконки',
+                                 help_text='CSS rласс иконки, оформляющей пункт меню, например icon-facebook'
+                                 )
+    hrefclass = models.CharField(max_length=15,
+                                 verbose_name='Класс ссылки',
+                                 help_text='CSS rласс ссылки, обрамляющей URL')
 
     def __str__(self):
         return "%s" % self.title
 
     class Meta:
-        verbose_name = 'Пункт меню'
-        verbose_name_plural = 'Пункты меню'
+        ordering = ['tree_id','lft']
+        verbose_name = 'Пункт'
+        verbose_name_plural = 'Пункты'
 
     class MPTTMeta:
         order_insertion_by = ['title']
