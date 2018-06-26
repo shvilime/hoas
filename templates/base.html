@@ -1,5 +1,7 @@
 {% load static %}
 {% load widget_tweaks %}
+{% load menu_tags %}
+{% load mptt_tags %}
 <!DOCTYPE html>
 <html dir="ltr" lang="en-US">
 <head>
@@ -79,17 +81,23 @@
                     </div>
                 </div>
 
+                {% menu topsocialnetworks %}
                 <div class="col_half fright col_last nobottommargin">
                     <div id="top-social">
                         <ul>
-                            {% for sociallink in topsociallinks %}
+                            {% recursetree nodes %}
                                 <li>
-                                    <a href="{{ sociallink.link }}" class="{{ sociallink.hrefclass }}">
-                                        <span class="ts-icon"><i class="{{ sociallink.iconclass }}"></i></span>
-                                        <span class="ts-text">{{ sociallink.name }}</span>
+                                    <a href="{{ node.url }}" class="{{ node.hrefclass }}">
+                                        <span class="ts-icon"><i class="{{ node.iconclass }}"></i></span>
+                                        <span class="ts-text">{{ node.title }}</span>
                                     </a>
+                                    {% if not node.is_leaf_node %}
+                                        <ul>
+                                            {{ children }}
+                                        </ul>
+                                    {% endif %}
                                 </li>
-                            {% endfor %}
+                            {% endrecursetree %}
                         </ul>
                     </div>
                 </div>
@@ -136,14 +144,23 @@
    			<div id="header-wrap">
    				<!-- Primary Navigation
 				============================================= -->
+                {% menu mainmenu %}
 				<nav id="primary-menu" class="style-2">
                     <div class="container clearfix">
                         <div id="primary-menu-trigger"><i class="icon-reorder"></i></div>
                         <ul>
-                            <li><a href="#"><div>Новости</div></a></li>
-                            <li><a href="#"><div>Документы</div></a></li>
-                            <li><a href="#"><div>Голосование</div></a></li>
-                            <li><a href="#"><div>О нас</div></a></li>
+                            {% recursetree nodes %}
+                                <li>
+                                    <a href="{{ node.url }}">
+                                        <div>{% if node.iconclass != '' %}<i class="{{ node.iconclass }}"></i>{% endif %}{{ node.title }}</div>
+                                    </a>
+                                    {% if not node.is_leaf_node %}
+                                        <ul>
+                                            {{ children }}
+                                        </ul>
+                                    {% endif %}
+                                </li>
+                            {% endrecursetree %}
                         </ul>
    						<!-- Top Search
 						============================================= -->

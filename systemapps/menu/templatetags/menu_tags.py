@@ -3,6 +3,7 @@ from django import template
 
 register = template.Library()
 
+@register.tag(name='menu')
 def buildmenu(parser, token):
     try:
         tag_name, menu_name = token.split_contents()
@@ -15,7 +16,5 @@ class MenuObject(template.Node):
         self.menu_name = menu_name
 
     def render(self, context):
-        MenuItem.objects.filter(menu = self.menu_name)
+        context['nodes'] = MenuItem.objects.filter(menu__name = self.menu_name)
         return ''
-
-register.tag('menu',buildmenu)

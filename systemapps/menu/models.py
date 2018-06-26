@@ -40,10 +40,12 @@ class MenuItem(MPTTModel):
                                          verbose_name='Авторизация',
                                          help_text='Показывать пункт меню только для авторизованных пользователей')
     iconclass = models.CharField(max_length=16,
+                                 blank=True,
                                  verbose_name='Класс иконки',
                                  help_text='CSS rласс иконки, оформляющей пункт меню, например icon-facebook'
                                  )
     hrefclass = models.CharField(max_length=15,
+                                 blank=True,
                                  verbose_name='Класс ссылки',
                                  help_text='CSS rласс ссылки, обрамляющей URL')
 
