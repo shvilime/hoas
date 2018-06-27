@@ -7,3 +7,5 @@ out
 __pycache__/
 *.py[cod]
 .env
+*.log
+fixtures/*.json

@@ -18,3 +18,8 @@ class MenuObject(template.Node):
     def render(self, context):
         context['nodes'] = MenuItem.objects.filter(menu__name = self.menu_name)
         return ''
+
+def get_menuitems(menu_name, user):
+    menuitems = []
+
+    return menuitems
