@@ -48,6 +48,9 @@ class MenuItem(MPTTModel):
                                  blank=True,
                                  verbose_name='Класс ссылки',
                                  help_text='CSS rласс ссылки, обрамляющей URL')
+    validators = models.TextField(blank=True,
+                                  verbose_name='Видимость меню',
+                                  help_text='Функции проверки видимости меню, например ["validators.is_authenticated"]')
 
     def __str__(self):
         return "%s" % self.title
