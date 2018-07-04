@@ -1,4 +1,5 @@
 import copy
+from ast import literal_eval as create_tuple
 from importlib import import_module
 from systemapps.menu.models import Menu, MenuItem
 from django import template
@@ -27,7 +28,6 @@ class MenuObject(template.Node):
         # Receives a dotted path or a callable, Returns a callable or None
         if callable(func_or_path):
             return func_or_path
-
         module_name = '.'.join(func_or_path.split('.')[:-1])
         function_name = func_or_path.split('.')[-1]
         _module = import_module(module_name)
@@ -35,7 +35,11 @@ class MenuObject(template.Node):
         return func
 
     def is_validated(self, menuitem):
-        validators = tuple(menuitem.validators)
+        try:
+            validators = create_tuple(menuitem.validators)
+        except (ValueError, SyntaxError):
+            validators = None
+
         if not validators:
             return True
         if not isinstance(validators, (list, tuple)):
