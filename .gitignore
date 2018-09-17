@@ -8,4 +8,11 @@ __pycache__/
 *.py[cod]
 .env
 *.log
-fixtures/*.json
+
+# Database stuff
+*.sqlite3
+migrations/
+db.sqlite3
+
+# Test fixtures
+fixtures
