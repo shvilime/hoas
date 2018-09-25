@@ -5,9 +5,16 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
 class SignupForm(UserCreationForm):
     prefix = 'signup'
-    first_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
-    last_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
-    email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
+    username = forms.CharField(label='Логин пользователя',
+                               max_length=20)
+    first_name = forms.CharField(label='Имя',
+                                 max_length=30,
+                                 help_text='Ваше имя (как в паспорте)')
+    last_name = forms.CharField(label='Фамилия',
+                                max_length=30,
+                                help_text='Ваша фамилия (как в паспорте)')
+    email = forms.EmailField(max_length=254,
+                             help_text='Обязательное поле. Введите реально существующий адрес')
 
     class Meta:
         model = User
@@ -15,3 +22,5 @@ class SignupForm(UserCreationForm):
 
 class LoginForm(AuthenticationForm):
     prefix = 'login'
+    # username = forms.CharField(label='Логин пользователя',
+    #                            max_length=20)

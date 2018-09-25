@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load widget_tweaks %}
 
 {% block content %}
 
@@ -19,14 +18,7 @@
                     <div class="acc_content clearfix">
                         <form id="login-form" name="login-form" class="nobottommargin" action="{% url 'login' %}" method="post">
                             {% csrf_token %}
-                            <div class="col_full">
-                                <label for="login-form-username">Имя пользователя:</label>
-                                {% render_field login_form.username class="form-control" %}
-                            </div>
-                            <div class="col_full">
-                                <label for="login-form-password">Пароль:</label>
-                                {% render_field login_form.password class="form-control" %}
-                            </div>
+                            {% include 'form.html' with form=login_form %}
                             <div class="col_full nobottommargin">
                                 <button class="button button-3d button-black nomargin" id="login-form-submit"
                                         name="login-form-submit" value="login">Войти
@@ -42,30 +34,7 @@
                     <div class="acc_content clearfix">
                         <form id="register-form" name="register-form" class="nobottommargin" action="{% url 'login' %}" method="post">
                             {% csrf_token %}
-                            <div class="col_full">
-                                <label for="register-form-name">Псевдоним:</label>
-                                {% render_field signup_form.username class="form-control" %}
-                            </div>
-                            <div class="col_full">
-                                <label for="register-form-username">Имя:</label>
-                                {% render_field signup_form.first_name class="form-control" %}
-                            </div>
-                            <div class="col_full">
-                                <label for="register-form-username">Фамилия:</label>
-                                {% render_field signup_form.last_name class="form-control" %}
-                            </div>
-                            <div class="col_full">
-                                <label for="register-form-email">Email:</label>
-                                {% render_field signup_form.email class="form-control" %}
-                            </div>
-                            <div class="col_full">
-                                <label for="register-form-password">Введите пароль:</label>
-                                {% render_field signup_form.password1 class="form-control" %}
-                            </div>
-                            <div class="col_full">
-                                <label for="register-form-repassword">Повторите пароль:</label>
-                                {% render_field signup_form.password2 class="form-control" %}
-                            </div>
+                            {% include 'form.html' with form=signup_form %}
                             <div class="col_full nobottommargin">
                                 <button class="button button-3d button-black nomargin" id="signup-form-submit"
                                         name="signup-form-submit" value="register">Зарегистрироваться

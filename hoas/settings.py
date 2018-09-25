@@ -43,7 +43,8 @@ INSTALLED_APPS = [
 
     'systemapps.accounts',
     'systemapps.menu',
-    'main',         #Main page
+    'systemapps.form',
+    'main',             #Main page
 ]
 
 MIDDLEWARE = [
