@@ -26,6 +26,9 @@ class MyUserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
     def create_superuser(self, email, password, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
         extra_fields.setdefault('is_superuser', True)
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
@@ -33,6 +36,7 @@ class MyUserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    username = None
     email = models.EmailField(verbose_name='Email',
                               unique=True, null=False)
     first_name = models.CharField(verbose_name='Имя',
@@ -45,6 +49,8 @@ class User(AbstractBaseUser, PermissionsMixin):
                               validators=[phone_regex], max_length=17, unique=True,
                               help_text='Номер должен соответствовать формату:+999999999 до 15 цифр')
     date_joined = models.DateTimeField(verbose_name='Дата регистрации', auto_now_add=True)
+    is_staff = models.BooleanField('Статус сотрудника',default=False,
+                                   help_text='Позволяет сотруднику получить доступ к администрированию сайта')
     is_active = models.BooleanField(default=True, verbose_name='Активность')
 
     def avatar__path(instance, filename):
