@@ -1,6 +1,6 @@
 from django.urls import path, re_path
 from django.contrib.auth import views as auth_views
-from systemapps.accounts import views as account_views
+from systemapps.account import views as account_views
 
 accounts_urlpatterns = [
     re_path(r'^login/$', account_views.loginsignup, name='login'),

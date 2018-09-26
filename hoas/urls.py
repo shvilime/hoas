@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import include, path, re_path
 
 from main.urls import main_urlpatterns
-from systemapps.accounts.urls import accounts_urlpatterns
+from systemapps.account.urls import accounts_urlpatterns
 
 urlpatterns = [
     re_path('^', include(main_urlpatterns)),
