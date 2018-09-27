@@ -50,7 +50,7 @@
                                     </ul>
                                 </li>
                             {% else %}
-                                <li><a href="{% url 'home' %}">Войти</a>
+                                <li><a href="{% url 'login' %}">Регистрация</a>
                                     <div class="top-link-section">
                                         {# Форма входа #}
                                         <form id="top-login" role="form" method="post" action="{% url 'home' %}">
@@ -75,7 +75,6 @@
                                         </form>
                                     </div>
                                 </li>
-                                <li><a href="{% url 'login' %}">Регистрация</a></a></li>
                             {% endif %}
 
                         </ul>

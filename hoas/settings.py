@@ -120,6 +120,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Custom user models link
 AUTH_USER_MODEL = 'account.User'
 
 # Internationalization
@@ -132,6 +133,16 @@ USE_L10N = True
 USE_TZ = True
 
 
+# Email configurations
+EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=False, cast=bool)
+EMAIL_USE_SSL = config('EMAIL_USE_SSL', default=False, cast=bool)
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
@@ -142,4 +153,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 SESSION_COOKIE_AGE = 3600
 LOGOUT_REDIRECT_URL = 'home'
 LOGIN_REDIRECT_URL = 'home'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

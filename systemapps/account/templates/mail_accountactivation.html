@@ -1,0 +1,6 @@
+{% autoescape off %}
+Здравствуйте {{ user.get_full_name }},
+Вы зарегистрировались на сайте {{ domain }}
+Для активации вашего личного кабинета необходимо пройти по ссылке
+http://{{ domain }}{% url 'activate' uidb64=uid token=token %}
+{% endautoescape %}

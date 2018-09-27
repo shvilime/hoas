@@ -12,6 +12,21 @@
 
                 <div class="accordion accordion-lg divcenter nobottommargin clearfix" style="max-width: 550px;">
 
+                    <div class="acctitle"><i class="acc-closed icon-user4"></i><i class="acc-open icon-ok-sign"></i>
+                        Новый пользователь? Зарегистрироваться
+                    </div>
+                    <div class="acc_content clearfix">
+                        <form id="register-form" name="register-form" class="nobottommargin" action="{% url 'login' %}" method="post">
+                            {% csrf_token %}
+                            {% include 'form.html' with form=signup_form %}
+                            <div class="col_full nobottommargin">
+                                <button class="button button-3d button-black nomargin" id="signup-form-submit"
+                                        name="signup-form-submit" value="register">Зарегистрироваться
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
                     <div class="acctitle"><i class="acc-closed icon-lock3"></i><i class="acc-open icon-unlock"></i>
                         Войти в вашу учетную запись
                     </div>
@@ -24,21 +39,6 @@
                                         name="login-form-submit" value="login">Войти
                                 </button>
                                 <a href="#" class="fright">Забыли пароль?</a>
-                            </div>
-                        </form>
-                    </div>
-
-                    <div class="acctitle"><i class="acc-closed icon-user4"></i><i class="acc-open icon-ok-sign"></i>
-                        Новый пользователь? Зарегистрироваться
-                    </div>
-                    <div class="acc_content clearfix">
-                        <form id="register-form" name="register-form" class="nobottommargin" action="{% url 'login' %}" method="post">
-                            {% csrf_token %}
-                            {% include 'form.html' with form=signup_form %}
-                            <div class="col_full nobottommargin">
-                                <button class="button button-3d button-black nomargin" id="signup-form-submit"
-                                        name="signup-form-submit" value="register">Зарегистрироваться
-                                </button>
                             </div>
                         </form>
                     </div>

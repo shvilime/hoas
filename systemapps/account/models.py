@@ -4,6 +4,7 @@ from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.core.validators import RegexValidator
 from django.utils.crypto import get_random_string
+from django.core.mail import send_mail
 from uuslug import slugify
 
 
@@ -46,7 +47,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$',
                                  message="Номер должен соответствовать формату: '+999999999'. До 15 цифр")
     phone = models.CharField (verbose_name='Номер телефона',
-                              validators=[phone_regex], max_length=17, unique=True,
+                              validators=[phone_regex], max_length=17,
                               help_text='Номер должен соответствовать формату:+999999999 до 15 цифр')
     date_joined = models.DateTimeField(verbose_name='Дата регистрации', auto_now_add=True)
     is_staff = models.BooleanField('Статус сотрудника',default=False,
@@ -73,3 +74,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_full_name(self):
         full_name = '%s %s' % (self.first_name, self.last_name)
         return full_name.strip()
+
+    def email2user(self, subj, text, from_address=None, **kwargs):
+        send_mail(subject=subj,
+                  message=text,
+                  from_email=from_address,
+                  recipient_list=[self.email],
+                  **kwargs)

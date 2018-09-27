@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
@@ -10,13 +10,12 @@ class SignupForm(UserCreationForm):
     first_name = forms.CharField(label='Имя',
                                  max_length=30,
                                  help_text='Ваше имя (как в паспорте)')
-    last_name = forms.CharField(max_length=30)
-    phone = forms.RegexField(regex=r'^\+?1?\d{9,15}$', max_length=17,
-                             help_text='Сотовый номер телефона, для связи')
-
+    last_name = forms.CharField(label='Фамилия',
+                                max_length=30,
+                                help_text='Ваша фамилия (как в паспорте)')
     class Meta:
-        model = User
-        fields = ('email', 'first_name', 'last_name', 'phone', 'password1', 'password2', )
+        model = get_user_model()
+        fields = ('email', 'first_name', 'last_name', 'password1', 'password2', )
 
 class LoginForm(AuthenticationForm):
     prefix = 'login'
