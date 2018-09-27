@@ -12,7 +12,6 @@ __pycache__/
 # Database stuff
 *.sqlite3
 migrations/
-db.sqlite3
 
 # Test fixtures
-fixtures
+fixtures/
