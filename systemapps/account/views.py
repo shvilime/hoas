@@ -1,7 +1,9 @@
+from django.conf import settings
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, get_user_model
+from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode, is_safe_url
 from django.utils.encoding import force_bytes, force_text
 from .tokens import account_activation_token
 from systemapps.account.forms import SignupForm, LoginForm
@@ -13,11 +15,18 @@ def LoginSignupView(request):
     if request.method == 'POST':
         login_form = LoginForm(data=request.POST)
         signup_form = SignupForm(data=request.POST)
+
         if 'login-form-submit' in request.POST:
             if login_form.is_valid():
                 user = login_form.get_user()
                 login(request, user)
+                next_url = request.POST.get('next', None)      #Checking the next URL and redirect
+                url_is_safe = is_safe_url(url=next_url, allowed_hosts=settings.ALLOWED_HOSTS,
+                                          require_https=request.is_secure())
+                if next_url and url_is_safe:
+                    return redirect(next_url)
                 return redirect('home')
+
         if 'signup-form-submit' in request.POST:
             if signup_form.is_valid():
                 user = signup_form.save(commit=False)
@@ -32,16 +41,13 @@ def LoginSignupView(request):
                                                  'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
                                                  'token': account_activation_token.make_token(user)})
                 user.email2user(mail_subject, mail_message)
-
-                # username = signup_form.cleaned_data.get('email')
-                # raw_password = signup_form.cleaned_data.get('password1')
-                # user = authenticate(username=username, password=raw_password)
-                # login(request, user)
                 return render(request, 'confirm_signup.html')
     else:
         login_form = LoginForm()
         signup_form = SignupForm()
+
     return render(request, 'loginsignup.html', {'login_form': login_form, 'signup_form': signup_form})
+
 
 def ActivateAccountView(request, uidb64, token):
     User = get_user_model()
@@ -60,5 +66,7 @@ def ActivateAccountView(request, uidb64, token):
         # invalid link
         return redirect('home')
 
+
+@login_required(login_url='login')
 def ProfileView(request):
     return render(request, 'profile.html')

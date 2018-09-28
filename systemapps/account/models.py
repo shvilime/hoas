@@ -61,7 +61,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         return 'avatar/{user}({randomstring}){ext}'.format(user=username,randomstring=randomstr,ext=file_ext)
     avatar = models.ImageField(verbose_name='Аватар',
                                upload_to=avatar__path,
-                               default='/static/img/avatar.jpg',
+                               default='/avatars/default.jpg',
                                null=True, blank=True)
 
     USERNAME_FIELD = 'email'
