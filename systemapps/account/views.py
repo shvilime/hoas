@@ -37,12 +37,11 @@ def LoginSignupView(request):
                 # raw_password = signup_form.cleaned_data.get('password1')
                 # user = authenticate(username=username, password=raw_password)
                 # login(request, user)
-                return redirect('home')
+                return render(request, 'confirm_signup.html')
     else:
         login_form = LoginForm()
         signup_form = SignupForm()
     return render(request, 'loginsignup.html', {'login_form': login_form, 'signup_form': signup_form})
-
 
 def ActivateAccountView(request, uidb64, token):
     User = get_user_model()
@@ -56,7 +55,10 @@ def ActivateAccountView(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
-        return redirect('home')
+        return redirect('profile')
     else:
         # invalid link
-        return render(request, 'registration/invalid.html')
+        return redirect('home')
+
+def ProfileView(request):
+    return render(request, 'profile.html')

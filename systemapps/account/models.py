@@ -59,7 +59,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         username = slugify(instance.get_full_name())
         randomstr = get_random_string(length=10, allowed_chars='abcdefghijklmnopqrstuvwxyz')
         return 'avatar/{user}({randomstring}){ext}'.format(user=username,randomstring=randomstr,ext=file_ext)
-    avatar = models.ImageField(verbose_name='Аватар', upload_to=avatar__path, null=True, blank=True)
+    avatar = models.ImageField(verbose_name='Аватар',
+                               upload_to=avatar__path,
+                               default='/static/img/avatar.jpg',
+                               null=True, blank=True)
 
     USERNAME_FIELD = 'email'
     objects = MyUserManager()
