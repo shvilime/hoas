@@ -31,156 +31,158 @@
 
 <body class="stretched">
 
-	<!-- Document Wrapper
-	============================================= -->
-    <div id="wrapper" class="clearfix">
-        <!-- Top Bar ============================================= -->
-        <div id="top-bar">
-            <div class="container clearfix">
+<!-- Document Wrapper
+============================================= -->
+<div id="wrapper" class="clearfix">
+    <!-- Top Bar ============================================= -->
+    <div id="top-bar">
+        <div class="container clearfix">
 
-                <div class="col_half nobottommargin">
-                    <div class="top-links">
-                        <ul>
-                            <li><a href="{% url 'home' %}">Домой</a></li>
-                            {% if user.is_authenticated %}
-                                <li><a href="{% url 'home' %}"> {{ user.get_full_name }} </a>
+            <div class="col_half nobottommargin">
+                <div class="top-links">
+                    <ul>
+                        <li><a href="{% url 'home' %}">Домой</a></li>
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'home' %}"> {{ user.get_full_name }} </a>
+                                <ul>
+                                    <li><a href="{% url 'profile' %}"><i class="icon-user2"></i> Мой профиль</a></li>
+                                    <li><a href="{% url 'logout' %} "><i class="icon-line2-logout"></i> Выйти</a></li>
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li><a href="{% url 'login' %}">Регистрация</a>
+                                <div class="top-link-section">
+                                    {# Форма входа #}
+                                    <form id="top-login" role="form" method="post" action="{% url 'home' %}">
+                                        {% csrf_token %}
+                                        <div class="input-group" id="top-login-username">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text"><i class="icon-user"></i></div>
+                                            </div>
+                                            {% render_field toploginform.username placeholder="Имя пользователя" class="form-control" %}
+                                        </div>
+                                        <div class="input-group" id="top-login-password">
+                                            <div class="input-group-prepend">
+                                                <div class="input-group-text"><i class="icon-key"></i></div>
+                                            </div>
+                                            {% render_field toploginform.password placeholder="Пароль" class="form-control" %}
+                                        </div>
+                                        <label class="checkbox">
+                                            <input type="checkbox" name="rememberme"> Запомнить меня
+                                        </label>
+                                        <button class="btn btn-danger btn-block" type="submit">Войти</button>
+                                        <input type="hidden" name="next" value="{{ next }}"/>
+                                    </form>
+                                </div>
+                            </li>
+                        {% endif %}
+
+                    </ul>
+                </div>
+            </div>
+
+            {% menu topsocialnetworks %}
+            <div class="col_half fright col_last nobottommargin">
+                <div id="top-social">
+                    <ul>
+                        {% recursetree nodes %}
+                            <li>
+                                <a href="{{ node.url }}" class="{{ node.hrefclass }}">
+                                    <span class="ts-icon"><i class="{{ node.iconclass }}"></i></span>
+                                    <span class="ts-text">{{ node.title }}</span>
+                                </a>
+                                {% if not node.is_leaf_node %}
                                     <ul>
-                                        <li><a href="{% url 'profile' %}"><i class="icon-user2"></i> Мой профиль</a></li>
-                                        <li><a href="{% url 'logout' %} "><i class="icon-line2-logout"></i> Выйти</a></li>
+                                        {{ children }}
                                     </ul>
-                                </li>
-                            {% else %}
-                                <li><a href="{% url 'login' %}">Регистрация</a>
-                                    <div class="top-link-section">
-                                        {# Форма входа #}
-                                        <form id="top-login" role="form" method="post" action="{% url 'home' %}">
-                                            {% csrf_token %}
-                                            <div class="input-group" id="top-login-username">
-                                                <div class="input-group-prepend">
-                                                    <div class="input-group-text"><i class="icon-user"></i></div>
-                                                </div>
-                                                {% render_field toploginform.username placeholder="Имя пользователя" class="form-control" %}
-                                            </div>
-                                            <div class="input-group" id="top-login-password">
-                                                <div class="input-group-prepend">
-                                                    <div class="input-group-text"><i class="icon-key"></i></div>
-                                                </div>
-                                                {% render_field toploginform.password placeholder="Пароль" class="form-control" %}
-                                            </div>
-                                            <label class="checkbox">
-                                                <input type="checkbox" name="rememberme"> Запомнить меня
-                                            </label>
-                                            <button class="btn btn-danger btn-block" type="submit">Войти</button>
-                                            <input type="hidden" name="next" value="{{ next }}"/>
-                                        </form>
-                                    </div>
-                                </li>
-                            {% endif %}
-
-                        </ul>
-                    </div>
+                                {% endif %}
+                            </li>
+                        {% endrecursetree %}
+                    </ul>
                 </div>
-
-                {% menu topsocialnetworks %}
-                <div class="col_half fright col_last nobottommargin">
-                    <div id="top-social">
-                        <ul>
-                            {% recursetree nodes %}
-                                <li>
-                                    <a href="{{ node.url }}" class="{{ node.hrefclass }}">
-                                        <span class="ts-icon"><i class="{{ node.iconclass }}"></i></span>
-                                        <span class="ts-text">{{ node.title }}</span>
-                                    </a>
-                                    {% if not node.is_leaf_node %}
-                                        <ul>
-                                            {{ children }}
-                                        </ul>
-                                    {% endif %}
-                                </li>
-                            {% endrecursetree %}
-                        </ul>
-                    </div>
-                </div>
-
-            </div>
-        </div><!-- #top-bar end -->
-
-        <!-- Header
-		============================================= -->
-   		<header id="header" class="sticky-style-2">
-			<div class="container clearfix">
-				<!-- Logo
-				============================================= -->
-				<div id="logo">
-					<a href="{% url 'home' %}" class="standard-logo"><img src={% static '/img/logo.png' %} alt="Logo"></a>
-					<a href="{% url 'home' %}" class="retina-logo"><img src={% static '/img/logo@2x.png' %} alt="Logo"></a>
-				</div><!-- #logo end -->
-
-				<ul class="header-extras">
-					<li>
-						<i class="i-plain icon-call nomargin"></i>
-						<div class="he-text">
-							Позвонить
-							<span>+7(918)111-33-45</span>
-						</div>
-					</li>
-					<li>
-						<i class="i-plain icon-line2-envelope nomargin"></i>
-						<div class="he-text">
-							Написать
-							<span>info@canvas.com</span>
-						</div>
-					</li>
-					<li>
-						<i class="i-plain icon-line-clock nomargin"></i>
-						<div class="he-text">
-							Мы работаем
-							<span>Пон - Пят, 10:00 - 18:00</span>
-						</div>
-					</li>
-				</ul>
-			</div>
-
-   			<div id="header-wrap">
-   				<!-- Primary Navigation
-				============================================= -->
-                {% menu mainmenu %}
-				<nav id="primary-menu" class="style-2">
-                    <div class="container clearfix">
-                        <div id="primary-menu-trigger"><i class="icon-reorder"></i></div>
-                        <ul>
-                            {% recursetree nodes %}
-                                <li>
-                                    <a href="{{ node.url }}">
-                                        <div>{% if node.iconclass != '' %}<i class="{{ node.iconclass }}"></i>{% endif %}{{ node.title }}</div>
-                                    </a>
-                                    {% if not node.is_leaf_node %}
-                                        <ul>
-                                            {{ children }}
-                                        </ul>
-                                    {% endif %}
-                                </li>
-                            {% endrecursetree %}
-                        </ul>
-   						<!-- Top Search
-						============================================= -->
-						<div id="top-search">
-							<a href="#" id="top-search-trigger"><i class="icon-search3"></i><i class="icon-line-cross"></i></a>
-							<form action="search.html" method="get">
-								<input type="text" name="q" class="form-control" value="" placeholder="Напечатайте &amp; нажмите Enter..">
-							</form>
-						</div><!-- #top-search end -->
-                    </div>
-                </nav>
             </div>
 
-		</header><!-- #header end -->
+        </div>
+    </div><!-- #top-bar end -->
 
-        <div class="container">
-            {% block content %}{% endblock %}
+    <!-- Header
+    ============================================= -->
+    <header id="header" class="sticky-style-2">
+        <div class="container clearfix">
+            <!-- Logo
+            ============================================= -->
+            <div id="logo">
+                <a href="{% url 'home' %}" class="standard-logo"><img src={% static '/img/logo.png' %} alt="Logo"></a>
+                <a href="{% url 'home' %}" class="retina-logo"><img src={% static '/img/logo@2x.png' %} alt="Logo"></a>
+            </div><!-- #logo end -->
+
+            <ul class="header-extras">
+                <li>
+                    <i class="i-plain icon-call nomargin"></i>
+                    <div class="he-text">
+                        Позвонить
+                        <span>+7(918)111-33-45</span>
+                    </div>
+                </li>
+                <li>
+                    <i class="i-plain icon-line2-envelope nomargin"></i>
+                    <div class="he-text">
+                        Написать
+                        <span>info@canvas.com</span>
+                    </div>
+                </li>
+                <li>
+                    <i class="i-plain icon-line-clock nomargin"></i>
+                    <div class="he-text">
+                        Мы работаем
+                        <span>Пон - Пят, 10:00 - 18:00</span>
+                    </div>
+                </li>
+            </ul>
         </div>
 
+        <div id="header-wrap">
+            <!-- Primary Navigation
+         ============================================= -->
+            {% menu mainmenu %}
+            <nav id="primary-menu" class="style-2">
+                <div class="container clearfix">
+                    <div id="primary-menu-trigger"><i class="icon-reorder"></i></div>
+                    <ul>
+                        {% recursetree nodes %}
+                            <li>
+                                <a href="{{ node.url }}">
+                                    <div>{% if node.iconclass != '' %}
+                                        <i class="{{ node.iconclass }}"></i>{% endif %}{{ node.title }}</div>
+                                </a>
+                                {% if not node.is_leaf_node %}
+                                    <ul>
+                                        {{ children }}
+                                    </ul>
+                                {% endif %}
+                            </li>
+                        {% endrecursetree %}
+                    </ul>
+                    <!-- Top Search
+                 ============================================= -->
+                    <div id="top-search">
+                        <a href="#" id="top-search-trigger"><i class="icon-search3"></i><i class="icon-line-cross"></i></a>
+                        <form action="search.html" method="get">
+                            <input type="text" name="q" class="form-control" value=""
+                                   placeholder="Напечатайте &amp; нажмите Enter..">
+                        </form>
+                    </div><!-- #top-search end -->
+                </div>
+            </nav>
+        </div>
+
+    </header><!-- #header end -->
+
+    <div class="container">
+        {% block content %}{% endblock %}
     </div>
+
+</div>
 
 
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -194,6 +196,7 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"
         integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T"
         crossorigin="anonymous"></script>
+{% block javascript %}{% endblock %}
 
 <!-- Footer Scripts
 ============================================= -->

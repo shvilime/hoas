@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from PIL import Image
 
 
 class SignupForm(UserCreationForm):
@@ -19,4 +20,30 @@ class SignupForm(UserCreationForm):
 
 class LoginForm(AuthenticationForm):
     prefix = 'login'
+
+class AvatarUploadForm(forms.ModelForm):
+    x = forms.FloatField(widget=forms.HiddenInput())
+    y = forms.FloatField(widget=forms.HiddenInput())
+    width = forms.FloatField(widget=forms.HiddenInput())
+    height = forms.FloatField(widget=forms.HiddenInput())
+
+    class Meta:
+        model = get_user_model()
+        fields = ('avatar', 'x', 'y', 'width', 'height', )
+
+    def save(self):
+         account = super(AvatarUploadForm, self).save()
+
+         x = self.cleaned_data.get('x')
+         y = self.cleaned_data.get('y')
+         w = self.cleaned_data.get('weight')
+         h = self.cleaned_data.get('height')
+
+         image = Image.open(account.Avatar)
+         cropped_image = image.crop((x, y, w + x, h + y))
+         resized_image = cropped_image.resize((224, 224), Image.ANTIALIAS)
+         resized_image.save(account.Avatar.path)
+
+         return account
+
 

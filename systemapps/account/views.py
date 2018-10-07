@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode, is_safe_url
 from django.utils.encoding import force_bytes, force_text
 from .tokens import account_activation_token
-from systemapps.account.forms import SignupForm, LoginForm
+from systemapps.account.forms import SignupForm, LoginForm, AvatarUploadForm
 
 
 # Create your views here.
@@ -69,4 +69,11 @@ def ActivateAccountView(request, uidb64, token):
 
 @login_required(login_url='login')
 def ProfileView(request):
-    return render(request, 'profile.html')
+    if request.method == 'POST':
+        form = AvatarUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = AvatarUploadForm()
+    return render(request, 'profile.html', {'form': form})

@@ -1,6 +1,64 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block javascript %}
+    <script>src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.4.1/cropper.js"</script>
+    <script>
+        $(function () {
+            /* SCRIPT TO OPEN THE MODAL WITH THE PREVIEW */
+            $("#id_file").change(function () {
+                if (this.files && this.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        $("#image").attr("src", e.target.result);
+                        $("#modalAvatar").modal("show");
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+
+            /* SCRIPTS TO HANDLE THE CROPPER BOX */
+            var $image = $("#image");
+            var cropBoxData;
+            var canvasData;
+            $("#modalAvatar").on("shown.bs.modal", function () {
+                $image.cropper({
+                    viewMode: 1,
+                    aspectRatio: 1 / 1,
+                    minCropBoxWidth: 224,
+                    minCropBoxHeight: 224,
+                    ready: function () {
+                        $image.cropper("setCanvasData", canvasData);
+                        $image.cropper("setCropBoxData", cropBoxData);
+                    }
+                });
+            }).on("hidden.bs.modal", function () {
+                cropBoxData = $image.cropper("getCropBoxData");
+                canvasData = $image.cropper("getCanvasData");
+                $image.cropper("destroy");
+            });
+
+            $(".js-zoom-in").click(function () {
+                $image.cropper("zoom", 0.1);
+            });
+
+            $(".js-zoom-out").click(function () {
+                $image.cropper("zoom", -0.1);
+            });
+
+            /* SCRIPT TO COLLECT THE DATA AND POST TO THE SERVER */
+            $(".js-crop-and-upload").click(function () {
+                var cropData = $image.cropper("getData");
+                $("#id_x").val(cropData["x"]);
+                $("#id_y").val(cropData["y"]);
+                $("#id_height").val(cropData["height"]);
+                $("#id_width").val(cropData["width"]);
+                $("#formUpload").submit();
+            });
+        });
+    </script>
+{% endblock %}
+
 {% block content %}
 
     <section id="content">
@@ -9,9 +67,11 @@
                 <div class="row clearfix">
 
                     <div class="col-md-9">
-                        <img src="{{ user.avatar.url }}"
-                             class="alignleft img-circle img-thumbnail notopmargin nobottommargin" alt="Avatar"
-                             style="max-width: 84px;">
+                        <a href="#" data-toggle="modal" data-target=".bs-avatarupload-modal">
+                            <img src="{{ user.avatar.url }}"
+                                 class="alignleft img-circle img-thumbnail notopmargin nobottommargin" alt="Avatar"
+                                 style="max-width: 84px;">
+                        </a>
                         <div class="heading-block noborder">
                             <h3>{{ user.email }} </h3>
                             <span>{{ user.get_full_name }}</span>
@@ -66,5 +126,37 @@
             </div>
         </div>
     </section>
+
+    <!-- MODAL TO CROP THE IMAGE -->
+    <div class="modal fade bs-avatarupload-modal" id="modalAvatar" tabindex="-1" role="dialog"
+         aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-small">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel">Изменить аватар</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <img src="" id="image" style="max-width: 100%;">
+                    </div>
+                    <div class="modal-footer">
+                        <div class="btn-group left" role="group">
+                            <button type="button" class="btn btn-light js-zoom-in">
+                                <i class="icon-zoom-in"></i>
+                            </button>
+                            <button type="button" class="btn btn-light js-zoom-out">
+                                <i class="icon-zoom-out"></i>
+                            </button>
+                        </div>
+                        <button type="button" class="button button-dark button-rounded" data-dismiss="modal">Отмена
+                        </button>
+                        <button type="button" class="button button-dark button-rounded js-crop-and-upload">Установить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
