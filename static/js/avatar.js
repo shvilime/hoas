@@ -33,7 +33,7 @@ $(function () {
             var reader = new FileReader();
             reader.readAsDataURL(this.files[0]);
             reader.onload = function (e) {
-                $("#image").attr("src", e.target.result);
+                $("#avatar").attr("src", e.target.result);
                 if (isInitialized = true) {
                     destroyCropper();
                 }
@@ -43,7 +43,6 @@ $(function () {
     });
 
     /* SCRIPTS TO HANDLE THE CROPPER BOX */
-
     $("#modalAvatar").on("shown.bs.modal", function () {
         initCropper()
     }).on("hidden.bs.modal", function () {
@@ -65,6 +64,6 @@ $(function () {
         $("#id_y").val(cropData["y"]);
         $("#id_height").val(cropData["height"]);
         $("#id_width").val(cropData["width"]);
-        $("#formUpload").submit();
+        $("#formAvatarUpload").submit();
     });
 });

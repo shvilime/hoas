@@ -20,7 +20,7 @@ def LoginSignupView(request):
             if login_form.is_valid():
                 user = login_form.get_user()
                 login(request, user)
-                next_url = request.POST.get('next', None)      #Checking the next URL and redirect
+                next_url = request.POST.get('next', None)  # Checking the next URL and redirect
                 url_is_safe = is_safe_url(url=next_url, allowed_hosts=settings.ALLOWED_HOSTS,
                                           require_https=request.is_secure())
                 if next_url and url_is_safe:
@@ -70,10 +70,11 @@ def ActivateAccountView(request, uidb64, token):
 @login_required(login_url='login')
 def ProfileView(request):
     if request.method == 'POST':
-        form = AvatarUploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('profile')
+        uploadform = AvatarUploadForm(request.POST, request.FILES)
+        if ('x' in request.POST) and ('y' in request.POST):
+            if uploadform.is_valid():
+                uploadform.save(update_fields=["Avatar"])
+                return redirect('profile')
     else:
-        form = AvatarUploadForm()
-    return render(request, 'profile.html', {'form': form})
+        uploadform = AvatarUploadForm()
+    return render(request, 'profile.html', {'uploadform': uploadform})

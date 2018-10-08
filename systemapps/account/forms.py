@@ -36,7 +36,7 @@ class AvatarUploadForm(forms.ModelForm):
 
          x = self.cleaned_data.get('x')
          y = self.cleaned_data.get('y')
-         w = self.cleaned_data.get('weight')
+         w = self.cleaned_data.get('widht')
          h = self.cleaned_data.get('height')
 
          image = Image.open(account.Avatar)

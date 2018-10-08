@@ -103,19 +103,18 @@
                                 <i class="icon-zoom-out"></i>
                             </button>
                         </div>
-                        <form method="post" enctype="multipart/form-data" id="formUpload"
+                        <form method="post" enctype="multipart/form-data" id="formAvatarUpload"
                               style="margin-bottom: 0px;" class="container clearfix">
                             {% csrf_token %}
-                            {{ form.x }}
-                            {{ form.y }}
-                            {{ form.width }}
-                            {{ form.height }}
-                            {{ form.avatar|add_class:"sm-form-control" }}
+                            {{ uploadform.x }}
+                            {{ uploadform.y }}
+                            {{ uploadform.width }}
+                            {{ uploadform.height }}
+                            {{ uploadform.avatar|add_class:"sm-form-control" }}
                         </form>
                         <button type="button" class="button button-dark button-rounded" data-dismiss="modal">Отмена
                         </button>
-                        <button type="button" class="button button-dark button-rounded js-crop-and-upload">
-                            Установить
+                        <button type="button" class="button button-dark button-rounded js-crop-and-upload">Установить
                         </button>
                     </div>
                 </div>
