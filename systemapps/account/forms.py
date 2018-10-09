@@ -1,3 +1,4 @@
+import os
 from django.contrib.auth import get_user_model
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
@@ -14,12 +15,15 @@ class SignupForm(UserCreationForm):
     last_name = forms.CharField(label='Фамилия',
                                 max_length=30,
                                 help_text='Ваша фамилия (как в паспорте)')
+
     class Meta:
         model = get_user_model()
-        fields = ('email', 'first_name', 'last_name', 'password1', 'password2', )
+        fields = ('email', 'first_name', 'last_name', 'password1', 'password2',)
+
 
 class LoginForm(AuthenticationForm):
     prefix = 'login'
+
 
 class AvatarUploadForm(forms.ModelForm):
     x = forms.FloatField(widget=forms.HiddenInput())
@@ -29,21 +33,24 @@ class AvatarUploadForm(forms.ModelForm):
 
     class Meta:
         model = get_user_model()
-        fields = ('avatar', 'x', 'y', 'width', 'height', )
+        fields = ('avatar', 'x', 'y', 'width', 'height',)
 
-    def save(self):
-         account = super(AvatarUploadForm, self).save()
+    def save(self, commit=True):
+        user = super(AvatarUploadForm, self).save()
+        previous_file = self.initial['avatar'].path
+        new_file = user.avatar.path
 
-         x = self.cleaned_data.get('x')
-         y = self.cleaned_data.get('y')
-         w = self.cleaned_data.get('widht')
-         h = self.cleaned_data.get('height')
+        x = self.cleaned_data.get('x')
+        y = self.cleaned_data.get('y')
+        w = self.cleaned_data.get('width')
+        h = self.cleaned_data.get('height')
 
-         image = Image.open(account.Avatar)
-         cropped_image = image.crop((x, y, w + x, h + y))
-         resized_image = cropped_image.resize((224, 224), Image.ANTIALIAS)
-         resized_image.save(account.Avatar.path)
+        image = Image.open(new_file)
+        cropped_image = image.crop((x, y, w + x, h + y))
+        resized_image = cropped_image.resize((224, 224), Image.ANTIALIAS)
+        resized_image.save(new_file)
 
-         return account
+        if (os.path.exists(previous_file)) and (new_file != previous_file):
+            os.remove(previous_file)
 
-
+        return user

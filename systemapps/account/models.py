@@ -46,11 +46,11 @@ class User(AbstractBaseUser, PermissionsMixin):
                                  max_length=30, help_text='Фамилия (как в паспорте)')
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$',
                                  message="Номер должен соответствовать формату: '+999999999'. До 15 цифр")
-    phone = models.CharField (verbose_name='Номер телефона',
-                              validators=[phone_regex], max_length=17,
-                              help_text='Номер должен соответствовать формату:+999999999 до 15 цифр')
+    phone = models.CharField(verbose_name='Номер телефона',
+                             validators=[phone_regex], max_length=17,
+                             help_text='Номер должен соответствовать формату:+999999999 до 15 цифр')
     date_joined = models.DateTimeField(verbose_name='Дата регистрации', auto_now_add=True)
-    is_staff = models.BooleanField('Статус сотрудника',default=False,
+    is_staff = models.BooleanField('Статус сотрудника', default=False,
                                    help_text='Позволяет сотруднику получить доступ к администрированию сайта')
     is_active = models.BooleanField(default=True, verbose_name='Активность')
 
@@ -58,10 +58,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         file_name, file_ext = os.path.splitext(filename)
         username = slugify(instance.get_full_name())
         randomstr = get_random_string(length=10, allowed_chars='abcdefghijklmnopqrstuvwxyz')
-        return 'avatar/{user}({randomstring}){ext}'.format(user=username,randomstring=randomstr,ext=file_ext)
+        return 'avatars/{user}-[{randomstring}]{ext}'.format(user=username, randomstring=randomstr, ext=file_ext)
+
+    def avatar__default():
+        return '/avatars/default.jpg'
+
     avatar = models.ImageField(verbose_name='Аватар',
                                upload_to=avatar__path,
-                               default='/avatars/default.jpg',
+                               default=avatar__default,
                                null=True, blank=True)
 
     USERNAME_FIELD = 'email'

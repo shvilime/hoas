@@ -70,10 +70,10 @@ def ActivateAccountView(request, uidb64, token):
 @login_required(login_url='login')
 def ProfileView(request):
     if request.method == 'POST':
-        uploadform = AvatarUploadForm(request.POST, request.FILES)
+        uploadform = AvatarUploadForm(request.POST, request.FILES, instance=request.user)
         if ('x' in request.POST) and ('y' in request.POST):
             if uploadform.is_valid():
-                uploadform.save(update_fields=["Avatar"])
+                uploadform.save()
                 return redirect('profile')
     else:
         uploadform = AvatarUploadForm()

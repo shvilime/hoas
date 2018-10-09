@@ -4,7 +4,7 @@ $(function () {
     var canvasData;
     var isInitialized = false;
 
-    /* CROPPER INITIALISATION*/
+    /* CROPPER INITIALISATION & DESRTROY*/
     function initCropper() {
         $image = $("#avatar");
         $image.cropper({
