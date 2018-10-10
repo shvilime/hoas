@@ -19,10 +19,10 @@ class Room(models.Model):
                                  decimal_places=3,
                                  verbose_name='Площадь')
     cadastre_regex = RegexValidator(regex=r'^\d{2}:\d{2}:\d{6,7}:\d{1,35}$',
-                                    message="Должен соответствовать формату АА:ВВ:CCCCСCC:КК")
-    cadastre = models.CharField(validators=[cadastre_regex], max_length=17,
+                                    message="Должен соответствовать формату АА:ВВ:CCCCСCC:КККККК")
+    cadastre = models.CharField(validators=[cadastre_regex], max_length=50,
                                 verbose_name='Кадастровый номер',
-                                help_text='Должен соответствовать формату АА:ВВ:CCCCСCC:КК')
+                                help_text='Должен соответствовать формату АА:ВВ:CCCCСCC:ККККК')
 
     def __str__(self):
         return '%s %s' % (self.get_type_display(), self.number)

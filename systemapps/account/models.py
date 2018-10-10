@@ -50,9 +50,12 @@ class User(AbstractBaseUser, PermissionsMixin):
                              validators=[phone_regex], max_length=17,
                              help_text='Номер должен соответствовать формату:+999999999 до 15 цифр')
     date_joined = models.DateTimeField(verbose_name='Дата регистрации', auto_now_add=True)
+    is_owner = models.BooleanField(verbose_name='Владелец', default=False,
+                                   help_text='Является владельцем помещений')
     is_staff = models.BooleanField('Статус сотрудника', default=False,
                                    help_text='Позволяет сотруднику получить доступ к администрированию сайта')
     is_active = models.BooleanField(default=True, verbose_name='Активность')
+
 
     def avatar__path(instance, filename):
         file_name, file_ext = os.path.splitext(filename)

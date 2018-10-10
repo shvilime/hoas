@@ -19,6 +19,6 @@ class UserAdmin(DjangoUserAdmin):
     )
     list_display = ('email', 'first_name', 'last_name', 'phone')
     search_fields = ('email', 'first_name', 'last_name')
-    ordering = ('email',)
+    ordering = ('last_name', 'first_name')
 
 admin.site.register(User, UserAdmin)
