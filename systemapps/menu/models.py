@@ -35,10 +35,6 @@ class MenuItem(MPTTModel):
     active = models.BooleanField(default=True,
                                  verbose_name='Активность',
                                  help_text='Включить/Выключить пункт меню')
-    login_required = models.BooleanField(blank=True,
-                                         default=False,
-                                         verbose_name='Авторизация',
-                                         help_text='Показывать пункт меню только для авторизованных пользователей')
     iconclass = models.CharField(max_length=16,
                                  blank=True,
                                  verbose_name='Класс иконки',
