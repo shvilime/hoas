@@ -40,7 +40,8 @@ class Owner(models.Model):
                              verbose_name='Владелец')
     date_request = models.DateField(auto_now_add=True,
                                     verbose_name='Дата запроса')
-    date_confirmation = models.DateField(verbose_name='Дата подтверждения')
+    date_confirmation = models.DateField(null=True, blank=True,
+                                         verbose_name='Дата подтверждения')
 
     class Meta:
         unique_together = (('room', 'user', 'date_request'),)

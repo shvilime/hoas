@@ -6,7 +6,8 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode, is_safe_url
 from django.utils.encoding import force_bytes, force_text
 from .tokens import account_activation_token
-from systemapps.account.forms import SignupForm, LoginForm, AvatarUploadForm
+from .forms import SignupForm, LoginForm, AvatarUploadForm
+from area.models import Owner
 
 
 # Create your views here.
@@ -69,12 +70,16 @@ def ActivateAccountView(request, uidb64, token):
 
 @login_required(login_url='login')
 def ProfileView(request):
+    # Выберем список владений помещениями
+    owner_rooms = Owner.objects.filter(user_id=request.user.pk)
+
     if request.method == 'POST':
-        uploadform = AvatarUploadForm(request.POST, request.FILES, instance=request.user)
+        avataruploadform = AvatarUploadForm(request.POST, request.FILES, instance=request.user)
         if ('x' in request.POST) and ('y' in request.POST):
-            if uploadform.is_valid():
-                uploadform.save()
+            if avataruploadform.is_valid():
+                avataruploadform.save()
                 return redirect('profile')
     else:
-        uploadform = AvatarUploadForm()
-    return render(request, 'profile.html', {'uploadform': uploadform})
+        avataruploadform = AvatarUploadForm()
+    return render(request, 'profile.html', {'avataruploadform': avataruploadform,
+                                            'owner_rooms': owner_rooms})
