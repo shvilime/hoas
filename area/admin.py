@@ -5,10 +5,11 @@ from .models import Room, Owner
 
 
 class RoomAdmin(admin.ModelAdmin):
-    list_display = ('type', 'number', 'square', 'cadastre')
+    list_display = ('__str__', 'square', 'cadastre')
+    list_filter = ('type',)
 
 class OwnerAdmin(admin.ModelAdmin):
-    list_display = ('room', 'user', 'date_confirmation')
+    list_display = ('id', 'room', 'user', 'date_confirmation')
 
 admin.site.register(Room, RoomAdmin)
 admin.site.register(Owner, OwnerAdmin)

@@ -82,8 +82,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         return '%s %s (%s)' % (self.last_name, self.first_name, self.email)
 
     def get_full_name(self):
-        full_name = '%s %s' % (self.first_name, self.last_name)
+        full_name = '%s %s' % (self.last_name, self.first_name)
         return full_name.strip()
+    get_full_name.short_description = "Полное имя пользователя"
 
     def email2user(self, subj, text, from_address=None, **kwargs):
         send_mail(subject=subj,

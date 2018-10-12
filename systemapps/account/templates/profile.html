@@ -4,10 +4,14 @@
 
 {% block stylesheet %}
     <link href="{% static 'js/cropper/cropper.min.css' %}" rel="stylesheet">
+    	<!-- Bootstrap File Upload CSS -->
+	<link href="{% static 'css/bootstrap/bs-filestyle.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block javascript %}
     <script src="{% static 'js/cropper/cropper.min.js' %}"></script>
+    <!-- Bootstrap File Upload Plugin -->
+	<script src="{% static 'js/bootstrap/bs-filestyle.js' %}"></script>
     <script src="{% static 'js/avatar.js' %}"></script>
 {% endblock %}
 
@@ -34,40 +38,64 @@
                             <div class="col-lg-12">
                                 <div class="tabs tabs-alt tabs-tb clearfix" id="tabs-profile">
                                     <ul class="tab-nav clearfix">
-                                        <li><a href="#tab-profile"><i class="icon-user"></i> Данные</a></li>
+                                        <li><a href="#tab-profile"><i class="icon-user2"></i> Данные</a></li>
                                         <li><a href="#tab-area"><i class="icon-building"></i> Помещения</a></li>
-                                        <li><a href="#tab-car"><i class="icon-ambulance"></i> Автомобили</a></li>
+                                        <li><a href="#tab-car"><i class="icon-truck"></i> Автомобили</a></li>
+                                        <li><a href="#tab-resources"><i class="icon-calendar"></i> Показания
+                                            счетчиков</a></li>
                                     </ul>
 
                                     <div class="tab-container">
+                                        <!-- Закладка Сведения ==================================== -->
                                         <div class="tab-content clearfix" id="tab-profile">
                                             {{ user.phone }}
                                         </div>
+                                        <!-- Закладка Помещения =================================== -->
                                         <div class="tab-content clearfix" id="tab-area">
-                                            <table class="table table-hover">
-                                                <thead class="thead-light">
-                                                <tr>
-                                                    <th>№</th>
-                                                    <th>Помещение</th>
-                                                    <th>Статус</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                {% for item in owner_rooms %}
+                                            <div class="col_two_third col_last nobottommargin">
+                                                <p>В данном разделе отражена информация о помещениях, собственником
+                                                    которых вы являетесь, или в отношении которых вами послан запрос на
+                                                    признание вас собственником.</p>
+                                            </div>
+                                            <div class="col_one_third col_last">
+                                                <a href="#" class="button button-rounded button-reveal button-large"><i
+                                                        class="icon-map-marker2"></i><span>Регистрация права</span></a>
+                                            </div>
+                                            {% if owner_rooms %}
+                                                <table class="table table-hover">
+                                                    <thead class="thead-light">
                                                     <tr>
-                                                        <td>{{ forloop.revcounter }}</td>
-                                                        <td>{{ item.room.get_type_display }} {{ item.room.number }}</td>
-                                                        {% if item.date_confirmation is None %}
-                                                            <td>Запрос на рассмотрении</td>
-                                                        {% else %}
-                                                            <td>В собственности</td>
-                                                        {% endif %}
+                                                        <th>№</th>
+                                                        <th>Помещение</th>
+                                                        <th>Статус</th>
                                                     </tr>
-                                                {% endfor %}
-                                                </tbody>
-                                            </table>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for item in owner_rooms %}
+                                                        <tr>
+                                                            <td>{{ forloop.revcounter }}</td>
+                                                            <td>{{ item.room.get_type_display }} {{ item.room.number }}</td>
+                                                            {% if item.date_confirmation is None %}
+                                                                <td>Запрос на рассмотрении</td>
+                                                            {% else %}
+                                                                <td>В собственности</td>
+                                                            {% endif %}
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            {% else %}
+                                                <div class="divider divider-border divider-center">
+                                                    <i class="icon-chat"></i>
+                                                </div>
+                                                <h4>Вы еще не подавали запросы на признание вас собственником</h4>
+                                            {% endif %}
+
                                         </div>
+                                        <!-- Закладка Автомобили ==================================== -->
                                         <div class="tab-content clearfix" id="tab-car"></div>
+                                        <!-- Закладка Показания счетчиков =========================== -->
+                                        <div class="tab-content clearfix" id="tab-resources"></div>
                                     </div>
                                 </div>
                             </div>
@@ -77,13 +105,6 @@
 
 
                     <div class="col-md-3 clearfix">
-
-                        <div class="fancy-title title-border">
-                            <h4>About Me</h4>
-                        </div>
-
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsum laboriosam, dignissimos
-                            veniam obcaecati. Quasi eaque, odio assumenda porro explicabo laborum!</p>
 
                         <div class="fancy-title topmargin title-border">
                             <h4>Social Profiles</h4>
@@ -156,7 +177,7 @@
                             {{ avataruploadform.y }}
                             {{ avataruploadform.width }}
                             {{ avataruploadform.height }}
-                            {{ avataruploadform.avatar|add_class:"sm-form-control" }}
+                            {{ avataruploadform.avatar|add_class:"file-loading"|set_data:"show-preview:false" }}
                         </form>
                         <button type="button" class="button button-dark button-rounded" data-dismiss="modal">Отмена
                         </button>

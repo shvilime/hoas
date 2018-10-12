@@ -66,4 +66,5 @@ $(function () {
         $("#id_width").val(cropData["width"]);
         $("#formAvatarUpload").submit();
     });
+
 });
