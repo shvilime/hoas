@@ -1,4 +1,5 @@
 import os
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
@@ -36,8 +37,10 @@ class AvatarUploadForm(forms.ModelForm):
         fields = ('avatar', 'x', 'y', 'width', 'height',)
 
     def save(self, commit=True):
+        previous_file = ''
+        if bool(self.initial['avatar']._file):
+            previous_file = self.initial['avatar'].path
         user = super(AvatarUploadForm, self).save()
-        previous_file = self.initial['avatar'].path
         new_file = user.avatar.path
 
         x = self.cleaned_data.get('x')
@@ -54,3 +57,9 @@ class AvatarUploadForm(forms.ModelForm):
             os.remove(previous_file)
 
         return user
+
+
+class EmailChangeForm(forms.ModelForm):
+    class Meta:
+        model = get_user_model()
+        fields = ['phone']

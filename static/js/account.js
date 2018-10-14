@@ -1,8 +1,13 @@
-$(function () {
+jQuery(function ($) {
     var $image;
     var cropBoxData;
     var canvasData;
     var isInitialized = false;
+    var initialAvatar = $("#avatar").attr("src");
+
+    // $(document).ready(function () {
+    //     var initialAvatar = $("#avatar").attr("value");
+    // });
 
     /* CROPPER INITIALISATION & DESRTROY*/
     function initCropper() {
@@ -12,6 +17,7 @@ $(function () {
             aspectRatio: 1 / 1,
             minCropBoxWidth: 224,
             minCropBoxHeight: 224,
+            cropBoxResizable: false,
             dragMode: 'move',
             ready: function () {
                 $image.cropper("setCanvasData", canvasData);
@@ -28,7 +34,7 @@ $(function () {
     }
 
     /* SCRIPT TO OPEN THE MODAL WITH THE PREVIEW */
-    $("#id_avatar").change(function () {
+    $("#id_avatar").on("change", function () {
         if (this.files && this.files[0]) {
             var reader = new FileReader();
             reader.readAsDataURL(this.files[0]);
@@ -40,6 +46,26 @@ $(function () {
                 initCropper();
             };
         }
+        else {
+            $("#avatar").attr("src", initialAvatar);
+        }
+    }).fileinput({
+        /* SCRIPT TO CONFIG THE BOOTSTRAP FILE-UPLOAD OBJECT */
+        mainClass: "input-group-md",
+        msgPlaceholder: "Выберите картинку",
+        showUpload: true,
+        previewFileType: "image",
+        browseClass: "btn btn-success",
+        browseLabel: "Выбрать",
+        browseIcon: "<i class=\"icon-picture\"></i> ",
+        removeClass: "btn btn-danger",
+        removeLabel: "Удалить",
+        removeIcon: "<i class=\"icon-trash\"></i> ",
+        removeTitle: "Отменить выбор данного файла",
+        uploadClass: "btn btn-info",
+        uploadLabel: "Загрузить",
+        uploadIcon: "<i class=\"icon-upload\"></i> ",
+        uploadTitle: "Обрезать и загрузить данный файл"
     });
 
     /* SCRIPTS TO HANDLE THE CROPPER BOX */
@@ -57,8 +83,13 @@ $(function () {
         $image.cropper("zoom", -0.1);
     });
 
+    /* SCRIPT TO CLEAR LOADED IMAGE */
+    $(".fileinput-remove-button").click(function () {
+        $("#avatar").attr("src", initialAvatar)
+    });
+
     /* SCRIPT TO COLLECT THE DATA AND POST TO THE SERVER */
-    $(".js-crop-and-upload").click(function () {
+    $(".fileinput-upload-button").click(function () {
         var cropData = $image.cropper("getData");
         $("#id_x").val(cropData["x"]);
         $("#id_y").val(cropData["y"]);
@@ -66,5 +97,7 @@ $(function () {
         $("#id_width").val(cropData["width"]);
         $("#formAvatarUpload").submit();
     });
+
+
 
 });

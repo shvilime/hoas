@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode, is_safe_url
 from django.utils.encoding import force_bytes, force_text
 from .tokens import account_activation_token
-from .forms import SignupForm, LoginForm, AvatarUploadForm
+from .forms import *
 from area.models import Owner
 
 
@@ -75,11 +75,15 @@ def ProfileView(request):
 
     if request.method == 'POST':
         avataruploadform = AvatarUploadForm(request.POST, request.FILES, instance=request.user)
+        emailchangeform = EmailChangeForm(request.POST, instance=request.user)
         if ('x' in request.POST) and ('y' in request.POST):
             if avataruploadform.is_valid():
                 avataruploadform.save()
                 return redirect('profile')
     else:
         avataruploadform = AvatarUploadForm()
+        emailchangeform = EmailChangeForm()
+
     return render(request, 'profile.html', {'avataruploadform': avataruploadform,
-                                            'owner_rooms': owner_rooms})
+                                            'owner_rooms': owner_rooms,
+                                            'emailchangeform': emailchangeform})

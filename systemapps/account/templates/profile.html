@@ -4,15 +4,13 @@
 
 {% block stylesheet %}
     <link href="{% static 'js/cropper/cropper.min.css' %}" rel="stylesheet">
-    	<!-- Bootstrap File Upload CSS -->
-	<link href="{% static 'css/bootstrap/bs-filestyle.css' %}" rel="stylesheet">
+    <link href="{% static '/js/bootstrap-fileinput/bs-filestyle.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block javascript %}
     <script src="{% static 'js/cropper/cropper.min.js' %}"></script>
-    <!-- Bootstrap File Upload Plugin -->
-	<script src="{% static 'js/bootstrap/bs-filestyle.js' %}"></script>
-    <script src="{% static 'js/avatar.js' %}"></script>
+    <script src="{% static 'js/bootstrap-fileinput/bs-filestyle.js' %}"></script>
+    <script src="{% static 'js/account.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -46,10 +44,25 @@
                                     </ul>
 
                                     <div class="tab-container">
+
                                         <!-- Закладка Сведения ==================================== -->
                                         <div class="tab-content clearfix" id="tab-profile">
-                                            {{ user.phone }}
+                                            <div class="promo promo-border">
+                                                <h3>Телефонный номер:
+                                                    {% if user.phone %}
+                                                        <span>{{ user.phone }}</span>
+                                                    {% else %}
+                                                        <span>Нет</span>
+                                                    {% endif %}
+                                                </h3>
+                                                <a href="#" class="button button-rounded button-reveal button-large"
+                                                   data-toggle="modal" data-target=".bs-insertphone-modal">
+                                                    <i class="icon-phone"> </i><span>Изменить</span>
+                                                </a>
+                                            </div>
+
                                         </div>
+
                                         <!-- Закладка Помещения =================================== -->
                                         <div class="tab-content clearfix" id="tab-area">
                                             <div class="col_two_third col_last nobottommargin">
@@ -179,14 +192,45 @@
                             {{ avataruploadform.height }}
                             {{ avataruploadform.avatar|add_class:"file-loading"|set_data:"show-preview:false" }}
                         </form>
-                        <button type="button" class="button button-dark button-rounded" data-dismiss="modal">Отмена
-                        </button>
-                        <button type="button" class="button button-dark button-rounded js-crop-and-upload">Установить
+                        <button type="button" class="button button-dark button-rounded upload-cancel-button"
+                                data-dismiss="modal">Отмена
                         </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- MODAL TO INSERT AND CONFIRM PHONE -->
+    <div class="modal fade bs-insertphone-modal" id="modalAvatar" tabindex="-1" role="dialog"
+         aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel">Изменить телефон</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="email-change-form" name="email-change-form" class="nobottommargin"
+                              action="{% url 'login' %}"
+                              method="post">
+                            {% csrf_token %}
+                            {% include 'form.html' with form=emailchangeform %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="button button-dark button-rounded phone-cancel-button"
+                                data-dismiss="modal">Отмена
+                        </button>
+                        <button class="button button-3d button-black nomargin" id="email-change-submit"
+                                name="email-change-submit" value="email-change">Изменить
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 {% endblock %}

@@ -49,6 +49,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(verbose_name='Номер телефона',
                              validators=[phone_regex], max_length=17,
                              help_text='Номер должен соответствовать формату:+999999999 до 15 цифр')
+    phone_confirmed = models.BooleanField(verbose_name='Телефон подтвержден', default=False)
     date_joined = models.DateTimeField(verbose_name='Дата регистрации', auto_now_add=True)
     is_owner = models.BooleanField(verbose_name='Владелец', default=False,
                                    help_text='Является владельцем помещений')
