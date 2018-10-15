@@ -44,11 +44,11 @@ class User(AbstractBaseUser, PermissionsMixin):
                                   max_length=30, help_text='Имя (как в паспорте)')
     last_name = models.CharField(verbose_name='Фамилия',
                                  max_length=30, help_text='Фамилия (как в паспорте)')
-    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$',
-                                 message="Номер должен соответствовать формату: '+999999999'. До 15 цифр")
+    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,10}$',
+                                 message="Номер должен соответствовать формату: '+79281234567'. До 15 цифр")
     phone = models.CharField(verbose_name='Номер телефона',
                              validators=[phone_regex], max_length=17,
-                             help_text='Номер должен соответствовать формату:+999999999 до 15 цифр')
+                             help_text='Сотовый телефон для связи и подтверждения действий')
     phone_confirmed = models.BooleanField(verbose_name='Телефон подтвержден', default=False)
     date_joined = models.DateTimeField(verbose_name='Дата регистрации', auto_now_add=True)
     is_owner = models.BooleanField(verbose_name='Владелец', default=False,
@@ -64,12 +64,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         randomstr = get_random_string(length=10, allowed_chars='abcdefghijklmnopqrstuvwxyz')
         return 'avatars/{user}-[{randomstring}]{ext}'.format(user=username, randomstring=randomstr, ext=file_ext)
 
-    def avatar__default():
-        return '/avatars/default.jpg'
-
     avatar = models.ImageField(verbose_name='Аватар',
                                upload_to=avatar__path,
-                               default=avatar__default,
+                               default='avatars/default.jpg',
                                null=True, blank=True)
 
     USERNAME_FIELD = 'email'

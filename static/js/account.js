@@ -5,10 +5,6 @@ jQuery(function ($) {
     var isInitialized = false;
     var initialAvatar = $("#avatar").attr("src");
 
-    // $(document).ready(function () {
-    //     var initialAvatar = $("#avatar").attr("value");
-    // });
-
     /* CROPPER INITIALISATION & DESRTROY*/
     function initCropper() {
         $image = $("#avatar");
@@ -97,7 +93,6 @@ jQuery(function ($) {
         $("#id_width").val(cropData["width"]);
         $("#formAvatarUpload").submit();
     });
-
 
 
 });

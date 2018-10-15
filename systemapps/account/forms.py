@@ -37,11 +37,11 @@ class AvatarUploadForm(forms.ModelForm):
         fields = ('avatar', 'x', 'y', 'width', 'height',)
 
     def save(self, commit=True):
-        previous_file = ''
-        if bool(self.initial['avatar']._file):
-            previous_file = self.initial['avatar'].path
         user = super(AvatarUploadForm, self).save()
         new_file = user.avatar.path
+        previous_file = ''
+        if (settings.MEDIA_URL+self.initial['avatar'].field.default != self.initial['avatar'].url ):
+            previous_file = self.initial['avatar'].path
 
         x = self.cleaned_data.get('x')
         y = self.cleaned_data.get('y')

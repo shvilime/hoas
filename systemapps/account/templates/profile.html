@@ -184,7 +184,7 @@
                             </button>
                         </div>
                         <form method="post" enctype="multipart/form-data" id="formAvatarUpload"
-                              style="margin-bottom: 0px;" class="container clearfix">
+                              class="container clearfix nomargin">
                             {% csrf_token %}
                             {{ avataruploadform.x }}
                             {{ avataruploadform.y }}
@@ -204,29 +204,30 @@
     <!-- MODAL TO INSERT AND CONFIRM PHONE -->
     <div class="modal fade bs-insertphone-modal" id="modalAvatar" tabindex="-1" role="dialog"
          aria-labelledby="myLargeModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-sm">
             <div class="modal-body">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title" id="myModalLabel">Изменить телефон</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
-                    <div class="modal-body">
-                        <form id="email-change-form" name="email-change-form" class="nobottommargin"
-                              action="{% url 'login' %}"
-                              method="post">
-                            {% csrf_token %}
-                            {% include 'form.html' with form=emailchangeform %}
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="button button-dark button-rounded phone-cancel-button"
-                                data-dismiss="modal">Отмена
-                        </button>
-                        <button class="button button-3d button-black nomargin" id="email-change-submit"
-                                name="email-change-submit" value="email-change">Изменить
-                        </button>
+                    <form id="email-change-form" name="email-change-form" class="nobottommargin"
+                          action="{% url 'profile' %}" method="post">
+                        <div class="modal-body">
 
-                    </div>
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.GET.next }}">
+                            {% include 'form.html' with form=emailchangeform %}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="button button-dark button-rounded phone-cancel-button"
+                                    data-dismiss="modal">Отмена
+                            </button>
+                            <button class="button button-dark button-rounded" id="email-change-submit"
+                                    name="email-change-submit" value="email-change">Ввести
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
