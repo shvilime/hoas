@@ -82,8 +82,10 @@ def ProfileView(request):
                 avataruploadform.save()
                 return redirect('profile')
 
-        if 'signup-form-submit' in request.POST:
-            return redirect('profile')
+        if 'email-change-submit' in request.POST:
+            if emailchangeform.is_valid():
+                emailchangeform.save()
+                return redirect('profile')
 
     else:
         avataruploadform = AvatarUploadForm()

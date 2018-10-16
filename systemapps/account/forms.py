@@ -1,4 +1,4 @@
-import os
+import os, re
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django import forms
@@ -40,7 +40,7 @@ class AvatarUploadForm(forms.ModelForm):
         user = super(AvatarUploadForm, self).save()
         new_file = user.avatar.path
         previous_file = ''
-        if (settings.MEDIA_URL+self.initial['avatar'].field.default != self.initial['avatar'].url ):
+        if (settings.MEDIA_URL + self.initial['avatar'].field.default != self.initial['avatar'].url):
             previous_file = self.initial['avatar'].path
 
         x = self.cleaned_data.get('x')
@@ -63,3 +63,7 @@ class EmailChangeForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
         fields = ['phone']
+
+    def clean(self):
+        self.cleaned_data = super(EmailChangeForm, self).clean()
+        self.cleaned_data['phone'] = re.sub('[- \(\)]', '', self.cleaned_data.get('phone'))

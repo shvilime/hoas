@@ -44,8 +44,8 @@ class User(AbstractBaseUser, PermissionsMixin):
                                   max_length=30, help_text='Имя (как в паспорте)')
     last_name = models.CharField(verbose_name='Фамилия',
                                  max_length=30, help_text='Фамилия (как в паспорте)')
-    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,10}$',
-                                 message="Номер должен соответствовать формату: '+79281234567'. До 15 цифр")
+    phone_regex = RegexValidator(regex=r'^((8|\+7)[\- ]?)(\(?\d{3}\)?[\- ]?)[\d\- ]{7,10}$',
+                                 message="Номер должен соответствовать международному формату: '+7(928)1234567'. До 15 цифр")
     phone = models.CharField(verbose_name='Номер телефона',
                              validators=[phone_regex], max_length=17,
                              help_text='Сотовый телефон для связи и подтверждения действий')

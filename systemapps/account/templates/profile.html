@@ -202,7 +202,7 @@
     </div>
 
     <!-- MODAL TO INSERT AND CONFIRM PHONE -->
-    <div class="modal fade bs-insertphone-modal" id="modalAvatar" tabindex="-1" role="dialog"
+    <div class="modal fade bs-insertphone-modal" id="modalEditPhone" tabindex="-1" role="dialog"
          aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-sm">
             <div class="modal-body">
@@ -211,10 +211,14 @@
                         <h4 class="modal-title" id="myModalLabel">Изменить телефон</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
+                    {% if form_error %}
+                        <script>
+                            $(#modalEditPhone).modal("show");
+                        </script>
+                    {% endif %}
                     <form id="email-change-form" name="email-change-form" class="nobottommargin"
                           action="{% url 'profile' %}" method="post">
                         <div class="modal-body">
-
                             {% csrf_token %}
                             <input type="hidden" name="next" value="{{ request.GET.next }}">
                             {% include 'form.html' with form=emailchangeform %}
@@ -223,8 +227,8 @@
                             <button type="button" class="button button-dark button-rounded phone-cancel-button"
                                     data-dismiss="modal">Отмена
                             </button>
-                            <button class="button button-dark button-rounded" id="email-change-submit"
-                                    name="email-change-submit" value="email-change">Ввести
+                            <button type="submit" class="button button-dark button-rounded" name="email-change-submit"
+                                    value="email-change">Ввести
                             </button>
                         </div>
                     </form>

@@ -16,13 +16,14 @@
                         Войти в вашу учетную запись
                     </div>
                     <div class="acc_content clearfix">
-                        <form id="login-form" name="login-form" class="nobottommargin" action="{% url 'login' %}" method="post">
+                        <form id="login-form" name="login-form" class="nobottommargin" action="{% url 'login' %}"
+                              method="post">
                             {% csrf_token %}
                             <input type="hidden" name="next" value="{{ request.GET.next }}">
                             {% include 'form.html' with form=login_form %}
                             <div class="col_full nobottommargin">
-                                <button class="button button-3d button-black nomargin" id="login-form-submit"
-                                        name="login-form-submit" value="login">Войти
+                                <button type="submit" class="button button-3d button-black nomargin"
+                                        id="login-form-submit" name="login-form-submit" value="login">Войти
                                 </button>
                                 <a href="#" class="fright">Забыли пароль?</a>
                             </div>
@@ -33,12 +34,14 @@
                         Новый пользователь? Зарегистрироваться
                     </div>
                     <div class="acc_content clearfix">
-                        <form id="register-form" name="register-form" class="nobottommargin" action="{% url 'login' %}" method="post">
+                        <form id="register-form" name="register-form" class="nobottommargin" action="{% url 'login' %}"
+                              method="post">
                             {% csrf_token %}
                             {% include 'form.html' with form=signup_form %}
                             <div class="col_full nobottommargin">
-                                <button class="button button-3d button-black nomargin" id="signup-form-submit"
-                                        name="signup-form-submit" value="register">Зарегистрироваться
+                                <button type="submit" class="button button-3d button-black nomargin"
+                                        id="signup-form-submit" name="signup-form-submit" value="register">
+                                    Зарегистрироваться
                                 </button>
                             </div>
                         </form>
