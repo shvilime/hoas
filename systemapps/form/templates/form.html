@@ -1,7 +1,7 @@
 {% load form_tags widget_tweaks %}
 
 {% for hidden_field in form.hidden_fields %}
-  {{ hidden_field }}
+    {{ hidden_field }}
 {% endfor %}
 
 {% if form.non_field_errors %}
@@ -12,7 +12,7 @@
   </div>
 {% endif %}
 
-{% for field in form %}
+{% for field in form.visible_fields %}
   <div class="col_full">
     {{ field.label_tag }}
     {% render_field field class=field|input_class %}

@@ -94,5 +94,4 @@ jQuery(function ($) {
         $("#formAvatarUpload").submit();
     });
 
-
 });

@@ -89,7 +89,7 @@ def ProfileView(request):
 
     else:
         avataruploadform = AvatarUploadForm()
-        emailchangeform = EmailChangeForm()
+        emailchangeform = EmailChangeForm(initial={'phone': request.user.phone})
 
     return render(request, 'profile.html', {'avataruploadform': avataruploadform,
                                             'owner_rooms': owner_rooms,
