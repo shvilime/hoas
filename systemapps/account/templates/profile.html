@@ -41,7 +41,7 @@
 
                         <div class="row clearfix">
                             <div class="col-lg-12">
-                                <div class="tabs tabs-alt tabs-tb clearfix" id="tabs-profile">
+                                <div class="tabs tabs-alt tabs-tb clearfix" id="tabs">
                                     <ul class="tab-nav clearfix">
                                         <li><a href="#tab-profile"><i class="icon-user2"></i> Данные</a></li>
                                         <li><a href="#tab-area"><i class="icon-building"></i> Помещения</a></li>
@@ -79,7 +79,8 @@
                                             </div>
                                             <div class="col_one_third col_last">
                                                 <a href="#" id="insert-request-button"
-                                                   class="button button-rounded button-reveal button-large">
+                                                   class="button button-rounded button-reveal button-large"
+                                                   data-toggle="modal" data-target="#modalOwnerRequest">
                                                     <i class="icon-map-marker2"></i>
                                                     <span>Регистрация права</span></a>
                                             </div>
@@ -89,6 +90,8 @@
                                                     <tr>
                                                         <th>№</th>
                                                         <th>Помещение</th>
+                                                        <th>Доля собственности</th>
+                                                        <th>Дата запроса</th>
                                                         <th>Статус</th>
                                                     </tr>
                                                     </thead>
@@ -97,6 +100,8 @@
                                                         <tr>
                                                             <td>{{ forloop.revcounter }}</td>
                                                             <td>{{ item.room.get_type_display }} {{ item.room.number }}</td>
+                                                            <td>{{ item.portion }}%</td>
+                                                            <td>{{ item.date_request }}</td>
                                                             {% if item.date_confirmation is None %}
                                                                 <td>Запрос на рассмотрении</td>
                                                             {% else %}
@@ -210,7 +215,7 @@
         </div>
     </div>
 
-    <!-- MODAL TO INSERT AND CONFIRM PHONE -->
+    <!-- MODAL TO EDIT PHONE -->
     <div class="modal fade" id="modalEditPhone" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
          aria-hidden="true">
         <div class="modal-dialog modal-sm">
@@ -233,6 +238,37 @@
                             </button>
                             <button type="submit" class="button button-dark button-rounded" name="email-change-submit"
                                     value="email-change">Ввести
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TO INSERT OWNER REQUEST -->
+    <div class="modal fade" id="modalOwnerRequest" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel">Послать запрос</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <form id="owner-request-form" name="owner-request-form" class="nobottommargin"
+                          action="{% url 'profile' %}" method="post">
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.GET.next }}">
+                            {% include 'form.html' with form=sendownerrequestform %}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="button button-dark button-rounded request-cancel-button"
+                                    data-dismiss="modal">Отмена
+                            </button>
+                            <button type="submit" class="button button-dark button-rounded" name="owner-request-submit"
+                                    value="owner-request">Отправить
                             </button>
                         </div>
                     </form>

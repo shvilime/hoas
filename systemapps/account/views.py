@@ -8,6 +8,7 @@ from django.utils.encoding import force_bytes, force_text
 from .tokens import account_activation_token
 from .forms import *
 from area.models import Owner
+from area.forms import SendOwnerRequest
 
 
 # Create your views here.
@@ -76,6 +77,7 @@ def ProfileView(request):
     if request.method == 'POST':
         avataruploadform = AvatarUploadForm(request.POST, request.FILES, instance=request.user)
         emailchangeform = EmailChangeForm(request.POST, instance=request.user)
+        sendownerrequestform = SendOwnerRequest(request.POST)
 
         if ('x' in request.POST) and ('y' in request.POST):
             if avataruploadform.is_valid():
@@ -87,10 +89,19 @@ def ProfileView(request):
                 emailchangeform.save()
                 return redirect('profile')
 
+        if 'owner-request-submit' in request.POST:
+            if sendownerrequestform.is_valid():
+                owner = sendownerrequestform.save(commit=False)
+                owner.user = request.user
+                owner.save()
+                return redirect('profile')
+
     else:
         avataruploadform = AvatarUploadForm()
         emailchangeform = EmailChangeForm(initial={'phone': request.user.phone})
+        sendownerrequestform = SendOwnerRequest()
 
     return render(request, 'profile.html', {'avataruploadform': avataruploadform,
                                             'owner_rooms': owner_rooms,
-                                            'emailchangeform': emailchangeform})
+                                            'emailchangeform': emailchangeform,
+                                            'sendownerrequestform': sendownerrequestform})
