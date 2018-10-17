@@ -71,8 +71,9 @@ def ActivateAccountView(request, uidb64, token):
 
 @login_required(login_url='login')
 def ProfileView(request):
-    # Выберем список владений помещениями
-    owner_rooms = Owner.objects.filter(user_id=request.user.pk)
+
+    owner_rooms = Owner.objects.filter(user_id=request.user.pk) # Список владений помещениями
+    activetab = 1  # Активная закладка
 
     if request.method == 'POST':
         avataruploadform = AvatarUploadForm(request.POST, request.FILES, instance=request.user)
@@ -104,4 +105,5 @@ def ProfileView(request):
     return render(request, 'profile.html', {'avataruploadform': avataruploadform,
                                             'owner_rooms': owner_rooms,
                                             'emailchangeform': emailchangeform,
-                                            'sendownerrequestform': sendownerrequestform})
+                                            'sendownerrequestform': sendownerrequestform,
+                                            'activetab': activetab})
