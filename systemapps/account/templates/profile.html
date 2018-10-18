@@ -7,19 +7,6 @@
     <link href="{% static '/js/bootstrap-fileinput/bs-filestyle.css' %}" rel="stylesheet">
 {% endblock %}
 
-{% block javascript %}
-    <script src="{% static 'js/cropper/cropper.min.js' %}"></script>
-    <script src="{% static 'js/bootstrap-fileinput/bs-filestyle.js' %}"></script>
-    <script src="{% static 'js/account.js' %}"></script>
-    {% if emailchangeform.errors %}
-        <script>
-            jQuery(function ($) {
-                $("#modalEditPhone").modal("show");
-            });
-        </script>
-    {% endif %}
-{% endblock %}
-
 {% block content %}
 
     <section id="content">
@@ -41,7 +28,8 @@
 
                         <div class="row clearfix">
                             <div class="col-lg-12">
-                                <div class="tabs tabs-alt tabs-tb clearfix" id="tabs-account" data-active="{{ activetab }}">
+                                <div class="tabs tabs-alt tabs-tb clearfix" id="tabs-account"
+                                     data-active="{{ activetab }}">
                                     <ul class="tab-nav clearfix">
                                         <li><a href="#tab-profile"><i class="icon-user2"></i> Данные</a></li>
                                         <li><a href="#tab-area"><i class="icon-building"></i> Помещения</a></li>
@@ -93,6 +81,7 @@
                                                         <th>Доля собственности</th>
                                                         <th>Дата запроса</th>
                                                         <th>Статус</th>
+                                                        <th>Удалить</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
@@ -104,8 +93,17 @@
                                                             <td>{{ item.date_request }}</td>
                                                             {% if item.date_confirmation is None %}
                                                                 <td>Запрос на рассмотрении</td>
+                                                                <td>
+                                                                    <button type="button"
+                                                                            class="btn btn-secondary btn-sm icon-trash"
+                                                                            data-object-id="{{ item.id }}"
+                                                                            data-toggle="modal"
+                                                                            data-target="#modalDeleteRequest">
+                                                                    </button>
+                                                                </td>
                                                             {% else %}
                                                                 <td>В собственности</td>
+                                                                <td></td>
                                                             {% endif %}
                                                         </tr>
                                                     {% endfor %}
@@ -225,19 +223,19 @@
                         <h4 class="modal-title" id="myModalLabel">Изменить телефон</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     </div>
-                    <form id="email-change-form" name="email-change-form" class="nobottommargin"
+                    <form id="phone-change-form" name="phone-change-form" class="nobottommargin"
                           action="{% url 'profile' %}" method="post">
                         <div class="modal-body">
                             {% csrf_token %}
                             <input type="hidden" name="next" value="{{ request.GET.next }}">
-                            {% include 'form.html' with form=emailchangeform %}
+                            {% include 'form.html' with form=phonechangeform %}
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="button button-dark button-rounded phone-cancel-button"
                                     data-dismiss="modal">Отмена
                             </button>
-                            <button type="submit" class="button button-dark button-rounded" name="email-change-submit"
-                                    value="email-change">Ввести
+                            <button type="submit" class="button button-dark button-rounded" name="phone-change-submit"
+                                    value="phone-change">Ввести
                             </button>
                         </div>
                     </form>
@@ -278,5 +276,56 @@
     </div>
 
 
+    <!-- MODAL TO DELETE OWNER REQUEST -->
+    <div class="modal fade" id="modalDeleteRequest" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-body">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel">Отменить запрос</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <form id="delete-request-form" name="delete-request-form" class="nobottommargin"
+                          action="{% url 'deleteowner' %}" method="post">
+                        <div class="modal-body">
+                            {% csrf_token %}
+                            <input type="hidden" name="request_id" value="1"/>
 
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="button button-dark button-rounded delete-cancel-button"
+                                    data-dismiss="modal">Отмена
+                            </button>
+                            <button type="submit" class="button button-dark button-rounded" name="delete-request-submit"
+                                    value="owner-request">Удалить
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block javascript %}
+    <script src="{% static 'js/cropper/cropper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-fileinput/bs-filestyle.js' %}"></script>
+    <script src="{% static 'js/account.js' %}"></script>
+    {% if phonechangeform.errors %}
+        <script>
+            jQuery(function ($) {
+                $("#modalEditPhone").modal("show");
+            });
+        </script>
+    {% endif %}
+    {% if sendownerrequestform.errors %}
+        <script>
+            jQuery(function ($) {
+                $("#modalOwnerRequest").modal("show");
+            });
+        </script>
+    {% endif %}
 {% endblock %}

@@ -70,40 +70,47 @@ def ActivateAccountView(request, uidb64, token):
 
 
 @login_required(login_url='login')
-def ProfileView(request):
-
-    owner_rooms = Owner.objects.filter(user_id=request.user.pk) # Список владений помещениями
-    activetab = 1  # Активная закладка
+def ProfileView(request, activetab=1):
+    tablist = {'profile': 1,
+               'area': 2,
+               'car': 3,
+               'resource': 4}
+    avataruploadform = AvatarUploadForm()
+    phonechangeform = EmailChangeForm(initial={'phone': request.user.phone})
+    sendownerrequestform = SendOwnerRequest()
+    owner_rooms = Owner.objects.filter(user_id=request.user.pk)     #Список владений помещениями
 
     if request.method == 'POST':
-        avataruploadform = AvatarUploadForm(request.POST, request.FILES, instance=request.user)
-        emailchangeform = EmailChangeForm(request.POST, instance=request.user)
-        sendownerrequestform = SendOwnerRequest(request.POST)
-
-        if ('x' in request.POST) and ('y' in request.POST):
+        if ('x' in request.POST) and ('y' in request.POST):     #Форма по изменению аватара
+            avataruploadform = AvatarUploadForm(request.POST, request.FILES, instance=request.user)
             if avataruploadform.is_valid():
                 avataruploadform.save()
-                return redirect('profile')
+                return redirect('profile', activetab=tablist['profile'])
 
-        if 'email-change-submit' in request.POST:
-            if emailchangeform.is_valid():
-                emailchangeform.save()
-                return redirect('profile')
+        if 'phone-change-submit' in request.POST:       #Форма по изменению телефона
+            phonechangeform = EmailChangeForm(request.POST, instance=request.user)
+            if phonechangeform.is_valid():
+                phonechangeform.save()
+                return redirect('profile', activetab=tablist['profile'])
 
-        if 'owner-request-submit' in request.POST:
+        if 'owner-request-submit' in request.POST:      #Форма по отправке заявки владельца
+            sendownerrequestform = SendOwnerRequest(request.POST)
             if sendownerrequestform.is_valid():
                 owner = sendownerrequestform.save(commit=False)
                 owner.user = request.user
                 owner.save()
-                return redirect('profile')
-
-    else:
-        avataruploadform = AvatarUploadForm()
-        emailchangeform = EmailChangeForm(initial={'phone': request.user.phone})
-        sendownerrequestform = SendOwnerRequest()
+                return redirect('profile', activetab=tablist['area'])
 
     return render(request, 'profile.html', {'avataruploadform': avataruploadform,
                                             'owner_rooms': owner_rooms,
-                                            'emailchangeform': emailchangeform,
+                                            'phonechangeform': phonechangeform,
                                             'sendownerrequestform': sendownerrequestform,
                                             'activetab': activetab})
+
+def deleteOwnerRequest(request):
+    if request.method == 'POST':
+        if ('delete-request-submit' in request.POST):
+            ownerrequest = Owner.objects.get(pk=request.POST.request_id)
+            ownerrequest.delete()
+
+    return redirect('profile', activetab=2)
