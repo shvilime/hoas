@@ -94,4 +94,23 @@ jQuery(function ($) {
         $("#formAvatarUpload").submit();
     });
 
+    $(".btn-deleteowner").confirm({
+        title: 'Подтверждение',
+        content: 'Вы действительно хотите удалить данные?',
+        buttons: {
+            cancel: {
+                text: 'Отменить',
+                action: function () {
+                }
+            },
+            confirm: {
+                text: 'Удалить',
+                btnClass: 'btn-red',
+                action: function () {
+                    location.href = this.$target.attr('href');
+                }
+            },
+        }
+    });
+
 });

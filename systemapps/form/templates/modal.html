@@ -1,0 +1,57 @@
+<!-- MODAL WINDOW
+with Parameters:
+   name: Unique Identifier for modal elements
+   size: Modal size (sm - small; lg - large)
+   header: Text in modal header
+   urlname: url for sending form action
+   formname: Form for submit
+   maintext: Text in the body of window-->
+<div class="modal fade" id="id-modal-{{ name }}" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-{{ size }}">
+        <div class="modal-body">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">{{ header }}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    {% if maintext %}
+                        <p>{{ maintext }}</p>
+                    {% endif %}
+                    {% if formname %}
+                        <form id="id-form-{{ name }}" name="name-form-{{ name }}" class="nobottommargin"
+                              action="{% url urlname %}" method="post">
+                            {% csrf_token %}
+                            {% include 'form.html' with form=formname %}
+                        </form>
+                    {% endif %}
+                </div>
+
+                <div class="modal-footer">
+                    {% for btn in buttons %}
+                        <button type={% if forloop.last %}"submit"{% else %}"button"{% endif %}
+                        class="button button-dark button-rounded"
+                        {% if btn == "C" or btn == "N" %}data-dismiss="modal"{% endif %}
+                        {% if forloop.last %}name="name-{{ name }}-submit"{% endif %}
+                        {% if forloop.last %}value="value-{{ name }}"{% endif %}>
+                        {% if btn == "C" %}
+                            <span>Отмена</span>
+                        {% elif btn == "S" %}
+                            <span>Послать</span>
+                        {% elif btn == "Y" %}
+                            <span>Да</span>
+                        {% elif btn == "N" %}
+                            <span>Нет</span>
+                        {% elif btn == "D" %}
+                            <span>Удалить</span>
+                        {% endif %}
+                        </button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

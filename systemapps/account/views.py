@@ -87,13 +87,13 @@ def ProfileView(request, activetab=1):
                 avataruploadform.save()
                 return redirect('profile', activetab=tablist['profile'])
 
-        if 'phone-change-submit' in request.POST:       #Форма по изменению телефона
+        if 'name-editphone-submit' in request.POST:       #Форма по изменению телефона
             phonechangeform = EmailChangeForm(request.POST, instance=request.user)
             if phonechangeform.is_valid():
                 phonechangeform.save()
                 return redirect('profile', activetab=tablist['profile'])
 
-        if 'owner-request-submit' in request.POST:      #Форма по отправке заявки владельца
+        if 'name-ownerrequest-submit' in request.POST:      #Форма по отправке заявки владельца
             sendownerrequestform = SendOwnerRequest(request.POST)
             if sendownerrequestform.is_valid():
                 owner = sendownerrequestform.save(commit=False)
@@ -107,10 +107,9 @@ def ProfileView(request, activetab=1):
                                             'sendownerrequestform': sendownerrequestform,
                                             'activetab': activetab})
 
-def deleteOwnerRequest(request):
+def deleteOwnerRequest(request, owner_id):
     if request.method == 'POST':
-        if ('delete-request-submit' in request.POST):
-            ownerrequest = Owner.objects.get(pk=request.POST.request_id)
+        if ('name-deleteowner-submit' in request.POST):
+            ownerrequest = Owner.objects.get(pk=owner_id)
             ownerrequest.delete()
-
     return redirect('profile', activetab=2)

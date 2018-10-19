@@ -5,6 +5,7 @@
 {% block stylesheet %}
     <link href="{% static 'js/cropper/cropper.min.css' %}" rel="stylesheet">
     <link href="{% static '/js/bootstrap-fileinput/bs-filestyle.css' %}" rel="stylesheet">
+    <link href="{% static '/js/jquery-confirm/jquery-confirm.min.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -51,7 +52,7 @@
                                                     {% endif %}
                                                 </h3>
                                                 <a href="#" class="button button-rounded button-reveal button-large"
-                                                   data-toggle="modal" data-target="#modalEditPhone">
+                                                   data-toggle="modal" data-target="#id-modal-editphone">
                                                     <i class="icon-phone"> </i><span>Изменить</span>
                                                 </a>
                                             </div>
@@ -68,7 +69,7 @@
                                             <div class="col_one_third col_last">
                                                 <a href="#" id="insert-request-button"
                                                    class="button button-rounded button-reveal button-large"
-                                                   data-toggle="modal" data-target="#modalOwnerRequest">
+                                                   data-toggle="modal" data-target="#id-modal-ownerrequest">
                                                     <i class="icon-map-marker2"></i>
                                                     <span>Регистрация права</span></a>
                                             </div>
@@ -94,12 +95,8 @@
                                                             {% if item.date_confirmation is None %}
                                                                 <td>Запрос на рассмотрении</td>
                                                                 <td>
-                                                                    <button type="button"
-                                                                            class="btn btn-secondary btn-sm icon-trash"
-                                                                            data-object-id="{{ item.id }}"
-                                                                            data-toggle="modal"
-                                                                            data-target="#modalDeleteRequest">
-                                                                    </button>
+                                                                    <a class="btn btn-secondary btn-sm icon-trash btn-deleteowner"
+                                                                       href="{% url 'deleteowner' item.id %}"></a>
                                                                 </td>
                                                             {% else %}
                                                                 <td>В собственности</td>
@@ -214,98 +211,10 @@
     </div>
 
     <!-- MODAL TO EDIT PHONE -->
-    <div class="modal fade" id="modalEditPhone" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-body">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="myModalLabel">Изменить телефон</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    </div>
-                    <form id="phone-change-form" name="phone-change-form" class="nobottommargin"
-                          action="{% url 'profile' %}" method="post">
-                        <div class="modal-body">
-                            {% csrf_token %}
-                            <input type="hidden" name="next" value="{{ request.GET.next }}">
-                            {% include 'form.html' with form=phonechangeform %}
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="button button-dark button-rounded phone-cancel-button"
-                                    data-dismiss="modal">Отмена
-                            </button>
-                            <button type="submit" class="button button-dark button-rounded" name="phone-change-submit"
-                                    value="phone-change">Ввести
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% include 'modal.html' with name="editphone" size="sm" header="Изменить телефон" urlname="profile" formname=phonechangeform buttons="CS" %}
 
     <!-- MODAL TO INSERT OWNER REQUEST -->
-    <div class="modal fade" id="modalOwnerRequest" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-body">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="myModalLabel">Послать запрос</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    </div>
-                    <form id="owner-request-form" name="owner-request-form" class="nobottommargin"
-                          action="{% url 'profile' %}" method="post">
-                        <div class="modal-body">
-                            {% csrf_token %}
-                            <input type="hidden" name="next" value="{{ request.GET.next }}">
-                            {% include 'form.html' with form=sendownerrequestform %}
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="button button-dark button-rounded request-cancel-button"
-                                    data-dismiss="modal">Отмена
-                            </button>
-                            <button type="submit" class="button button-dark button-rounded" name="owner-request-submit"
-                                    value="owner-request">Отправить
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- MODAL TO DELETE OWNER REQUEST -->
-    <div class="modal fade" id="modalDeleteRequest" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-         aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-body">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="myModalLabel">Отменить запрос</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    </div>
-                    <form id="delete-request-form" name="delete-request-form" class="nobottommargin"
-                          action="{% url 'deleteowner' %}" method="post">
-                        <div class="modal-body">
-                            {% csrf_token %}
-                            <input type="hidden" name="request_id" value="1"/>
-
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="button button-dark button-rounded delete-cancel-button"
-                                    data-dismiss="modal">Отмена
-                            </button>
-                            <button type="submit" class="button button-dark button-rounded" name="delete-request-submit"
-                                    value="owner-request">Удалить
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% include 'modal.html' with name="ownerrequest" size="lg" header="Послать запрос" urlname="profile" formname=sendownerrequestform buttons="CS" %}
 
 {% endblock %}
 
@@ -313,6 +222,7 @@
 {% block javascript %}
     <script src="{% static 'js/cropper/cropper.min.js' %}"></script>
     <script src="{% static 'js/bootstrap-fileinput/bs-filestyle.js' %}"></script>
+    <script src="{% static 'js/jquery-confirm/jquery-confirm.min.js' %}"></script>
     <script src="{% static 'js/account.js' %}"></script>
     {% if phonechangeform.errors %}
         <script>
@@ -328,4 +238,5 @@
             });
         </script>
     {% endif %}
+
 {% endblock %}

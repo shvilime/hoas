@@ -6,3 +6,4 @@ class SendOwnerRequest(forms.ModelForm):
     class Meta:
         model = Owner
         fields = ['room','portion']
+

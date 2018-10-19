@@ -9,5 +9,5 @@ accounts_urlpatterns = [
             account_views.ActivateAccountView, name='activate'),
     re_path(r'^profile/$', account_views.ProfileView, name='profile'),
     re_path(r'^profile/(?P<activetab>[0-9]{1})/$', account_views.ProfileView, name='profile'),
-    re_path(r'^deleteowner/$', account_views.deleteOwnerRequest, name='deleteowner'),
+    re_path(r'^deleteowner/(?P<owner_id>\d)/$', account_views.deleteOwnerRequest, name='deleteowner'),
 ]

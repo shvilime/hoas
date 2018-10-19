@@ -67,3 +67,4 @@ class EmailChangeForm(forms.ModelForm):
     def clean(self):
         self.cleaned_data = super(EmailChangeForm, self).clean()
         self.cleaned_data['phone'] = re.sub('[- \(\)]', '', self.cleaned_data.get('phone'))
+
