@@ -1,4 +1,43 @@
-jQuery(function ($) {
+var $ = jQuery.noConflict();
+
+// ================================= jquery extend function =====================================
+$.redirectPost = function (location, args) {
+    var form = $('<form></form>');
+    form.attr("method", "post");
+    form.attr("action", location);
+    $.each(args, function (key, value) {
+        var field = $('<input></input>');
+        field.attr("type", "hidden");
+        field.attr("name", key);
+        field.attr("value", value);
+        form.append(field);
+    });
+    $(form).appendTo('body').submit();
+};
+
+$.urlParam = function (location, name) {
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(location);
+    return results[1] || 0;
+};
+
+$.getCookie = function (name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+};
+
+// ====================================== Account reactions =====================================
+(function ($) {
     var $image;
     var cropBoxData;
     var canvasData;
@@ -94,6 +133,7 @@ jQuery(function ($) {
         $("#formAvatarUpload").submit();
     });
 
+    /* SCRIPT TO SHOW CONFIRMATION WINDOW & SEND POST REQUEST FOR DELETE OWNER */
     $(".btn-deleteowner").confirm({
         title: 'Подтверждение',
         content: 'Вы действительно хотите удалить данные?',
@@ -107,10 +147,15 @@ jQuery(function ($) {
                 text: 'Удалить',
                 btnClass: 'btn-red',
                 action: function () {
-                    location.href = this.$target.attr('href');
+                    let url = document.createElement('a');
+                    url.href = this.$target.attr('href');
+                    $.redirectPost(url.pathname, {
+                        owner_id: $.urlParam(url.href, 'owner_id'),
+                        csrfmiddlewaretoken: $.getCookie('csrftoken'),
+                    });
                 }
             },
         }
     });
 
-});
+})(jQuery);

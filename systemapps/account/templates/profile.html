@@ -96,7 +96,7 @@
                                                                 <td>Запрос на рассмотрении</td>
                                                                 <td>
                                                                     <a class="btn btn-secondary btn-sm icon-trash btn-deleteowner"
-                                                                       href="{% url 'deleteowner' item.id %}"></a>
+                                                                       href="{% url 'deleteowner' %}?owner_id={{ item.id }}"></a>
                                                                 </td>
                                                             {% else %}
                                                                 <td>В собственности</td>

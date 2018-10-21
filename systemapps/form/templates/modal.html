@@ -32,22 +32,27 @@ with Parameters:
 
                 <div class="modal-footer">
                     {% for btn in buttons %}
-                        <button type={% if forloop.last %}"submit"{% else %}"button"{% endif %}
-                        class="button button-dark button-rounded"
-                        {% if btn == "C" or btn == "N" %}data-dismiss="modal"{% endif %}
-                        {% if forloop.last %}name="name-{{ name }}-submit"{% endif %}
-                        {% if forloop.last %}value="value-{{ name }}"{% endif %}>
-                        {% if btn == "C" %}
-                            <span>Отмена</span>
-                        {% elif btn == "S" %}
-                            <span>Послать</span>
-                        {% elif btn == "Y" %}
-                            <span>Да</span>
-                        {% elif btn == "N" %}
-                            <span>Нет</span>
-                        {% elif btn == "D" %}
-                            <span>Удалить</span>
-                        {% endif %}
+                        <button class="button button-dark button-rounded"
+                                {% if forloop.last %}
+                                type="submit"
+                                name="name-{{ name }}-submit"
+                                value="value-{{ name }}"
+                                form="id-form-{{ name }}"
+                                {% else %}
+                                type="button"
+                                {% endif %}
+                                {% if btn == "C" or btn == "N" %}data-dismiss="modal"{% endif %}>
+                            {% if btn == "C" %}
+                                <span>Отмена</span>
+                            {% elif btn == "S" %}
+                                <span>Послать</span>
+                            {% elif btn == "Y" %}
+                                <span>Да</span>
+                            {% elif btn == "N" %}
+                                <span>Нет</span>
+                            {% elif btn == "D" %}
+                                <span>Удалить</span>
+                            {% endif %}
                         </button>
                     {% endfor %}
                 </div>
