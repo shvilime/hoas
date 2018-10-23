@@ -88,7 +88,7 @@
                                                     <tbody>
                                                     {% for item in owner_rooms %}
                                                         <tr>
-                                                            <td>{{ forloop.revcounter }}</td>
+                                                            <td>{{ forloop.counter }}</td>
                                                             <td>{{ item.room.get_type_display }} {{ item.room.number }}</td>
                                                             <td>{{ item.portion }}%</td>
                                                             <td>{{ item.date_request }}</td>
@@ -215,6 +215,7 @@
 
     <!-- MODAL TO INSERT OWNER REQUEST -->
     {% include 'modal.html' with name="ownerrequest" size="lg" header="Послать запрос" urlname="profile" formname=sendownerrequestform buttons="CS" %}
+
 
 {% endblock %}
 
