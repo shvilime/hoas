@@ -41,7 +41,7 @@ class Owner(models.Model):
     portion = models.DecimalField(max_digits=5,
                                   decimal_places=2,
                                   default=100,
-                                  validators=[MinValueValidator(0.01),MaxValueValidator(100)],
+                                  validators=[MinValueValidator(0.01), MaxValueValidator(100)],
                                   verbose_name='Доля собственности (от 0 до 100%)')
     date_request = models.DateField(auto_now_add=True,
                                     verbose_name='Дата запроса')
@@ -49,8 +49,9 @@ class Owner(models.Model):
                                          verbose_name='Дата подтверждения')
     date_cancellation = models.DateField(null=True, blank=True,
                                          verbose_name='Дата аннулирования')
-    cancelid = models.BigIntegerField(null=True, blank=True,
-                                      verbose_name='Ссылка на аннулирующую запись')
+    cancelid = models.ForeignKey('self', on_delete=models.SET_NULL,
+                                 null=True, blank=True,
+                                 verbose_name='Ссылка на аннулирующую запись')
 
     class Meta:
         unique_together = (('room', 'user', 'date_request'),)
