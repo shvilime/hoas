@@ -25,10 +25,10 @@ class Room(models.Model):
                                 help_text='Должен соответствовать формату АА:ВВ:CCCCСCC:ККККК')
 
     def __str__(self):
-        return '%s № %s' % (self.get_type_display(), self.number)
+        return '%s %s' % (self.get_type_display(), self.number)
 
     class Meta:
-        ordering = ['number']
+        # ordering = ['number']
         verbose_name = 'Помещение'
         verbose_name_plural = 'Помещения'
 

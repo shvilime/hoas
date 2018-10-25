@@ -35,12 +35,12 @@ class MenuItem(MPTTModel):
     active = models.BooleanField(default=True,
                                  verbose_name='Активность',
                                  help_text='Включить/Выключить пункт меню')
-    iconclass = models.CharField(max_length=16,
+    iconclass = models.CharField(max_length=20,
                                  blank=True,
                                  verbose_name='Класс иконки',
                                  help_text='CSS rласс иконки, оформляющей пункт меню, например icon-facebook'
                                  )
-    hrefclass = models.CharField(max_length=15,
+    hrefclass = models.CharField(max_length=20,
                                  blank=True,
                                  verbose_name='Класс ссылки',
                                  help_text='CSS rласс ссылки, обрамляющей URL')

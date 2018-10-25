@@ -96,7 +96,7 @@
                                                                 <td>Запрос на рассмотрении</td>
                                                                 <td>
                                                                     <a class="btn btn-secondary btn-sm icon-trash btn-deleteowner"
-                                                                       href="{% url 'deleteowner' %}?owner_id={{ item.id }}"></a>
+                                                                       href="{% url 'account:deleteowner' %}?owner_id={{ item.id }}"></a>
                                                                 </td>
                                                             {% else %}
                                                                 <td>В собственности</td>
@@ -211,10 +211,10 @@
     </div>
 
     <!-- MODAL TO EDIT PHONE -->
-    {% include 'modal.html' with name="editphone" size="sm" header="Изменить телефон" urlname="profile" formname=phonechangeform buttons="CS" %}
+    {% include 'modal.html' with name="editphone" size="sm" header="Изменить телефон" urlname="account:profile" formname=phonechangeform buttons="CS" %}
 
     <!-- MODAL TO INSERT OWNER REQUEST -->
-    {% include 'modal.html' with name="ownerrequest" size="lg" header="Послать запрос" urlname="profile" formname=sendownerrequestform buttons="CS" %}
+    {% include 'modal.html' with name="ownerrequest" size="lg" header="Послать запрос" urlname="account:profile" formname=sendownerrequestform buttons="CS" %}
 
 
 {% endblock %}

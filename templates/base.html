@@ -43,15 +43,51 @@
                 <div class="top-links">
                     <ul>
                         <li><a href="{% url 'home' %}">Домой</a></li>
-                        {% if user.is_authenticated %}
+
+                        {% if user.is_authenticated %}  {# Если пользователь авторизован #}
                             <li><a href="{% url 'home' %}"> {{ user.get_full_name }} </a>
+                                {% menu usermenu %}
                                 <ul>
-                                    <li><a href="{% url 'profile' %}"><i class="icon-user2"></i> Мой профиль</a></li>
-                                    <li><a href="{% url 'logout' %} "><i class="icon-line2-logout"></i> Выйти</a></li>
+                                    {% recursetree nodes %}
+                                        <li>
+                                            <a href="{% url node.url %}" class="{{ node.hrefclass }}">
+                                                <span class="ts-icon"><i class="{{ node.iconclass }}"></i></span>
+                                                <span class="ts-text">{{ node.title }}</span>
+                                            </a>
+                                            {% if not node.is_leaf_node %}
+                                                <ul>
+                                                    {{ children }}
+                                                </ul>
+                                            {% endif %}
+                                        </li>
+                                    {% endrecursetree %}
                                 </ul>
                             </li>
+
+                            {% if user.is_staff %}    {# Если пользователь является сотрудником #}
+                                <li><a href="{% url 'home' %}">Администратор</a>
+                                    {% menu adminmenu %}
+                                    <ul>
+                                        {% recursetree nodes %}
+                                            <li>
+                                                <a href="{% url node.url %}" class="{{ node.hrefclass }}">
+                                                    <span class="ts-icon"><i class="{{ node.iconclass }}"></i></span>
+                                                    <span class="ts-text">{{ node.title }}</span>
+                                                </a>
+                                                {% if not node.is_leaf_node %}
+                                                    <ul>
+                                                        {{ children }}
+                                                    </ul>
+                                                {% endif %}
+                                            </li>
+                                        {% endrecursetree %}
+                                    </ul>
+                                </li>
+                            {% endif %}
+
                         {% else %}
-                            <li><a href="{% url 'login' %}">Регистрация</a>
+
+                            <li><a href="{% url 'account:login' %}">Регистрация</a>
                                 <div class="top-link-section">
                                     {# Форма входа #}
                                     <form id="top-login" role="form" method="post" action="{% url 'home' %}">
@@ -76,6 +112,7 @@
                                     </form>
                                 </div>
                             </li>
+
                         {% endif %}
 
                     </ul>

@@ -120,5 +120,4 @@ def deleteOwnerRequest(request):
             ownerrequest = Owner.objects.get(pk=request.POST.get('owner_id'))
             if not ownerrequest.date_confirmation:
                 ownerrequest.delete()
-    return render(request,)
-        # redirect('profile', activetab=ProfileView.tablist['area'])
+    return redirect('profile', activetab=ProfileView.tablist['area'])

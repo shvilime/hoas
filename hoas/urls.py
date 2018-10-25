@@ -18,13 +18,14 @@ from django.urls import include, path, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 
-
 from main.urls import main_urlpatterns
 from systemapps.account.urls import accounts_urlpatterns
+from area.urls import area_urlpatterns
 
 urlpatterns = [
     re_path('^', include(main_urlpatterns)),
-    re_path('^', include(accounts_urlpatterns)),
+    re_path('^account/', include((accounts_urlpatterns,'account'), namespace='account')),
+    re_path('^area/', include((area_urlpatterns,'area'), namespace='area')),
     path('admin/', admin.site.urls),
 ]
 
