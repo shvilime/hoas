@@ -109,7 +109,7 @@ class ProfileView(View):
                 owner.user = request.user
                 owner.save()
                 self.activetab = self.tablist['area']
-        return redirect('profile', activetab=self.activetab)
+        return redirect('account:profile', activetab=self.activetab)
 
 
 # ======================= Удаление заявки на право собственности на помещение =====================
@@ -120,4 +120,4 @@ def deleteOwnerRequest(request):
             ownerrequest = Owner.objects.get(pk=request.POST.get('owner_id'))
             if not ownerrequest.date_confirmation:
                 ownerrequest.delete()
-    return redirect('profile', activetab=ProfileView.tablist['area'])
+    return redirect('account:profile', activetab=ProfileView.tablist['area'])

@@ -6,8 +6,8 @@ from systemapps.menu.models import Menu, MenuItem
 
 class MenuAdmin(admin.ModelAdmin):
     exclude = ['parent']
-    def get_model_perms(self, request):     #hide this Model in Admin
-        return {}
+#    def get_model_perms(self, request):     #hide this Model in Admin
+#        return {}
 
 class MenuItemAdmin(DraggableMPTTAdmin):
     list_filter = ('menu',)

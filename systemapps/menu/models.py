@@ -23,13 +23,13 @@ class MenuItem(MPTTModel):
                              on_delete=models.CASCADE)
     parent = TreeForeignKey('self',
                             verbose_name='Родительский пункт',
-                            null=True,
-                            blank=True,
+                            null=True,blank=True,
                             on_delete=models.CASCADE,
                             related_name='child')
     title = models.CharField(max_length=50,
                              verbose_name='Заголовок')
     url = models.CharField(max_length=100,
+                           null=True, blank=True,
                            verbose_name='Cсылка',
                            help_text='Ссылка /faq/ или http://google.com')
     active = models.BooleanField(default=True,

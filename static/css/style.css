@@ -11300,7 +11300,7 @@ input[type=checkbox]:not(:checked) + label.error { display: block !important; }
 /* Fancy Title - Bottom Short Border
 -----------------------------------------------------------------*/
 
-.fancy-title.title-dotted-border { background: url('images/icons/dotted.png') repeat-x center; }
+.fancy-title.title-dotted-border { background: url('../images/icons/dotted.png') repeat-x center; }
 
 
 /* Sub Heading
