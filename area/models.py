@@ -4,7 +4,7 @@ from django.core.validators import RegexValidator, MinValueValidator, MaxValueVa
 
 
 # Create your models here.
-
+# ======================= ********************************************** ==========================
 class Room(models.Model):
     ROOM_TYPE = (('FL', 'Квартира'),
                  ('UN', 'Нежилое помещение'),)
@@ -32,7 +32,7 @@ class Room(models.Model):
         verbose_name = 'Помещение'
         verbose_name_plural = 'Помещения'
 
-
+# ======================= ********************************************** ==========================
 class Owner(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE,
                              verbose_name='Номер помещения')

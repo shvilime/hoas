@@ -8,7 +8,7 @@
 
 {% block content %}
 
-    <div class="fancy-title title-dotted-border title-center">
+    <div class="fancy-title title-bottom-border">
         <h3>Запросы на регистрацию <span>собственником</span> помещений</h3>
     </div>
 
@@ -38,6 +38,9 @@
                 </tbody>
             </table>
         </div>
+    {% else %}
+        <p>В настоящее время нет необработанных запросов пользователей на регистрацию собственником помещений. В случае
+            их подачи жильцами, они будут размещены в данном разделе и представлены в табличной форме.</p>
     {% endif %}
 
 {% endblock %}
