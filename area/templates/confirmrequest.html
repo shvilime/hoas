@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block stylesheet %}
+    <link href="{% static 'js/datatables/datatables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/responsive.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+    <div class="fancy-title title-bottom-border">
+        <h3>Запрос от <span>{{ new_owner.user.get_full_name }}</span> прав на <span>{{ new_owner.room }}</span></h3>
+    </div>
+
+    <form id="id-form-confirmownerrequest" name="name-form-confirmownerrequest" class="nobottommargin"
+          action="{% url 'area:ownerrequests' new_owner.id %}" method="post">
+        {% csrf_token %}
+        {% for checkbox in confirmform.request %}
+            <div class="form-check">
+                {{ checkbox.tag }}
+                <label class="form-check-label" for="{{ checkbox.id_for_label }}">
+                    {{ checkbox.choice_label }}
+                </label>
+                {% for error in checkbox.errors %}
+                    <div class="invalid-feedback">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% empty %}
+            <p>Отсутствуют ранее зарегистрированные права на данное помещение, которые подлежат анулированию.</p>
+        {% endfor %}
+    </form>
+    <a href="{% url 'area:ownerrequests' %}" class="button button-dark button-rounded cancel-button">Отмена</a>
+    <button type="submit" form="id-form-confirmownerrequest"
+            class="button button-dark button-rounded confirmrequest-button">
+        Подтвердить
+    </button>
+
+{% endblock %}
+
+{% block javascript %}{% endblock %}

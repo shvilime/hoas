@@ -21,8 +21,9 @@
                     <th>№</th>
                     <th>Пользователь</th>
                     <th>Помещение</th>
-                    <th>Доля в имуществе</th>
+                    <th>Доля в имуществе(%)</th>
                     <th>Дата запроса</th>
+                    <th>Действие</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -33,6 +34,10 @@
                         <td>{{ request.room }}</td>
                         <td>{{ request.portion }}</td>
                         <td>{{ request.date_request }}</td>
+                        <td class="center">
+                            <a class="btn btn-secondary btn-sm icon-edit"
+                               href="{% url 'area:ownerrequests' request.id %}"></a>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>

@@ -32,6 +32,7 @@ class Room(models.Model):
         verbose_name = 'Помещение'
         verbose_name_plural = 'Помещения'
 
+
 # ======================= ********************************************** ==========================
 class Owner(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE,
@@ -52,6 +53,11 @@ class Owner(models.Model):
     cancelid = models.ForeignKey('self', on_delete=models.SET_NULL,
                                  null=True, blank=True,
                                  verbose_name='Ссылка на аннулирующую запись')
+
+    def __str__(self):
+        return '[{date}] {owner}, {area}, доля ({portion})'.format(date=self.date_request,
+                                                                   owner=self.user.get_full_name(),
+                                                                   area=self.room, portion=self.portion)
 
     class Meta:
         unique_together = (('room', 'user', 'date_request'),)

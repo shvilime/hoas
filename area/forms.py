@@ -12,14 +12,14 @@ class SendOwnerRequestForm(forms.ModelForm):
         fields = ['room','portion']
 
 # ======================= ********************************************** ==========================
-class ConfirmOwnerRequest(forms.ModelForm):
+class ConfirmOwnerRequestForm(forms.ModelForm):
     request = forms.ModelMultipleChoiceField(queryset=None,
-                                             widget=forms.CheckboxSelectMultiple)
+                                             widget=forms.CheckboxSelectMultiple(attrs = {'class': 'form-check-input'}))
 
     def __init__(self, *args, **kwargs):
+        room = kwargs.pop('room', None)
         super().__init__(*args, **kwargs)
-        room = kwargs.pop('room')
-        self.fields['request'].queryset = Owner.objects.filter(room=room)
+        self.fields['request'].queryset = Owner.objects.filter(room=room, date_confirmation__isnull=True)
 
     class Meta:
         model = Owner
