@@ -32,10 +32,11 @@ class ConfirmRequestView(View):
     def post(self, request, *args, **kwargs):
         confirmform = ConfirmOwnerRequestForm(request.POST, room=self.new_owner.room)
         if confirmform.is_valid():
-            # confirmform.save()
+            if 'request' in request.POST:   #Переданы данные для аннулирования прежних владельце
+                confirmform.save()
+            else:                           #Нет данных о предыдущих владельцах
+                self.new_owner.confirm()
             return redirect('area:ownerrequests')
-        else:
-            return render(request, self.template_name, {'new_owner': self.new_owner,
-                                                        'confirmform': confirmform})
 
-
+        return render(request, self.template_name, {'new_owner': self.new_owner,
+                                                    'confirmform': confirmform})

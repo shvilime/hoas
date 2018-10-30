@@ -17,16 +17,13 @@
           action="{% url 'area:ownerrequests' new_owner.id %}" method="post">
         {% csrf_token %}
         {% for checkbox in confirmform.request %}
-            <div class="form-check">
-                {{ checkbox.tag }}
-                <label class="form-check-label" for="{{ checkbox.id_for_label }}">
-                    {{ checkbox.choice_label }}
-                </label>
-                {% for error in checkbox.errors %}
-                    <div class="invalid-feedback">
-                        {{ error }}
-                    </div>
-                {% endfor %}
+            <div class="bottommargin-sm">
+                <div class="form-check">
+                    {{ checkbox.tag }}
+                    <label class="form-check-label" for="{{ checkbox.id_for_label }}">
+                        {{ checkbox.choice_label }}
+                    </label>
+                </div>
             </div>
         {% empty %}
             <p>Отсутствуют ранее зарегистрированные права на данное помещение, которые подлежат анулированию.</p>

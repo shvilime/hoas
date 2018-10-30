@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
@@ -58,6 +59,13 @@ class Owner(models.Model):
         return '[{date}] {owner}, {area}, доля ({portion})'.format(date=self.date_request,
                                                                    owner=self.user.get_full_name(),
                                                                    area=self.room, portion=self.portion)
+    def confirm(self):
+        self.date_confirmation = datetime.datetime.today()
+        self.save()
+
+    def cancel(self):
+        self.date_cancellation = datetime.datetime.today()
+        self.save()
 
     class Meta:
         unique_together = (('room', 'user', 'date_request'),)
