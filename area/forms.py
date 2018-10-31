@@ -16,14 +16,13 @@ class SendOwnerRequestForm(forms.ModelForm):
 
 # ======================= ********************************************** ==========================
 class ConfirmOwnerRequestForm(forms.ModelForm):
-    request = forms.ModelMultipleChoiceField(required=False,
+    request = forms.ModelMultipleChoiceField(required=True,
                                              queryset=None,
-                                             widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}))
+                                             widget=forms.CheckboxSelectMultiple(attrs={'class': 'checkbox-style'}))
 
     def __init__(self, *args, **kwargs):
         room = kwargs.pop('room', None)
         super().__init__(*args, **kwargs)
-        self.fields["request"].initial = (Owner.objects.all().values_list('id', flat=True))
         self.fields['request'].queryset = Owner.objects.filter(room=room, date_confirmation__isnull=False)
 
     class Meta:

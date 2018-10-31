@@ -3,24 +3,42 @@
 {% load widget_tweaks %}
 
 {% block stylesheet %}
-    <link href="{% static 'js/datatables/datatables.min.css' %}" rel="stylesheet">
-    <link href="{% static 'css/responsive.css' %}" rel="stylesheet">
+    <!-- Radio Checkbox Plugin -->
+    <link rel="stylesheet" href="{% static 'css/radio-checkbox.css' %}" type="text/css"/>
 {% endblock %}
 
 {% block content %}
-
+    <!-- Заголовок для запроса ==================================== -->
     <div class="fancy-title title-bottom-border">
-        <h3>Запрос от <span>{{ new_owner.user.get_full_name }}</span> прав на <span>{{ new_owner.room }}</span></h3>
+        <h4>Запрос от <span>{{ new_owner.user.get_full_name }}</span> прав на <span>{{ new_owner.room }}</span></h4>
     </div>
+    <!-- Детальная информация запроса ============================= -->
+    <div class="card col_half">
+        <div class="card-header">Параметры запроса</div>
+        <div class="card-body">
+            <div>Помещение:
+                <div class="float-right">{{ new_owner.room.number }}</div>
+            </div>
+            <div>Дата запроса:
+                <div class="float-right">{{ new_owner.date_request }}</div>
+            </div>
+            <div>Запрашиваемая доля:
+                <div class="float-right">{{ new_owner.portion }}%</div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="divider divider-border"><i class="icon-pencil"></i></div>
 
     <form id="id-form-confirmownerrequest" name="name-form-confirmownerrequest" class="nobottommargin"
           action="{% url 'area:ownerrequests' new_owner.id %}" method="post">
         {% csrf_token %}
         {% for checkbox in confirmform.request %}
             <div class="bottommargin-sm">
-                <div class="form-check">
+                <div>
                     {{ checkbox.tag }}
-                    <label class="form-check-label" for="{{ checkbox.id_for_label }}">
+                    <label class="checkbox-style-2-label" for="{{ checkbox.id_for_label }}">
                         {{ checkbox.choice_label }}
                     </label>
                 </div>
@@ -29,6 +47,7 @@
             <p>Отсутствуют ранее зарегистрированные права на данное помещение, которые подлежат анулированию.</p>
         {% endfor %}
     </form>
+
     <a href="{% url 'area:ownerrequests' %}" class="button button-dark button-rounded cancel-button">Отмена</a>
     <button type="submit" form="id-form-confirmownerrequest"
             class="button button-dark button-rounded confirmrequest-button">
@@ -37,4 +56,5 @@
 
 {% endblock %}
 
-{% block javascript %}{% endblock %}
+{% block javascript %}
+{% endblock %}
