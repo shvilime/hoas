@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load widget_tweaks %}
+{% load string_tags %}
 
 {% block stylesheet %}
     <!-- Radio Checkbox Plugin -->
@@ -10,14 +11,14 @@
 {% block content %}
     <!-- Заголовок для запроса ==================================== -->
     <div class="fancy-title title-bottom-border">
-        <h4>Запрос от <span>{{ new_owner.user.get_full_name }}</span> прав на <span>{{ new_owner.room }}</span></h4>
+        <h4>Запрос № <span>{{ new_owner.id }}</span> на регистрацию права</h4>
     </div>
     <!-- Детальная информация запроса ============================= -->
-    <div class="card col_half">
-        <div class="card-header">Параметры запроса</div>
+    <div class="card">
+        <div class="card-header"><span>{{ new_owner.room }}</span></div>
         <div class="card-body">
-            <div>Помещение:
-                <div class="float-right">{{ new_owner.room.number }}</div>
+            <div>Собственник:
+                <div class="float-right">{{ new_owner.user.get_full_name }}</div>
             </div>
             <div>Дата запроса:
                 <div class="float-right">{{ new_owner.date_request }}</div>
@@ -34,18 +35,34 @@
     <form id="id-form-confirmownerrequest" name="name-form-confirmownerrequest" class="nobottommargin"
           action="{% url 'area:ownerrequests' new_owner.id %}" method="post">
         {% csrf_token %}
-        {% for checkbox in confirmform.request %}
-            <div class="bottommargin-sm">
-                <div>
-                    {{ checkbox.tag }}
-                    <label class="checkbox-style-2-label" for="{{ checkbox.id_for_label }}">
-                        {{ checkbox.choice_label }}
-                    </label>
+        <div class="row bottommargin-sm">
+            {% for checkbox in confirmform.ownerrequest %}
+                {% with checkbox.choice_label|split:"," as words %}
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                {{ checkbox.tag }}
+                                <label class="checkbox-style-2-label" for="{{ checkbox.id_for_label }}"></label>
+                                {{ words|slice:"1:2"|first }}
+                            </div>
+                            <div class="card-body">
+                                <div>Дата:
+                                    <div class="float-right">{{ words|first }}</div>
+                                </div>
+                                <div>Доля:
+                                    <div class="float-right">{{ words|last }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endwith %}
+            {% empty %}
+                <div class="col-md-12">
+                    <p>Отсутствуют ранее зарегистрированные права на данное помещение, которые подлежат
+                        анулированию.</p>
                 </div>
-            </div>
-        {% empty %}
-            <p>Отсутствуют ранее зарегистрированные права на данное помещение, которые подлежат анулированию.</p>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </form>
 
     <a href="{% url 'area:ownerrequests' %}" class="button button-dark button-rounded cancel-button">Отмена</a>

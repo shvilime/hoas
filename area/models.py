@@ -1,5 +1,6 @@
 import datetime
 from django.db import models
+from django.utils import formats
 from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 
@@ -56,9 +57,10 @@ class Owner(models.Model):
                                  verbose_name='Ссылка на аннулирующую запись')
 
     def __str__(self):
-        return '[{date}] {owner}, {area}, доля ({portion})'.format(date=self.date_request,
-                                                                   owner=self.user.get_full_name(),
-                                                                   area=self.room, portion=self.portion)
+        return '{date},{owner},{area},{portion}'.format(date=formats.date_format(self.date_request),
+                                                        owner=self.user.get_full_name(),
+                                                        area=self.room, portion=self.portion)
+
     def confirm(self):
         self.date_confirmation = datetime.datetime.today()
         self.save()

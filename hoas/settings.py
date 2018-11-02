@@ -147,6 +147,7 @@ EMAIL_PORT = config('EMAIL_PORT', cast=int)
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
+DATE_FORMAT = "d.m.Y"
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 MEDIA_URL = '/media/'
