@@ -18,6 +18,7 @@ class ConfirmRequestView(View):
     template_name = 'confirmrequest.html'
     request_id = 0
     new_owner = None
+    popup_message = dict(type='',icon='',message='')
 
     def dispatch(self, request, *args, **kwargs):
         self.request_id = kwargs.get('id', 0)
@@ -27,16 +28,25 @@ class ConfirmRequestView(View):
     def get(self, request, *args, **kwargs):
         confirmform = ConfirmOwnerRequestForm(room=self.new_owner.room)
         return render(request, self.template_name, {'new_owner': self.new_owner,
-                                                    'confirmform': confirmform})
+                                                    'confirmform': confirmform,
+                                                    'popup_message': self.popup_message})
 
     def post(self, request, *args, **kwargs):
         confirmform = ConfirmOwnerRequestForm(request.POST, room=self.new_owner.room)
         if confirmform.is_valid():
-            if 'request' in request.POST:   #Переданы данные для аннулирования прежних владельце
-                confirmform.save()
-            else:                           #Нет данных о предыдущих владельцах
+            if 'ownerrequest' in request.POST:  # Переданы данные для аннулирования прежних владельце
+                owners4cancel = request.POST.getlist('ownerrequest')
+                for owner_id in owners4cancel:
+                    Owner.objects.get(pk=owner_id).cancel()
+                self.new_owner.confirm()
+            else:  # Нет данных о предыдущих владельцах
                 self.new_owner.confirm()
             return redirect('area:ownerrequests')
+        else:
+            self.popup_message={'type': 'error',
+                                'icon': 'icon-remove-sign',
+                                'message': 'Необходимо выбрать значения'}
 
         return render(request, self.template_name, {'new_owner': self.new_owner,
-                                                    'confirmform': confirmform})
+                                                    'confirmform': confirmform,
+                                                    'popup_message': self.popup_message})

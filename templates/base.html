@@ -129,8 +129,10 @@
             <!-- Logo
             ============================================= -->
             <div id="logo">
-                <a href="{% url 'home' %}" class="standard-logo"><img alt="Logo" src={% static '/images/logo.png' %}></a>
-                <a href="{% url 'home' %}" class="retina-logo"><img alt="Logo" src={% static '/images/logo@2x.png' %}></a>
+                <a href="{% url 'home' %}" class="standard-logo"><img alt="Logo"
+                                                                      src={% static '/images/logo.png' %}></a>
+                <a href="{% url 'home' %}" class="retina-logo"><img alt="Logo"
+                                                                    src={% static '/images/logo@2x.png' %}></a>
             </div><!-- #logo end -->
 
             <ul class="header-extras">
@@ -281,6 +283,12 @@
 
     </footer><!-- #footer end -->
 
+    <!-- Popup messege for all pages
+    ============================================= -->
+    <div id="popup-message" data-notify-type="{{ popup_message.type }}"
+         data-notify-msg="<i class={{ popup_message.icon }}></i> {{ popup_message.message }}">
+    </div>
+
 </div><!-- #wrapper end -->
 
 
@@ -300,6 +308,16 @@
 ============================================= -->
 <script src="{% static 'js/plugins.js' %}"></script>
 <script src="{% static 'js/functions.js' %}"></script>
+{% if popup_message.type %}
+    <script>
+        $(window).on("load", function () {
+            var t = setTimeout(function () {
+                SEMICOLON.widget.notifications($('#popup-message'));
+            }, 500);
+        });
+    </script>
+{% endif %}
+
 {% block javascript %}{% endblock %}
 
 </body>
