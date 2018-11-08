@@ -17,7 +17,8 @@ class RoomAdmin(admin.ModelAdmin):
 
 
 class OwnerAdmin(admin.ModelAdmin):
-    list_display = ('id', 'room', 'user', 'date_confirmation')
+    list_display = ('id', 'room', 'user', 'date_confirmation', 'date_cancellation')
+    list_filter = (('date_cancellation',admin.DateFieldListFilter),)
 
 
 admin.site.register(Room, RoomAdmin)

@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import View, ListView
 from .forms import ConfirmOwnerRequestForm
 from .models import Owner
+from .services import *
 
 
 # Create your views here.
@@ -18,7 +19,7 @@ class ConfirmRequestView(View):
     template_name = 'confirmrequest.html'
     request_id = 0
     new_owner = None
-    popup_message = dict(type='',icon='',message='')
+    popup_message = dict(type='', icon='', message='')
 
     def dispatch(self, request, *args, **kwargs):
         self.request_id = kwargs.get('id', 0)
@@ -34,19 +35,27 @@ class ConfirmRequestView(View):
     def post(self, request, *args, **kwargs):
         confirmform = ConfirmOwnerRequestForm(request.POST, room=self.new_owner.room)
         if confirmform.is_valid():
-            if 'ownerrequest' in request.POST:  # Переданы данные для аннулирования прежних владельце
-                owners4cancel = request.POST.getlist('ownerrequest')
-                for owner_id in owners4cancel:
-                    Owner.objects.get(pk=owner_id).cancel()
-                self.new_owner.confirm()
-            else:  # Нет данных о предыдущих владельцах
-                self.new_owner.confirm()
-            return redirect('area:ownerrequests')
-        else:
-            self.popup_message={'type': 'error',
-                                'icon': 'icon-remove-sign',
-                                'message': 'Необходимо выбрать значения'}
+            old_owners_portion = previous_owners_portion(self.new_owner)  # Какая доля у предыдущих собственников
+            if 'ownerrequest' in request.POST:  # Форма вернула данные об отмеченных прежних владельцах
+                list_owners_selected = request.POST.getlist('ownerrequest')  # Собстенники выбранные для анулирования
+                selected_owners_portion = list_owners_portion(list_owners_selected)  # Доля у выбранных собственников
 
+                if (selected_owners_portion >= self.new_owner.portion) or (
+                    selected_owners_portion == old_owners_portion):
+                    cancel_list_owners(list_owners_selected,self.new_owner)  # Анулируем предыдущих владельцев
+                    self.new_owner.confirm()  # Подтвердим нового собственника
+                    return redirect('area:ownerrequests')
+                else: # Ругаемся, на неверный выбор
+                    self.popup_message = {'type': 'error','icon': 'icon-remove-sign',
+                                          'message': 'Неправильный выбор владельцев'}
+
+            else:  # Форма не вернула данных о предыдущих владельцах
+                if old_owners_portion == 0:  # Доля прежних собственников нулевая, подтверждаем запрос
+                    self.new_owner.confirm()  # Подтвердим нового собственника
+                    return redirect('area:ownerrequests')
+                else:  # Ругаемся, что нужно анулировать предыдущих собственников
+                    self.popup_message = {'type': 'error','icon': 'icon-remove-sign',
+                                          'message': 'Необходимо выбрать владельцев'}
         return render(request, self.template_name, {'new_owner': self.new_owner,
                                                     'confirmform': confirmform,
                                                     'popup_message': self.popup_message})

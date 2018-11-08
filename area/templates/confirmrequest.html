@@ -15,7 +15,7 @@
     </div>
     <!-- Детальная информация запроса ============================= -->
     <div class="card">
-        <div class="card-header"><span>{{ new_owner.room }}</span></div>
+        <div class="card-header"><span>{{ new_owner.room }}</span><span> ({{ new_owner.room.square|floatformat }} м2)</span></div>
         <div class="card-body">
             <div>Собственник:
                 <div class="float-right">{{ new_owner.user.get_full_name }}</div>
@@ -24,7 +24,7 @@
                 <div class="float-right">{{ new_owner.date_request }}</div>
             </div>
             <div>Запрашиваемая доля:
-                <div class="float-right">{{ new_owner.portion }}%</div>
+                <div class="float-right"><span class="new-portion">{{ new_owner.portion }}</span>%</div>
             </div>
 
         </div>
@@ -32,38 +32,14 @@
 
     <div class="divider divider-border"><i class="icon-pencil"></i></div>
 
-    {% if confirmform.ownerrequest %}
+    {% if confirmform.ownerrequest.field.queryset.count %}
         <div class="col-md-12">
-            <p>У данной квартиры зарегистрированы следующие права собственности, которые необходимо анулировать
-                для подтверждения нового запроса.</p>
+            <p style="text-align: justify">У данного помещения зарегистрированы предыдущие права собственности, которые
+                необходимо анулировать
+                для подтверждения нового запроса. Отметьте подлежащие анулированию права и нажмите кнопку "Подтвердить".
+                Суммарная доля анулируемых прав не должна быть меньше чем запрашиваемая доля, за исключением случая,
+                когда предыдущие права были зарегистрированы не всеми владельцами.</p>
         </div>
-        <form id="id-form-confirmownerrequest" name="name-form-confirmownerrequest" class="nobottommargin"
-              action="{% url 'area:ownerrequests' new_owner.id %}" method="post">
-            {% csrf_token %}
-            <div class="row bottommargin-sm">
-                {% for checkbox in confirmform.ownerrequest %}
-                    {% with checkbox.choice_label|split:"," as words %}
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-header">
-                                    {{ checkbox.tag }}
-                                    <label class="checkbox-style-2-label" for="{{ checkbox.id_for_label }}"></label>
-                                    {{ words|slice:"1:2"|first }}
-                                </div>
-                                <div class="card-body">
-                                    <div>Дата:
-                                        <div class="float-right">{{ words|first }}</div>
-                                    </div>
-                                    <div>Доля:
-                                        <div class="float-right">{{ words|last }}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endwith %}
-                {% endfor %}
-            </div>
-        </form>
     {% else %}
         <div class="col-md-12">
             <p>Отсутствуют ранее зарегистрированные права на данное помещение, которые подлежат
@@ -71,6 +47,33 @@
         </div>
     {% endif %}
 
+    <form id="id-form-confirmownerrequest" name="name-form-confirmownerrequest" class="nobottommargin"
+          action="{% url 'area:ownerrequests' new_owner.id %}" method="post">
+        {% csrf_token %}
+        <div class="row bottommargin-sm">
+            {% for checkbox in confirmform.ownerrequest %}
+                {% with checkbox.choice_label|split:"," as words %}
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                {{ checkbox.tag }}
+                                <label class="checkbox-style-2-label" for="{{ checkbox.id_for_label }}"></label>
+                                {{ words|slice:"1:2"|first }}
+                            </div>
+                            <div class="card-body">
+                                <div>Дата:
+                                    <div class="float-right">{{ words|first }}</div>
+                                </div>
+                                <div>Доля:
+                                    <div class="float-right"><span class="cancel_portion">{{ words|last }}</span>%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endwith %}
+            {% endfor %}
+        </div>
+    </form>
 
     <a href="{% url 'area:ownerrequests' %}" class="button button-dark button-rounded cancel-button">Отмена</a>
     <button type="submit" form="id-form-confirmownerrequest"

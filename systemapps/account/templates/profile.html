@@ -59,9 +59,9 @@
                             <!-- Закладка Помещения =================================== -->
                             <div class="tab-content clearfix" id="tab-area">
                                 <div class="col_two_third col_last nobottommargin">
-                                    <p>В данном разделе отражена информация о помещениях, собственником
-                                        которых вы являетесь, или в отношении которых вами послан запрос на
-                                        признание вас собственником.</p>
+                                    <p style="text-align: justify">В данном разделе отражена информация о помещениях,
+                                        собственником которых вы являлись, являетесь, или в отношении которых вами
+                                        послан запрос на признание вас собственником.</p>
                                 </div>
                                 <div class="col_one_third col_last">
                                     <a href="#" id="insert-request-button"
@@ -79,7 +79,7 @@
                                             <th>Доля собственности(%)</th>
                                             <th>Дата запроса</th>
                                             <th>Статус</th>
-                                            <th>Удалить</th>
+                                            <th>Действие</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -96,7 +96,11 @@
                                                            href="{% url 'account:deleteowner' %}?owner_id={{ item.id }}"></a>
                                                     </td>
                                                 {% else %}
-                                                    <td>В собственности</td>
+                                                    {% if item.date_cancellation is not None %}
+                                                        <td>Аннулировано</td>
+                                                    {% else %}
+                                                        <td>В собственности</td>
+                                                    {% endif %}
                                                     <td></td>
                                                 {% endif %}
                                             </tr>

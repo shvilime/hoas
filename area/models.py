@@ -60,13 +60,13 @@ class Owner(models.Model):
         return '{date},{owner},{area},{portion}'.format(date=formats.date_format(self.date_request),
                                                         owner=self.user.get_full_name(),
                                                         area=self.room, portion=self.portion)
-
     def confirm(self):
         self.date_confirmation = datetime.datetime.today()
         self.save()
 
-    def cancel(self):
+    def cancel(self, new_owner):
         self.date_cancellation = datetime.datetime.today()
+        self.cancelid = new_owner
         self.save()
 
     class Meta:

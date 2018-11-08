@@ -6,9 +6,10 @@ from .models import Room, Owner
 
 # ======================= ********************************************** ==========================
 class SendOwnerRequestForm(forms.ModelForm):
-    room = forms.ModelChoiceField(
-        Room.objects.annotate(room_integer=Cast('number', IntegerField())).order_by('room_integer'))
-
+    room = forms.ModelChoiceField(label="Номер помещения",
+                                  queryset=Room.objects.annotate(
+                                      room_integer=Cast('number', IntegerField())).order_by('room_integer')
+                                  )
     class Meta:
         model = Owner
         fields = ['room', 'portion']
@@ -16,9 +17,10 @@ class SendOwnerRequestForm(forms.ModelForm):
 
 # ======================= ********************************************** ==========================
 class ConfirmOwnerRequestForm(forms.ModelForm):
-    ownerrequest = forms.ModelMultipleChoiceField(required=True,
-                                             queryset=None,
-                                             widget=forms.CheckboxSelectMultiple(attrs={'class': 'checkbox-style'}))
+    ownerrequest = forms.ModelMultipleChoiceField(required=False,
+                                                  queryset=None,
+                                                  widget=forms.CheckboxSelectMultiple(
+                                                      attrs={'class': 'checkbox-style'}))
 
     def __init__(self, *args, **kwargs):
         room = kwargs.pop('room', None)
