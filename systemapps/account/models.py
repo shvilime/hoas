@@ -44,6 +44,8 @@ class User(AbstractBaseUser, PermissionsMixin):
                                   max_length=30, help_text='Имя (как в паспорте)')
     last_name = models.CharField(verbose_name='Фамилия',
                                  max_length=30, help_text='Фамилия (как в паспорте)')
+    account = models.CharField(verbose_name='Лицевой счет',
+                               max_length=20, help_text='Номер лицевого счета')
     phone_regex = RegexValidator(regex=r'^((8|\+7)[\- ]?)(\(?\d{3}\)?[\- ]?)[\d\- ]{7,10}$',
                                  message="Номер должен соответствовать международному формату: '+7(928)1234567'. До 15 цифр")
     phone = models.CharField(verbose_name='Номер телефона',
@@ -56,7 +58,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField('Статус сотрудника', default=False,
                                    help_text='Позволяет сотруднику получить доступ к администрированию сайта')
     is_active = models.BooleanField(default=True, verbose_name='Активность')
-
 
     def avatar__path(instance, filename):
         file_name, file_ext = os.path.splitext(filename)
@@ -82,6 +83,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def get_full_name(self):
         full_name = '%s %s' % (self.last_name, self.first_name)
         return full_name.strip()
+
     get_full_name.short_description = "Полное имя пользователя"
 
     def email2user(self, subj, text, from_address=None, **kwargs):

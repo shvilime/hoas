@@ -1,7 +1,11 @@
+from decouple import config
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate,login as authlogin
+from area.rosreestrapi import Client
 
 def home(request):
+
+    apiclient = Client(config('ROSREESTR_KEY'))
+    text = apiclient.account(method='info', result='email')
 
     return render(request, 'home.html')
 
