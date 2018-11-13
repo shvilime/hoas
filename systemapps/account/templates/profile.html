@@ -40,6 +40,15 @@
 
                             <!-- Закладка Сведения ==================================== -->
                             <div class="tab-content clearfix" id="tab-profile">
+                                <div class="promo promo-border bottommargin-sm">
+                                    <h3>Лицевой счет:
+                                        {% if user.account %}
+                                            <span>{{ user.account }}</span>
+                                        {% else %}
+                                            <span>Не присвоен</span>
+                                        {% endif %}
+                                    </h3>
+                                </div>
                                 <div class="promo promo-border">
                                     <h3>Телефонный номер:
                                         {% if user.phone %}

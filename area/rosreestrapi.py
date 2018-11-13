@@ -20,7 +20,7 @@ class Client:
     def __init__(self, token):
         self.token = token
 
-    def set_access_params(self):
+    def set_access_params(self):     # Установим необходимые параметры запроса
         self.params['v'] = self.api_version
         self.params['access_token'] = self.token
         self.params['format'] = self.api_format
@@ -29,10 +29,10 @@ class Client:
 
     def post_request(self):
         self.set_access_params()
-        params = urlencode(self.params).encode()    # Перекодируем параметры в строку запроса
-        request = Request(self.url + self.api_method, params)
+        params = urlencode(self.params).encode()    # Перекодируем параметры в строку параметров запроса
+        request = Request(self.url + self.api_method, params)      # Сформируем полную строку запроса
         try:
-            response = urlopen(request)
+            response = urlopen(request)     # Попытаемся открыть строку запроса
         except URLError as e:
             if hasattr(e, 'code'):
                 print(e.code)
@@ -60,7 +60,13 @@ class Client:
         else:
             return ''
 
+    # ============================= Вызываемые методы для получения данных ======================================
     def account(self, **kwargs):
         self.accepted_method = ('info',)
         self.api_method = 'account.' + kwargs['method']
+        return self.get_data(**kwargs)
+
+    def service(self, **kwargs):
+        self.accepted_method = ('get','getByEgrn','list','payMathods')
+        self.api_method = 'service.' + kwargs['method']
         return self.get_data(**kwargs)

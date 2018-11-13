@@ -4,8 +4,6 @@ from area.rosreestrapi import Client
 
 def home(request):
 
-    apiclient = Client(config('ROSREESTR_KEY'))
-    text = apiclient.account(method='info', result='email')
 
     return render(request, 'home.html')
 
