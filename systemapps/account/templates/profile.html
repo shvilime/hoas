@@ -12,7 +12,7 @@
 
     <div class="row clearfix">
 
-        <div class="col-md-9">
+        <div class="col-md-12">
             <a href="#" data-toggle="modal" data-target="#modalAvatar">
                 <img src="{{ user.avatar.url }}"
                      class="alignleft img-circle img-thumbnail notopmargin nobottommargin" alt="Avatar"
@@ -25,7 +25,7 @@
             <div class="clear"></div>
 
             <div class="row clearfix">
-                <div class="col-lg-12">
+                <div class="col-md-12">
                     <div class="tabs tabs-alt tabs-tb clearfix" id="tabs-account"
                          data-active="{{ activetab }}">
                         <ul class="tab-nav clearfix">
@@ -40,44 +40,54 @@
 
                             <!-- Закладка Сведения ==================================== -->
                             <div class="tab-content clearfix" id="tab-profile">
-                                <div class="promo promo-border bottommargin-sm">
-                                    <h3>Лицевой счет:
-                                        {% if user.account %}
-                                            <span>{{ user.account }}</span>
-                                        {% else %}
-                                            <span>Не присвоен</span>
-                                        {% endif %}
-                                    </h3>
+                                <div class="col_one_third">
+                                    <div class="feature-box fbox-rounded fbox-effect fbox-light">
+                                        <div class="fbox-icon">
+                                            <i class="icon-bill i-alt"></i>
+                                        </div>
+                                        <h3>Лицевой счет</h3>
+                                        <h3>
+                                            {% if user.account %}
+                                                <span>{{ user.account }}</span>
+                                            {% else %}
+                                                <span>Не присвоен</span>
+                                            {% endif %}
+                                        </h3>
+                                    </div>
                                 </div>
-                                <div class="promo promo-border">
-                                    <h3>Телефонный номер:
-                                        {% if user.phone %}
-                                            <span>{{ user.phone }}</span>
-                                        {% else %}
-                                            <span>Нет</span>
-                                        {% endif %}
-                                    </h3>
-                                    <a href="#" class="button button-rounded button-reveal button-large"
-                                       data-toggle="modal" data-target="#id-modal-editphone">
-                                        <i class="icon-phone"> </i><span>Изменить</span>
-                                    </a>
+                                <div class="col_one_third">
+                                    <div class="feature-box fbox-rounded fbox-effect fbox-light">
+                                        <div class="fbox-icon">
+                                            <i class="icon-phone-landscape i-alt"></i>
+                                        </div>
+                                        <h3>Телефонный номер</h3>
+                                        <h3>
+                                            {% if user.phone %}
+                                                <span>{{ user.phone }}</span>
+                                            {% else %}
+                                                <span>Нет</span>
+                                            {% endif %}
+                                            <a href="#" data-toggle="modal" data-target="#id-modal-editphone"
+                                               title="Изменить">
+                                                <sup><i class="icon-edit"> </i></sup>
+                                            </a>
+
+                                        </h3>
+                                    </div>
                                 </div>
 
                             </div>
 
                             <!-- Закладка Помещения =================================== -->
                             <div class="tab-content clearfix" id="tab-area">
-                                <div class="col_two_third col_last nobottommargin">
+                                <div class="nobottommargin">
                                     <p style="text-align: justify">В данном разделе отражена информация о помещениях,
                                         собственником которых вы являлись, являетесь, или в отношении которых вами
-                                        послан запрос на признание вас собственником.</p>
-                                </div>
-                                <div class="col_one_third col_last">
-                                    <a href="#" id="insert-request-button"
-                                       class="button button-rounded button-reveal button-large"
-                                       data-toggle="modal" data-target="#id-modal-ownerrequest">
-                                        <i class="icon-map-marker2"></i>
-                                        <span>Регистрация права</span></a>
+                                        послан запрос на признание вас собственником. Для направления нового запроса в
+                                        адрес администрации ТСЖ нажмите кнопку
+                                        <a href="#" class="button button-mini button-circle"
+                                           id="insert-request-button" data-toggle="modal"
+                                           data-target="#id-modal-ownerrequest">Регистрация права</a></p>
                                 </div>
                                 {% if owner_rooms %}
                                     <table class="table table-hover">
@@ -102,6 +112,7 @@
                                                     <td>Запрос на рассмотрении</td>
                                                     <td class="center">
                                                         <a class="btn btn-secondary btn-sm icon-trash btn-deleteowner"
+                                                           title="Удалить"
                                                            href="{% url 'account:deleteowner' %}?owner_id={{ item.id }}"></a>
                                                     </td>
                                                 {% else %}
@@ -110,16 +121,15 @@
                                                     {% else %}
                                                         <td>В собственности</td>
                                                     {% endif %}
-                                                    <td></td>
+                                                    <td class="center">
+                                                        <i class="icon-minus"></i>
+                                                    </td>
                                                 {% endif %}
                                             </tr>
                                         {% endfor %}
                                         </tbody>
                                     </table>
                                 {% else %}
-                                    <div class="divider divider-border divider-center">
-                                        <i class="icon-chat"></i>
-                                    </div>
                                     <h4>Вы еще не подавали запросы на признание вас собственником</h4>
                                 {% endif %}
 
@@ -133,44 +143,6 @@
                 </div>
             </div>
 
-        </div>
-
-
-        <div class="col-md-3 clearfix">
-
-            <div class="fancy-title topmargin title-border">
-                <h4>Social Profiles</h4>
-            </div>
-
-            <a href="#" class="social-icon si-facebook si-small si-rounded si-light" title="Facebook">
-                <i class="icon-facebook"></i>
-                <i class="icon-facebook"></i>
-            </a>
-
-            <a href="#" class="social-icon si-gplus si-small si-rounded si-light" title="Google+">
-                <i class="icon-gplus"></i>
-                <i class="icon-gplus"></i>
-            </a>
-
-            <a href="#" class="social-icon si-dribbble si-small si-rounded si-light" title="Dribbble">
-                <i class="icon-dribbble"></i>
-                <i class="icon-dribbble"></i>
-            </a>
-
-            <a href="#" class="social-icon si-flickr si-small si-rounded si-light" title="Flickr">
-                <i class="icon-flickr"></i>
-                <i class="icon-flickr"></i>
-            </a>
-
-            <a href="#" class="social-icon si-linkedin si-small si-rounded si-light" title="LinkedIn">
-                <i class="icon-linkedin"></i>
-                <i class="icon-linkedin"></i>
-            </a>
-
-            <a href="#" class="social-icon si-twitter si-small si-rounded si-light" title="Twitter">
-                <i class="icon-twitter"></i>
-                <i class="icon-twitter"></i>
-            </a>
         </div>
 
     </div>
