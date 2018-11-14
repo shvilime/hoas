@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'systemapps.form',
     'main',             #Main page
     'area',             #Flat
+    'counter',          #Counter
 ]
 
 MIDDLEWARE = [
