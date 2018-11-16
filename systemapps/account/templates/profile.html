@@ -130,15 +130,60 @@
                                         </tbody>
                                     </table>
                                 {% else %}
-                                    <h4>Вы еще не подавали запросы на признание вас собственником</h4>
+                                    <div class="style-msg" style="background-color: #EEE;">
+                                        <div class="sb-msg"><i class="icon-info-sign"></i>
+                                            Вы еще <strong>не подавали</strong> запросы на признание вас собственником.
+                                        </div>
+                                    </div>
                                 {% endif %}
 
                             </div>
                             <!-- Закладка Автомобили ==================================== -->
                             <div class="tab-content clearfix" id="tab-car"></div>
+
+
                             <!-- Закладка Показания счетчиков =========================== -->
-                            <div class="tab-content clearfix" id="tab-resources"></div>
-                        </div>
+                            <div class="tab-content clearfix" id="tab-resources">
+                                <div class="nobottommargin">
+                                    <p style="text-align: justify">Для направления показаний счетчиков нажмите кнопку
+                                        <a href="#" class="button button-mini button-circle"
+                                           id="insert-countervalue-button" data-toggle="modal"
+                                           data-target="#id-modal-countervalue">Подать показания</a></p>
+                                </div>
+                                {% if counter_values %}
+                                    <table class="table table-hover">
+                                        <thead class="thead-light">
+                                        <tr>
+                                            <th>Дата</th>
+                                            <th>Кто предоставил</th>
+                                            <th>Помещение</th>
+                                            <th>Счетчик</th>
+                                            <th>Показания</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for item in counter_values %}
+                                            <tr>
+                                                <td>{{ item.date }}</td>
+                                                <td>{{ item.user.get_full_name }}</td>
+                                                <td>{{ item.room.get_type_display }} {{ item.room.number }}</td>
+                                                <td>{{ item.type }}</td>
+                                                <td>{{ item.value }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                {% else %}
+                                    <div class="style-msg" style="background-color: #EEE;">
+                                        <div class="sb-msg"><i class="icon-info-sign"></i>
+                                            <strong>Не обнаружено</strong> показаний счетчиков, по принадлежащим вам
+                                            помещениям.
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>   <!-- Tab-container end -->
+
                     </div>
                 </div>
             </div>

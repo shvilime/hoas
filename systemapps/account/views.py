@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate, get_user_model
+from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode, is_safe_url
@@ -9,6 +9,8 @@ from .tokens import account_activation_token
 from .forms import *
 from area.models import Owner
 from area.forms import SendOwnerRequestForm
+from area.services import owner_requests_history
+from counter.models import CounterValue, CounterType
 
 
 # ======================= Вход в систем, регистрация нового пользователя ==========================
@@ -86,11 +88,15 @@ class ProfileView(View):
         avataruploadform = AvatarUploadForm()
         phonechangeform = EmailChangeForm(initial={'phone': request.user.phone})
         sendownerrequestform = SendOwnerRequestForm()
-        owner_rooms = Owner.objects.filter(user_id=request.user.pk)  # Список владений помещениями
+        actualroom_list = [request.room for request in Owner.objects.filter(user_id=request.user.pk,
+                                                                           date_confirmation__isnull=False,
+                                                                           date_cancellation__isnull=True)]
+        counter_values = CounterValue.objects.filter(room__in=actualroom_list)   # Список поданных показаний
         return render(request, self.template_name, {'avataruploadform': avataruploadform,
-                                                    'owner_rooms': owner_rooms,
+                                                    'counter_values': counter_values,
                                                     'phonechangeform': phonechangeform,
                                                     'sendownerrequestform': sendownerrequestform,
+                                                    'owner_rooms': owner_requests_history(request.user),
                                                     'activetab': self.activetab})
 
     def post(self, request, *args, **kwargs):

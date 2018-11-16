@@ -15,7 +15,8 @@
     </div>
     <!-- Детальная информация запроса ============================= -->
     <div class="card">
-        <div class="card-header"><span>{{ new_owner.room }}</span><span> ({{ new_owner.room.square|floatformat }} м2)</span></div>
+        <div class="card-header">
+            <span>{{ new_owner.room }}</span><span> ({{ new_owner.room.square|floatformat }} м2)</span></div>
         <div class="card-body">
             <div>Собственник:
                 <div class="float-right">{{ new_owner.user.get_full_name }}</div>
@@ -42,8 +43,12 @@
         </div>
     {% else %}
         <div class="col-md-12">
-            <p>Отсутствуют ранее зарегистрированные права на данное помещение, которые подлежат
-                анулированию.</p>
+            <div class="style-msg" style="background-color: #EEE;">
+                <div class="sb-msg"><i class="icon-info-sign"></i>
+                    <strong>Отсутствуют</strong> ранее зарегистрированные права на данное помещение, которые подлежат
+                    анулированию.
+                </div>
+            </div>
         </div>
     {% endif %}
 
