@@ -285,9 +285,14 @@
 
     <!-- Popup messege for all pages
     ============================================= -->
-    <div id="popup-message" data-notify-type="{{ popup_message.type }}"
-         data-notify-msg="<i class={{ popup_message.icon }}></i> {{ popup_message.message }}">
-    </div>
+    {% if messages %}
+        {% for message in messages %}
+            <div id="popup-message" data-notify-type="{{ message.tags }}"
+
+                 data-notify-msg="<i class={{ message.icon }}></i> {{ message }}">
+            </div>
+        {% endfor %}
+    {% endif %}
 
 </div><!-- #wrapper end -->
 
@@ -308,7 +313,7 @@
 ============================================= -->
 <script src="{% static 'js/plugins.js' %}"></script>
 <script src="{% static 'js/functions.js' %}"></script>
-{% if popup_message.type %}
+{% if messages %}
     <script>
         $(window).on("load", function () {
             var t = setTimeout(function () {

@@ -60,6 +60,7 @@ class Owner(models.Model):
         return '{date},{owner},{area},{portion}'.format(date=formats.date_format(self.date_request),
                                                         owner=self.user.get_full_name(),
                                                         area=self.room, portion=self.portion)
+
     def confirm(self):
         self.date_confirmation = datetime.datetime.today()
         self.save()
@@ -69,7 +70,8 @@ class Owner(models.Model):
         self.cancelid = new_owner
         self.save()
 
-    class Meta:
-        unique_together = (('room', 'user', 'date_request'),)
-        verbose_name = 'Владелец'
-        verbose_name_plural = 'Владельцы'
+
+class Meta:
+    unique_together = (('room', 'user'),)
+    verbose_name = 'Владелец'
+    verbose_name_plural = 'Владельцы'

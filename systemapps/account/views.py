@@ -5,6 +5,7 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode, is_safe_url
 from django.utils.encoding import force_bytes, force_text
 from django.views import View
+from django.contrib import messages
 from .tokens import account_activation_token
 from .forms import *
 from area.models import Owner
@@ -79,43 +80,49 @@ class ProfileView(View):
                'resource': 4}
     template_name = 'profile.html'
     activetab = tablist['profile']
+    context = {'avataruploadform': AvatarUploadForm,
+               'phonechangeform': EmailChangeForm,
+               'sendownerrequestform': SendOwnerRequestForm}
 
     def dispatch(self, request, *args, **kwargs):
         self.activetab = kwargs.get('activetab', self.tablist['profile'])
         return super(ProfileView, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        avataruploadform = AvatarUploadForm()
-        phonechangeform = EmailChangeForm(initial={'phone': request.user.phone})
-        sendownerrequestform = SendOwnerRequestForm()
-        actualroom_list = [request.room for request in Owner.objects.filter(user_id=request.user.pk,
-                                                                           date_confirmation__isnull=False,
-                                                                           date_cancellation__isnull=True)]
-        counter_values = CounterValue.objects.filter(room__in=actualroom_list)   # Список поданных показаний
-        return render(request, self.template_name, {'avataruploadform': avataruploadform,
-                                                    'counter_values': counter_values,
-                                                    'phonechangeform': phonechangeform,
-                                                    'sendownerrequestform': sendownerrequestform,
-                                                    'owner_rooms': owner_requests_history(request.user),
-                                                    'activetab': self.activetab})
+        self.context['avataruploadform'] = AvatarUploadForm()
+        self.context['phonechangeform'] = EmailChangeForm(initial={'phone': request.user.phone})
+        self.context['sendownerrequestform'] = SendOwnerRequestForm(user=request.user)
+        self.context['counter_values'] = CounterValue.objects.filter(
+            room__in=[request.room for request in
+                      Owner.objects.filter(user_id=request.user.pk,
+                                           date_confirmation__isnull=False,
+                                           date_cancellation__isnull=True)])  # Список поданных показаний
+        self.context['owner_rooms'] = owner_requests_history(request.user)
+
+        return render(request, self.template_name, self.context)
 
     def post(self, request, *args, **kwargs):
         if ('x' in request.POST) and ('y' in request.POST):  # Форма по изменению аватара
-            avataruploadform = AvatarUploadForm(request.POST, request.FILES, instance=request.user)
-            if avataruploadform.is_valid():
-                avataruploadform.save()
+            self.context['avataruploadform'] = AvatarUploadForm(request.POST, request.FILES, instance=request.user)
+            if self.context['avataruploadform'].is_valid():
+                self.context['avataruploadform'].save()
+                return redirect('account:profile')
         if 'name-editphone-submit' in request.POST:  # Форма по изменению телефона
-            phonechangeform = EmailChangeForm(request.POST, instance=request.user)
-            if phonechangeform.is_valid():
-                phonechangeform.save()
+            self.context['phonechangeform'] = EmailChangeForm(request.POST, instance=request.user)
+            if self.context['phonechangeform'].is_valid():
+                self.context['phonechangeform'].save()
+                messages.info(request, 'Номер добавлен')
+                return redirect('account:profile')
         if 'name-ownerrequest-submit' in request.POST:  # Форма по отправке заявки владельца
-            sendownerrequestform = SendOwnerRequestForm(request.POST)
-            if sendownerrequestform.is_valid():
-                owner = sendownerrequestform.save(commit=False)
+            self.context['sendownerrequestform'] = SendOwnerRequestForm(request.POST, user=request.user)
+            self.activetab = self.tablist['area']
+            if self.context['sendownerrequestform'].is_valid():
+                owner = self.context['sendownerrequestform'].save(commit=False)
                 owner.user = request.user
                 owner.save()
-                self.activetab = self.tablist['area']
-        return redirect('account:profile', activetab=self.activetab)
+                return redirect('account:profile', activetab=self.activetab)
+
+        return render(request, self.template_name, self.context)
 
 
 # ======================= Удаление заявки на право собственности на помещение =====================
