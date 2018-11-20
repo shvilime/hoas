@@ -79,15 +79,20 @@ class ProfileView(View):
                'resource': 4}
     template_name = 'profile.html'
     activetab = tablist['profile']
+    form_classes = {'avatarupload': AvatarUploadForm,
+                    'phonechange': EmailChangeForm,
+                    'sendownerrequest': SendOwnerRequestForm}
 
     def dispatch(self, request, *args, **kwargs):
+        self.form_classes['phonechange'].initial = {'phone': request.user.phone}
+        self.form_classes['phonechange'].user = request.user
         self.activetab = kwargs.get('activetab', self.tablist['profile'])
         return super(ProfileView, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         avataruploadform = AvatarUploadForm()
         phonechangeform = EmailChangeForm(initial={'phone': request.user.phone})
-        sendownerrequestform = SendOwnerRequestForm()
+        sendownerrequestform = SendOwnerRequestForm(user=request.user)
         actualroom_list = [request.room for request in Owner.objects.filter(user_id=request.user.pk,
                                                                            date_confirmation__isnull=False,
                                                                            date_cancellation__isnull=True)]
@@ -109,12 +114,12 @@ class ProfileView(View):
             if phonechangeform.is_valid():
                 phonechangeform.save()
         if 'name-ownerrequest-submit' in request.POST:  # Форма по отправке заявки владельца
-            sendownerrequestform = SendOwnerRequestForm(request.POST)
+            sendownerrequestform = SendOwnerRequestForm(request.POST, user=request.user)
+            self.activetab = self.tablist['area']
             if sendownerrequestform.is_valid():
                 owner = sendownerrequestform.save(commit=False)
                 owner.user = request.user
                 owner.save()
-                self.activetab = self.tablist['area']
         return redirect('account:profile', activetab=self.activetab)
 
 
