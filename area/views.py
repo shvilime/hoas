@@ -43,18 +43,19 @@ class ConfirmRequestView(View):
                         selected_owners_portion == old_owners_portion):
                     cancel_list_owners(list_owners_selected, self.new_owner)  # Анулируем предыдущих владельцев
                     self.new_owner.confirm()  # Подтвердим нового собственника
-                    messages.success(request, 'Новый владелец подтвержден')
+                    messages.success(request, 'Новый владелец подтвержден', 'icon-ok-sign')
                     return redirect('area:ownerrequests')
                 else:  # Ругаемся, на неверный выбор
-                    messages.error(request, 'Неправильный выбор владельцев')
+                    messages.error(request, 'Неправильный выбор владельцев', 'icon-remove-sign')
 
             else:  # Форма не вернула данных о предыдущих владельцах
                 if old_owners_portion == 0:  # Доля прежних собственников нулевая, подтверждаем запрос
                     self.new_owner.confirm()  # Подтвердим нового собственника
-                    messages.success(request, 'Новый владелец подтвержден')
+                    messages.success(request, 'Новый владелец подтвержден', 'icon-ok-sign')
                     return redirect('area:ownerrequests')
                 else:  # Ругаемся, что нужно анулировать предыдущих собственников
-                    messages.error(request, 'Необходимо выбрать владельцев')
+                    messages.error(request, 'Необходимо выбрать владельцев', 'icon-remove-sign')
 
         return render(request, self.template_name, {'new_owner': self.new_owner,
                                                     'confirmform': confirmform})
+

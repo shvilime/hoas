@@ -13,5 +13,6 @@ accounts_urlpatterns = [
                                           login_url='account:login'), name='profile'),
     re_path(r'^profile/(?P<activetab>[0-9]{1})/$',
             login_required(account_views.ProfileView.as_view(), login_url='account:login'), name='profile'),
-    re_path(r'^deleteowner/$', account_views.deleteOwnerRequest, name='deleteowner'),
+    re_path(r'^deleteowner/$', login_required(account_views.deleteOwnerRequest, login_url='account:login'),
+            name='deleteowner'),
 ]

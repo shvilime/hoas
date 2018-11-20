@@ -79,13 +79,13 @@ class ProfileView(View):
                'car': 3,
                'resource': 4}
     template_name = 'profile.html'
-    activetab = tablist['profile']
     context = {'avataruploadform': AvatarUploadForm,
                'phonechangeform': EmailChangeForm,
-               'sendownerrequestform': SendOwnerRequestForm}
+               'sendownerrequestform': SendOwnerRequestForm,
+               'activetab': tablist['profile']}
 
     def dispatch(self, request, *args, **kwargs):
-        self.activetab = kwargs.get('activetab', self.tablist['profile'])
+        self.context['activetab'] = kwargs.get('activetab', self.tablist['profile'])
         return super(ProfileView, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -97,7 +97,7 @@ class ProfileView(View):
                       Owner.objects.filter(user_id=request.user.pk,
                                            date_confirmation__isnull=False,
                                            date_cancellation__isnull=True)])  # Список поданных показаний
-        self.context['owner_rooms'] = owner_requests_history(request.user)
+        self.context['owner_rooms'] = owner_requests_history(request.user)   # История заявок на право собственности
 
         return render(request, self.template_name, self.context)
 
@@ -106,31 +106,33 @@ class ProfileView(View):
             self.context['avataruploadform'] = AvatarUploadForm(request.POST, request.FILES, instance=request.user)
             if self.context['avataruploadform'].is_valid():
                 self.context['avataruploadform'].save()
+                messages.success(request, 'Аватар обновлен', 'icon-ok-sign')
                 return redirect('account:profile')
         if 'name-editphone-submit' in request.POST:  # Форма по изменению телефона
             self.context['phonechangeform'] = EmailChangeForm(request.POST, instance=request.user)
             if self.context['phonechangeform'].is_valid():
                 self.context['phonechangeform'].save()
-                messages.info(request, 'Номер добавлен')
+                messages.info(request, 'Номер телефона обновлен', 'icon-phone')
                 return redirect('account:profile')
         if 'name-ownerrequest-submit' in request.POST:  # Форма по отправке заявки владельца
             self.context['sendownerrequestform'] = SendOwnerRequestForm(request.POST, user=request.user)
-            self.activetab = self.tablist['area']
+            self.context['activetab'] = self.tablist['area']
             if self.context['sendownerrequestform'].is_valid():
                 owner = self.context['sendownerrequestform'].save(commit=False)
                 owner.user = request.user
                 owner.save()
-                return redirect('account:profile', activetab=self.activetab)
+                messages.success(request, 'Запрос отправлен', 'icon-ok-sign')
+                return redirect('account:profile', activetab=self.context['activetab'])
 
         return render(request, self.template_name, self.context)
 
 
 # ======================= Удаление заявки на право собственности на помещение =====================
-@login_required(login_url='login')
 def deleteOwnerRequest(request):
     if request.method == 'POST':
         if ('owner_id' in request.POST):
             ownerrequest = Owner.objects.get(pk=request.POST.get('owner_id'))
             if not ownerrequest.date_confirmation:
                 ownerrequest.delete()
+                messages.success(request, 'Запрос успешно удален', 'icon-ok-sign')
     return redirect('account:profile', activetab=ProfileView.tablist['area'])

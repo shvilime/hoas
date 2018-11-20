@@ -288,8 +288,7 @@
     {% if messages %}
         {% for message in messages %}
             <div id="popup-message" data-notify-type="{{ message.tags }}"
-
-                 data-notify-msg="<i class={{ message.icon }}></i> {{ message }}">
+                 data-notify-msg="<i class={{ message.extra_tags }}></i>  {{ message }}">
             </div>
         {% endfor %}
     {% endif %}
