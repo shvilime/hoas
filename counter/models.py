@@ -1,3 +1,5 @@
+import datetime
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import formats
 from django.contrib.auth import get_user_model
@@ -35,7 +37,8 @@ class CounterType(models.Model):
 
 # ======================= ********************************************** ==========================
 class CounterValue(models.Model):
-    date = models.DateField(verbose_name='Дата показаний')
+    date = models.DateField(verbose_name='Дата показаний',
+                            auto_now_add=True)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,
                              verbose_name='Владелец')
     room = models.ForeignKey(Room, on_delete=models.CASCADE,

@@ -240,6 +240,9 @@
     <!-- MODAL TO INSERT OWNER REQUEST -->
     {% include 'modal.html' with name="ownerrequest" size="lg" header="Послать запрос" urlname="account:profile" formname=sendownerrequestform buttons="CS" %}
 
+    <!-- MODAL TO INSERT COUNTER VALUE -->
+    {% include 'modal.html' with name="countervalue" size="lg" header="Подать показания" urlname="account:profile" formname=sendcountervalueform buttons="CS" %}
+
 
 {% endblock %}
 
@@ -260,6 +263,13 @@
         <script>
             jQuery(function ($) {
                 $("#id-modal-ownerrequest").modal("show");
+            });
+        </script>
+    {% endif %}
+    {% if sendcountervalueform.errors %}
+        <script>
+            jQuery(function ($) {
+                $("#id-modal-countervalue").modal("show");
             });
         </script>
     {% endif %}

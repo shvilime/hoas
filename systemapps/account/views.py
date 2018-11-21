@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode, is_safe_url
 from django.utils.encoding import force_bytes, force_text
@@ -11,7 +10,8 @@ from .forms import *
 from area.models import Owner
 from area.forms import SendOwnerRequestForm
 from area.services import owner_requests_history
-from counter.models import CounterValue, CounterType
+from counter.models import CounterValue
+from counter.forms import SendCounterValueForm
 
 
 # ======================= Вход в систем, регистрация нового пользователя ==========================
@@ -82,6 +82,7 @@ class ProfileView(View):
     context = {'avataruploadform': AvatarUploadForm,
                'phonechangeform': EmailChangeForm,
                'sendownerrequestform': SendOwnerRequestForm,
+               'sendcountervalueform': SendCounterValueForm,
                'activetab': tablist['profile']}
 
     def dispatch(self, request, *args, **kwargs):
@@ -92,6 +93,7 @@ class ProfileView(View):
         self.context['avataruploadform'] = AvatarUploadForm()
         self.context['phonechangeform'] = EmailChangeForm(initial={'phone': request.user.phone})
         self.context['sendownerrequestform'] = SendOwnerRequestForm(user=request.user)
+        self.context['sendcountervalueform'] = SendCounterValueForm(user=request.user)
         self.context['counter_values'] = CounterValue.objects.filter(
             room__in=[request.room for request in
                       Owner.objects.filter(user_id=request.user.pk,
@@ -123,16 +125,25 @@ class ProfileView(View):
                 owner.save()
                 messages.success(request, 'Запрос отправлен', 'icon-ok-sign')
                 return redirect('account:profile', activetab=self.context['activetab'])
+        if 'name-countervalue-submit' in request.POST:  # Форма по подаче показания счетчика
+            self.context['sendcountervalueform'] = SendCounterValueForm(request.POST, user=request.user)
+            self.context['activetab'] = self.tablist['resource']
+            if self.context['sendcountervalueform'].is_valid():
+                value = self.context['sendcountervalueform'].save(commit=False)
+                value.user = request.user
+                value.save()
+                messages.success(request, 'Запрос отправлен', 'icon-ok-sign')
+                return redirect('account:profile', activetab=self.context['resource'])
 
         return render(request, self.template_name, self.context)
 
 
 # ======================= Удаление заявки на право собственности на помещение =====================
-def deleteOwnerRequest(request):
+def DeleteOwnerRequest(request):
     if request.method == 'POST':
-        if ('owner_id' in request.POST):
-            ownerrequest = Owner.objects.get(pk=request.POST.get('owner_id'))
-            if not ownerrequest.date_confirmation:
-                ownerrequest.delete()
+        if 'owner_id' in request.POST:
+            owner_request = Owner.objects.get(pk=request.POST.get('owner_id'))
+            if not owner_request.date_confirmation:
+                owner_request.delete()
                 messages.success(request, 'Запрос успешно удален', 'icon-ok-sign')
     return redirect('account:profile', activetab=ProfileView.tablist['area'])
