@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import IntegerField
 from django.db.models.functions import Cast
 from .services import *
-from area.models import Owner
+from area.models import Owner, Room
 from .models import CounterValue, CounterType
 
 
@@ -14,7 +14,7 @@ class OwnerModelChoiceField(forms.ModelChoiceField):
 
 
 class SendCounterValueForm(forms.ModelForm):
-    owner = OwnerModelChoiceField(label="Номер помещения",
+    room = forms.ModelChoiceField(label="Номер помещения",
                                   queryset=None)
     type = forms.ModelChoiceField(label="Тип счетчика",
                                   queryset=None)
@@ -24,7 +24,8 @@ class SendCounterValueForm(forms.ModelForm):
         self.room = None
         self.date = datetime.date.today()
         super(SendCounterValueForm, self).__init__(*args, **kwargs)
-        self.fields['owner'].queryset = Owner.objects.filter(user=self.user)
+        self.fields['room'].queryset = Room.objects.filter(number__in=[request.room.number for request in Owner.objects.filter(user=self.user)])
+
         self.fields['type'].queryset = CounterType.objects.filter(active=True)
 
     def clean(self):
@@ -34,20 +35,20 @@ class SendCounterValueForm(forms.ModelForm):
             start, end = get_counter_period(cleaned_data['type'])
             raise ValidationError('Период приема показаний установлен с {0} по {1} число месяца'.format(start, end))
         # Проверим на наличие ранее введенных показаний счетчика
-        if not check_value_duplication(cleaned_data['owner'].room, cleaned_data['type'], datetime.date.today()):
+        if not check_value_duplication(cleaned_data['room'], cleaned_data['type'], datetime.date.today()):
             raise ValidationError('Показания счетчика для данного месяца уже существуют')
         # Проверим на приращение счетчика
-        if not check_value_increment(cleaned_data['owner'].room, cleaned_data['type'],
+        if not check_value_increment(cleaned_data['room'], cleaned_data['type'],
                                      datetime.date.today(), cleaned_data['value']):
             raise ValidationError('Показания счетчика должны быть больше чем предыдущее значение')
 
 
         return cleaned_data
 
-    def save(self, commit=True):
-        self.room = self.cleaned_data.get('owner').room
-        super(SendCounterValueForm, self).save()
+    # def save(self, commit=True):
+    #     self.fields['room'] = self.cleaned_data.get('owner').room
+    #     super(SendCounterValueForm, self).save()
 
     class Meta:
         model = CounterValue
-        fields = ['owner', 'type', 'value']
+        fields = ['room', 'type', 'value']

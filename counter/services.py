@@ -44,7 +44,7 @@ def get_previous_value(room, type, date):
 # Проверяет показания счетчика на прирост относительно предыдущего значения
 def check_value_increment(room, type, date, value):
     previous_value = get_previous_value(room, type, date)
-    if previous_value > value:
+    if previous_value >= value:
         return False
     else:
         return True

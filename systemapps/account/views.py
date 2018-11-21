@@ -133,7 +133,7 @@ class ProfileView(View):
                 value.user = request.user
                 value.save()
                 messages.success(request, 'Запрос отправлен', 'icon-ok-sign')
-                return redirect('account:profile', activetab=self.context['resource'])
+                return redirect('account:profile', activetab=self.context['activetab'])
 
         return render(request, self.template_name, self.context)
 
