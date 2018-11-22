@@ -10,5 +10,4 @@ area_urlpatterns = [
                                                                    login_url="account:login"), name='ownerrequests'),
     re_path(r'^deleteowner/(?P<pk>\d+)/$', login_required(area_views.DeleteOwnerRequest.as_view(),
                                                           login_url='account:login'), name='deleteowner'),
-
 ]

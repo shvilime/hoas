@@ -180,9 +180,9 @@
                                                             {% else %}
                                                                 <td>
                                                                     <a class="i-small i-light i-rounded nobottommargin
-                                                                              notopmargin icon-trash"
+                                                                              notopmargin icon-trash btn-delete-with-post"
                                                                        title="Удалить"
-                                                                       href="{% url 'area:ownerrequests' item.id %}"></a>
+                                                                       href="{% url 'counter:deletevalue' item.id %}?next={% url 'account:profile' 4 %}"></a>
                                                                 </td>
                                                             {% endif %}
                                                         {% endwith %}
@@ -270,6 +270,7 @@
     <script src="{% static 'js/cropper/cropper.min.js' %}"></script>
     <script src="{% static 'js/bootstrap-fileinput/bs-filestyle.js' %}"></script>
     <script src="{% static 'js/jquery-confirm/jquery-confirm.min.js' %}"></script>
+    <script src="{% static 'js/common.js' %}"></script>
     <script src="{% static 'js/account.js' %}"></script>
     {% if phonechangeform.errors %}
         <script>

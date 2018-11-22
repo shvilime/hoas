@@ -62,15 +62,6 @@ class ConfirmRequestView(View):
 
 
 # ======================= Удаление заявки на право собственности на помещение =====================
-# def DeleteOwnerRequest(request):
-#     if request.method == 'POST':
-#         owner_request = Owner.objects.get(pk=request.pk)
-#         if not owner_request.date_confirmation:
-#             owner_request.delete()
-#             messages.success(request, 'Запрос успешно удален', 'icon-ok-sign')
-#     return redirect_next(request)
-
-
 class DeleteOwnerRequest(DeleteView):
     model = Owner
 

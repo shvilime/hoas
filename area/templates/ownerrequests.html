@@ -4,6 +4,7 @@
 {% block stylesheet %}
     <link href="{% static 'js/datatables/datatables.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/responsive.css' %}" rel="stylesheet">
+    <link href="{% static '/js/jquery-confirm/jquery-confirm.min.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -58,6 +59,8 @@
 {% endblock %}
 
 {% block javascript %}
+    <script src="{% static 'js/jquery-confirm/jquery-confirm.min.js' %}"></script>
+    <script src="{% static 'js/common.js' %}"></script>
     <script src="{% static 'js/datatables/datatables.min.js' %}"></script>
     <script>
         $(document).ready(function () {
