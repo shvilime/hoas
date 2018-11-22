@@ -9,7 +9,7 @@ from .tokens import account_activation_token
 from .forms import *
 from area.models import Owner
 from area.forms import SendOwnerRequestForm
-from area.services import owner_requests_history
+from area.services import *
 from counter.models import CounterValue
 from counter.forms import SendCounterValueForm
 
@@ -95,11 +95,9 @@ class ProfileView(View):
         self.context['sendownerrequestform'] = SendOwnerRequestForm(user=request.user)
         self.context['sendcountervalueform'] = SendCounterValueForm(user=request.user)
         self.context['counter_values'] = CounterValue.objects.filter(
-            room__in=[request.room for request in
-                      Owner.objects.filter(user_id=request.user.pk,
-                                           date_confirmation__isnull=False,
-                                           date_cancellation__isnull=True)])  # Список поданных показаний
-        self.context['owner_rooms'] = owner_requests_history(request.user)   # История заявок на право собственности
+            room__in=[item.room for item in
+                      owner_requests_history(request.user, active=True)])  # Список поданных показаний
+        self.context['owner_rooms'] = owner_requests_history(request.user)  # История заявок на право собственности
 
         return render(request, self.template_name, self.context)
 
@@ -132,18 +130,9 @@ class ProfileView(View):
                 value = self.context['sendcountervalueform'].save(commit=False)
                 value.user = request.user
                 value.save()
-                messages.success(request, 'Запрос отправлен', 'icon-ok-sign')
+                messages.success(request, 'Показания переданы', 'icon-ok-sign')
                 return redirect('account:profile', activetab=self.context['activetab'])
 
         return render(request, self.template_name, self.context)
 
 
-# ======================= Удаление заявки на право собственности на помещение =====================
-def DeleteOwnerRequest(request):
-    if request.method == 'POST':
-        if 'owner_id' in request.POST:
-            owner_request = Owner.objects.get(pk=request.POST.get('owner_id'))
-            if not owner_request.date_confirmation:
-                owner_request.delete()
-                messages.success(request, 'Запрос успешно удален', 'icon-ok-sign')
-    return redirect('account:profile', activetab=ProfileView.tablist['area'])

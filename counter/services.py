@@ -2,6 +2,12 @@ import datetime, calendar
 from .models import CounterValue, CounterType
 
 
+
+# =======================================================================================
+# Возвращает период приема показаний для типа счетчика
+def list_active_counters():
+    return CounterType.objects.filter(active=True)
+
 # =======================================================================================
 # Возвращает период приема показаний для типа счетчика
 def get_counter_period(type):

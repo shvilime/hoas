@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import IntegerField
 from django.db.models.functions import Cast
 from .services import *
+from area.services import *
 from area.models import Owner, Room
 from .models import CounterValue, CounterType
 
@@ -24,9 +25,9 @@ class SendCounterValueForm(forms.ModelForm):
         self.room = None
         self.date = datetime.date.today()
         super(SendCounterValueForm, self).__init__(*args, **kwargs)
-        self.fields['room'].queryset = Room.objects.filter(number__in=[request.room.number for request in Owner.objects.filter(user=self.user)])
-
-        self.fields['type'].queryset = CounterType.objects.filter(active=True)
+        self.fields['room'].queryset = Room.objects.filter(number__in=[item.room.number for item in
+                                                                       owner_requests_history(self.user, active=True)])
+        self.fields['type'].queryset = list_active_counters()
 
     def clean(self):
         cleaned_data = super(SendCounterValueForm, self).clean()
@@ -44,10 +45,6 @@ class SendCounterValueForm(forms.ModelForm):
 
 
         return cleaned_data
-
-    # def save(self, commit=True):
-    #     self.fields['room'] = self.cleaned_data.get('owner').room
-    #     super(SendCounterValueForm, self).save()
 
     class Meta:
         model = CounterValue

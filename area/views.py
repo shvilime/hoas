@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.views.generic import View, ListView
+from django.views.generic import View, ListView, DeleteView
+from main.urls import redirect_next
 from .forms import ConfirmOwnerRequestForm
 from .models import Owner
 from .services import *
@@ -59,3 +60,27 @@ class ConfirmRequestView(View):
         return render(request, self.template_name, {'new_owner': self.new_owner,
                                                     'confirmform': confirmform})
 
+
+# ======================= Удаление заявки на право собственности на помещение =====================
+# def DeleteOwnerRequest(request):
+#     if request.method == 'POST':
+#         owner_request = Owner.objects.get(pk=request.pk)
+#         if not owner_request.date_confirmation:
+#             owner_request.delete()
+#             messages.success(request, 'Запрос успешно удален', 'icon-ok-sign')
+#     return redirect_next(request)
+
+
+class DeleteOwnerRequest(DeleteView):
+    model = Owner
+
+    def get(self, request, *args, **kwargs):
+        return redirect('home')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Запрос успешно удален', 'icon-ok-sign')
+        return super(DeleteOwnerRequest, self).delete(request, *args, **kwargs)
+
+    def get_success_url(self):
+        self.success_url = self.request.POST.get('next', None)
+        return super(DeleteOwnerRequest, self).get_success_url()

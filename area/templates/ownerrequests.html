@@ -35,8 +35,15 @@
                         <td>{{ request.portion }}</td>
                         <td>{{ request.date_request }}</td>
                         <td class="center">
-                            <a class="btn btn-secondary btn-sm icon-edit"
+                            <a class="i-small i-light i-rounded nobottommargin notopmargin icon-check"
+                               title="Проверить"
                                href="{% url 'area:ownerrequests' request.id %}"></a>
+                            <a class="i-small i-light i-rounded nobottommargin notopmargin icon-ok-sign"
+                               title="Подтвердить"
+                               href="{% url 'area:ownerrequests' request.id %}"></a>
+                            <a class="i-small i-light i-rounded nobottommargin notopmargin icon-trash btn-delete-with-post"
+                               title="Удалить"
+                               href="{% url 'area:deleteowner' request.id %}?next={% url 'area:ownerrequests' %}"></a>
                         </td>
                     </tr>
                 {% endfor %}

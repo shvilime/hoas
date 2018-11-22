@@ -110,10 +110,11 @@
                                                 <td>{{ item.date_request }}</td>
                                                 {% if item.date_confirmation is None %}
                                                     <td>Запрос на рассмотрении</td>
-                                                    <td class="center">
-                                                        <a class="btn btn-secondary btn-sm icon-trash btn-deleteowner"
+                                                    <td>
+                                                        <a class="i-small i-light i-rounded nobottommargin
+                                                         notopmargin icon-trash btn-delete-with-post"
                                                            title="Удалить"
-                                                           href="{% url 'account:deleteowner' %}?owner_id={{ item.id }}"></a>
+                                                           href="{% url 'area:deleteowner' item.id %}?next={% url 'account:profile' 2 %}"></a>
                                                     </td>
                                                 {% else %}
                                                     {% if item.date_cancellation is not None %}
@@ -121,7 +122,7 @@
                                                     {% else %}
                                                         <td>В собственности</td>
                                                     {% endif %}
-                                                    <td class="center">
+                                                    <td>
                                                         <i class="icon-minus"></i>
                                                     </td>
                                                 {% endif %}
@@ -151,24 +152,42 @@
                                            data-target="#id-modal-countervalue">Подать показания</a></p>
                                 </div>
                                 {% if counter_values %}
+                                    {% now "Y-m-d" as todays %}
                                     <table class="table table-hover">
                                         <thead class="thead-light">
                                         <tr>
-                                            <th>Дата</th>
+                                            <th>Период</th>
                                             <th>Кто предоставил</th>
                                             <th>Помещение</th>
                                             <th>Счетчик</th>
                                             <th>Показания</th>
+                                            <th>Действие</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         {% for item in counter_values %}
                                             <tr>
-                                                <td>{{ item.date }}</td>
+                                                <td>{{ item.date|date:"F Y" }}</td>
                                                 <td>{{ item.user.get_full_name }}</td>
                                                 <td>{{ item.room.get_type_display }} {{ item.room.number }}</td>
                                                 <td>{{ item.type }}</td>
                                                 <td>{{ item.value }}</td>
+                                                {% with item.date.year|stringformat:"i" as year %}
+                                                    {% with item.date.month|stringformat:"i" as month %}
+                                                        {% with item.type.end_day|stringformat:"i" as day %}
+                                                            {% if todays > year|add:"-"|add:month|add:"-"|add:day %}
+                                                                <td><i class="icon-minus"></i></td>
+                                                            {% else %}
+                                                                <td>
+                                                                    <a class="i-small i-light i-rounded nobottommargin
+                                                                              notopmargin icon-trash"
+                                                                       title="Удалить"
+                                                                       href="{% url 'area:ownerrequests' item.id %}"></a>
+                                                                </td>
+                                                            {% endif %}
+                                                        {% endwith %}
+                                                    {% endwith %}
+                                                {% endwith %}
                                             </tr>
                                         {% endfor %}
                                         </tbody>
