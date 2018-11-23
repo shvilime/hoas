@@ -8,17 +8,15 @@ from area.models import Owner, Room
 from .models import CounterValue, CounterType
 
 
-# ======================= ********************************************** ==========================
+# =========================== Форма отправки показания счетчика услуг ==============================
 class OwnerModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
-        return '%s' % (obj.room)
+        return '%s' % obj.room
 
 
 class SendCounterValueForm(forms.ModelForm):
-    room = forms.ModelChoiceField(label="Номер помещения",
-                                  queryset=None)
-    type = forms.ModelChoiceField(label="Тип счетчика",
-                                  queryset=None)
+    room = forms.ModelChoiceField(label="Номер помещения", queryset=None)
+    type = forms.ModelChoiceField(label="Тип счетчика", queryset=None)
 
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
@@ -42,7 +40,6 @@ class SendCounterValueForm(forms.ModelForm):
         if not check_value_increment(cleaned_data['room'], cleaned_data['type'],
                                      datetime.date.today(), cleaned_data['value']):
             raise ValidationError('Показания счетчика должны быть больше чем предыдущее значение')
-
 
         return cleaned_data
 

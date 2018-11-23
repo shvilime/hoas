@@ -33,7 +33,7 @@
 
     <div class="divider divider-border"><i class="icon-pencil"></i></div>
 
-    {% if confirmform.ownerrequest.field.queryset.count %}
+    {% if form.ownerrequest.field.queryset.count %}
         <div class="col-md-12">
             <p style="text-align: justify">У данного помещения зарегистрированы предыдущие права собственности, которые
                 необходимо анулировать
@@ -56,7 +56,7 @@
           action="{% url 'area:ownerrequests' new_owner.id %}" method="post">
         {% csrf_token %}
         <div class="row bottommargin-sm">
-            {% for checkbox in confirmform.ownerrequest %}
+            {% for checkbox in form.ownerrequest %}
                 {% with checkbox.choice_label|split:"," as words %}
                     <div class="col-md-4">
                         <div class="card">
