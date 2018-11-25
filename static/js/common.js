@@ -73,4 +73,41 @@ $.getCookie = function (name) {
             },
         }
     });
+
+    $(".btn-rosreestr-data").confirm({
+        title: 'Подтверждение',
+        content: 'Вы действительно хотите получить платные данные с росрееста?',
+        buttons: {
+            cancel: {
+                text: 'Отменить',
+                action: function () {
+                }
+            },
+            confirm: {
+                text: 'Запросить',
+                btnClass: 'btn-red',
+                action: function () {
+                    let url = document.createElement('a');
+                    url.href = this.$target.attr('href');
+                    let params = $.urlParamsDecode(url.search);
+                    params['csrfmiddlewaretoken'] = $.getCookie('csrftoken');
+                    $.ajax({
+                        url: url.pathname,
+                        type: "POST",
+                        dataType: 'json',
+                        data: params,
+                        success: function(json) {
+                            $('#owner_name').html(json[0]['name'])
+                            $('#owner_date').html(json[0]['sign'])
+                            $('#owner_portion').html(json[0]['price'])
+                        },
+                        error: function (xhr, errmsg, err) {
+                            console.log(errmsg);
+                        }
+                    });
+                }
+            },
+        }
+    });
+
 })(jQuery);

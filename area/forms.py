@@ -1,5 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.contrib import messages
 from django.db.models import IntegerField
 from django.db.models.functions import Cast
 from .services import *
@@ -37,8 +38,12 @@ class ConfirmOwnerRequestForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(ConfirmOwnerRequestForm, self).clean()
-        selected_owners_portion = cleaned_data['ownerrequest'].aggregate(summa=Sum('portion'))['summa'] or 0 # Доля у выбранных собственников
-        old_owners_portion = previous_owners_portion(self.instance)  # Какая доля у предыдущих собственников
+        new_owner_portion = self.instance.portion     # Размер доли, в новой заявке
+        old_owners_portion = sum_previous_owners_portion(self.instance)  # Какая доля у предыдущих собственников
+        selected_owners_portion = sum_owners_portion(cleaned_data['ownerrequest'])   # Доля у выбранных собственников
+
+        if (new_owner_portion >= old_owners_portion) and (selected_owners_portion < old_owners_portion):
+            raise ValidationError('Выбрано для анулирования владельцев меньше чем необходимо')
 
         return cleaned_data
 

@@ -22,12 +22,14 @@ from main.urls import main_urlpatterns
 from systemapps.account.urls import accounts_urlpatterns
 from area.urls import area_urlpatterns
 from counter.urls import counter_urlpatterns
+from rosreestr.urls import rosreestr_urlpatterns
 
 urlpatterns = [
     re_path('^', include(main_urlpatterns)),
     re_path('^account/', include((accounts_urlpatterns,'account'), namespace='account')),
     re_path('^area/', include((area_urlpatterns,'area'), namespace='area')),
     re_path('^counter/', include((counter_urlpatterns, 'counter'), namespace='counter')),
+    re_path('^rosreestr/', include((rosreestr_urlpatterns, 'rosreestr'), namespace='rosreestr')),
     path('admin/', admin.site.urls),
 ]
 

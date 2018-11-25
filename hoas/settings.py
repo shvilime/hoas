@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'main',             #Main page
     'area',             #Flat
     'counter',          #Counter
+    'rosreestr',        #Rosreestr API
 ]
 
 MIDDLEWARE = [

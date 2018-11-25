@@ -38,10 +38,10 @@
                         <td class="center">
                             <a class="i-small i-light i-rounded nobottommargin notopmargin icon-check"
                                title="Проверить"
-                               href="{% url 'area:ownerrequests' request.id %}"></a>
+                               href="{% url 'area:checkowner' request.id %}"></a>
                             <a class="i-small i-light i-rounded nobottommargin notopmargin icon-ok-sign"
                                title="Подтвердить"
-                               href="{% url 'area:ownerrequests' request.id %}"></a>
+                               href="{% url 'area:confirmowner' request.id %}"></a>
                             <a class="i-small i-light i-rounded nobottommargin notopmargin icon-trash btn-delete-with-post"
                                title="Удалить"
                                href="{% url 'area:deleteowner' request.id %}?next={% url 'area:ownerrequests' %}"></a>

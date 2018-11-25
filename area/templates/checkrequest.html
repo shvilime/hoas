@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block stylesheet %}
+    <link href="{% static '/js/jquery-confirm/jquery-confirm.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <!-- Заголовок для запроса ==================================== -->
+    <div class="fancy-title title-bottom-border">
+        <h4>Запрос № <span>{{ new_owner.id }}</span> на регистрацию права</h4>
+    </div>
+
+    <div class="col-md-12">
+        <p style="text-align: justify">Для оперативной сверки данных, вы можете запросить данные с официального сайта
+            росреестра.
+            В случае направления такого запроса, необходимо понимать, что с ТСЖ будет
+            взыскана плата за получение информационных данных с сайта <strong>rosreestr.net</strong>.
+            Стоимость составляет 350 рублей за один запрос.
+            <a href="{% url 'rosreestr:data' %}?egrn={{ new_owner.room.cadastre }}"
+                class="button button-mini button-circle nomargin btn-rosreestr-data">
+                <i class="icon-data"></i>Получить данные</a>
+        </p>
+    </div>
+
+    <!-- Детальная информация запроса ============================= -->
+    <div class="card col_half">
+        <div class="card-header">
+            <span>{{ new_owner.room }}</span><span> ({{ new_owner.room.square|floatformat }} м2)</span>
+        </div>
+        <div class="card-body">
+            <div>Собственник:
+                <div class="float-right">{{ new_owner.user.get_full_name }}</div>
+            </div>
+            <div>Дата запроса:
+                <div class="float-right">{{ new_owner.date_request }}</div>
+            </div>
+            <div>Запрашиваемая доля:
+                <div class="float-right"><span class="new-portion">{{ new_owner.portion }}</span>%</div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Данные росреестра ======================================= -->
+    <div class="card col_half col_last">
+        <div class="card-header">
+            <span>Данные росреестра</span>
+
+        </div>
+        <div class="card-body">
+            <div>Собственник:
+                <div class="float-right" id="owner_name">-</div>
+            </div>
+            <div>Дата регистрации:
+                <div class="float-right" id="owner_date">-</div>
+            </div>
+            <div>Доля собственности:
+                <div class="float-right" id="owner_portion">-</div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+{% endblock %}
+
+{% block javascript %}
+    <script src="{% static 'js/jquery-confirm/jquery-confirm.min.js' %}"></script>
+    <script src="{% static 'js/common.js' %}"></script>
+{% endblock %}

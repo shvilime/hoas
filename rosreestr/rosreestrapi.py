@@ -11,6 +11,7 @@ class Client:
     api_version = '1.0'
     api_format = 'json'
     api_method = ''
+    result_key = ''
     accepted_method = list()
     params = dict()
     response = dict()
@@ -19,6 +20,18 @@ class Client:
 
     def __init__(self, token):
         self.token = token
+
+    def find(self, key, dictionary):
+        for k, v in dictionary.items():
+            if k == key:
+                yield v
+            elif isinstance(v, dict):
+                for result in self.find(key, v):
+                    yield result
+            elif isinstance(v, list):
+                for d in v:
+                    for result in self.find(key, d):
+                        yield result
 
     def set_access_params(self):     # Установим необходимые параметры запроса
         self.params['v'] = self.api_version
@@ -53,20 +66,16 @@ class Client:
 
     def get_data(self, **kwargs):
         self.params = kwargs
-        if kwargs['method'] not in self.accepted_method:
+        if self.api_method not in self.accepted_method:
             raise ValueError('Метод должен быть из числа: ' + str(self.accepted_method))
         if self.check_result(self.post_request()):
-            return self.response[kwargs['result']]
+            return self.response[self.result_key]
         else:
             return ''
 
     # ============================= Вызываемые методы для получения данных ======================================
-    def account(self, **kwargs):
-        self.accepted_method = ('info',)
-        self.api_method = 'account.' + kwargs['method']
-        return self.get_data(**kwargs)
-
-    def service(self, **kwargs):
-        self.accepted_method = ('get','getByEgrn','list','payMathods')
-        self.api_method = 'service.' + kwargs['method']
+    def post(self, method='account.info', result='balance', **kwargs):
+        self.accepted_method = ('account.info','service.getByEgrn','database.get')
+        self.api_method = method
+        self.result_key = result
         return self.get_data(**kwargs)
