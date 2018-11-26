@@ -8,8 +8,6 @@ from urllib.error import URLError
 class ClientApiRosreestr:
     token = ''
     url = 'http://apirosreestr.ru/api/'
-    api_version = '1.0'
-    api_format = 'json'
     api_method = ''
     result_key = ''
     accepted_method = list()
@@ -34,16 +32,15 @@ class ClientApiRosreestr:
                         yield result
 
     def set_access_params(self):  # Установим необходимые параметры запроса
-        self.params['v'] = self.api_version
-        self.params['access_token'] = self.token
-        self.params['format'] = self.api_format
         self.params.pop('method', None)  # Очистим от лишнего параметра
         self.params.pop('result', None)  # Очистим от лишнего параметра
 
     def post_request(self):
         self.set_access_params()
+        headers = {'Token': self.token}
         params = urlencode(self.params).encode()  # Перекодируем параметры в строку параметров запроса
-        request = Request(self.url + self.api_method, params)  # Сформируем полную строку запроса
+        # params = bytes(json.dumps(self.params), encoding="utf-8")
+        request = Request(url=self.url + self.api_method, data=params, headers=headers)  # Сформируем полную строку запроса
         try:
             response = urlopen(request)  # Попытаемся открыть строку запроса
         except URLError as e:
@@ -60,8 +57,8 @@ class ClientApiRosreestr:
             self.response = parsed_json['response']['data']
             return True
         if 'error' in parsed_json:
-            self.error_code = parsed_json['error']['error_code']
-            self.error = parsed_json['error']['error_msg']
+            self.error_code = parsed_json['error']['code']
+            self.error = parsed_json['error']['mess']
             return False
 
     def get_data(self, **kwargs):
