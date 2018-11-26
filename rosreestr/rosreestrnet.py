@@ -5,9 +5,9 @@ from urllib.error import URLError
 
 
 # ===================================================================
-class ClientApiRosreestr:
+class ClientRosreestrNet:
     token = ''
-    url = 'http://apirosreestr.ru/api/'
+    url = 'https://rosreestr.net/api/method/'
     api_version = '1.0'
     api_format = 'json'
     api_method = ''
@@ -77,8 +77,8 @@ class ClientApiRosreestr:
             return ''
 
     # ============================= Вызываемые методы для получения данных ======================================
-    def post(self, method='account/info', result='', **kwargs):
-        self.accepted_method = ('cadaster/objectInfoFull')
+    def post(self, method='account.info', result='balance', **kwargs):
+        self.accepted_method = ('account.info', 'service.getByEgrn', 'database.get', 'database.reload')
         self.api_method = method
         self.result_key = result
         return self.get_data(**kwargs)

@@ -53,7 +53,7 @@
     {% endif %}
 
     <form id="id-form-confirmownerrequest" name="name-form-confirmownerrequest" class="nobottommargin"
-          action="{% url 'area:ownerrequests' new_owner.id %}" method="post">
+          action="{% url 'area:confirmowner' new_owner.id %}" method="post">
         {% csrf_token %}
         {% if form.non_field_errors %}
             <div class="alert alert-danger" role="alert">

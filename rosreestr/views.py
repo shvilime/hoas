@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from decouple import config
-from .rosreestrapi import Client
+from .rosreestrnet import ClientRosreestrNet
 
 
 # Create your views here.
@@ -9,6 +9,7 @@ from .rosreestrapi import Client
 
 def rosreestr_getdata(request):
     egrn = request.POST.get('egrn', False)
-    client = Client(token=config('ROSREESTR_KEY'))
-    data = client.post(method='database.get', result='owners', egrn=egrn)
-    return JsonResponse(data, safe=False)
+    client = ClientRosreestrNet(token=config('ROSREESTRNET_KEY'))
+    client.post(method='database.reload', egrn=egrn)
+    client.post(method='database.get', result='owners', egrn=egrn)
+    return JsonResponse(client.response, safe=False)

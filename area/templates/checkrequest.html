@@ -13,19 +13,16 @@
     </div>
 
     <div class="col-md-12">
-        <p style="text-align: justify">Для оперативной сверки данных, вы можете запросить данные с официального сайта
-            росреестра.
-            В случае направления такого запроса, необходимо понимать, что с ТСЖ будет
-            взыскана плата за получение информационных данных с сайта <strong>rosreestr.net</strong>.
-            Стоимость составляет 350 рублей за один запрос.
-            <a href="{% url 'rosreestr:data' %}?egrn={{ new_owner.room.cadastre }}"
-                class="button button-mini button-circle nomargin btn-rosreestr-data">
+        <p style="text-align: justify">Для оперативной сверки данных, вы можете запросить некоторые данные c информацией из росреестра
+            с неофициального сайта <strong>rosreestr.net</strong>. Данная информация не содержит сведения о ФИО
+            собственников помещений. <a href="{% url 'rosreestr:data' %}?egrn={{ new_owner.room.cadastre }}"
+               class="button button-mini button-circle nomargin btn-rosreestr-data">
                 <i class="icon-data"></i>Получить данные</a>
         </p>
     </div>
 
     <!-- Детальная информация запроса ============================= -->
-    <div class="card col_half">
+    <div class="card">
         <div class="card-header">
             <span>{{ new_owner.room }}</span><span> ({{ new_owner.room.square|floatformat }} м2)</span>
         </div>
@@ -43,26 +40,57 @@
         </div>
     </div>
 
+    <div id="divider" class="divider divider-border hidden"><i class="icon-pencil"></i></div>
+
     <!-- Данные росреестра ======================================= -->
-    <div class="card col_half col_last">
+    <div id="rosreestr-common" class="card hidden">
         <div class="card-header">
             <span>Данные росреестра</span>
-
         </div>
         <div class="card-body">
-            <div>Собственник:
-                <div class="float-right" id="owner_name">-</div>
+            <div>Дата информации:
+                <div class="float-right" id="main-date">-</div>
             </div>
-            <div>Дата регистрации:
-                <div class="float-right" id="owner_date">-</div>
+            <div>Номер ЕГРН:
+                <div class="float-right" id="main-egrn">-</div>
             </div>
-            <div>Доля собственности:
-                <div class="float-right" id="owner_portion">-</div>
+            <div>Адрес:
+                <div class="float-right" id="main-address">-</div>
             </div>
-
+            <div>Тип помещения:
+                <div class="float-right" id="area-type">-</div>
+            </div>
+            <div>Этаж:
+                <div class="float-right" id="area-floor">-</div>
+            </div>
+            <div>Площадь:
+                <div class="float-right" id="area-square">-</div>
+            </div>
+            <div>Количество собственников:
+                <div class="float-right" id="main-num-owners">-</div>
+            </div>
         </div>
     </div>
 
+    <div id="rosreestr-owners" class="card hidden">
+        <div class="card-header">
+            <span>Записи о собственности</span>
+        </div>
+        <table id="table-owners" class="table">
+            <thead>
+            <tr>
+                <th>№ п.п.</th>
+                <th>Тип записи</th>
+                <th>Номер записи</th>
+                <th>Дата записи</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <a href="{% url 'area:ownerrequests' %}" class="button button-dark button-rounded topmargin-sm">Вернуться</a>
 
 
 {% endblock %}
@@ -70,4 +98,5 @@
 {% block javascript %}
     <script src="{% static 'js/jquery-confirm/jquery-confirm.min.js' %}"></script>
     <script src="{% static 'js/common.js' %}"></script>
+    <script src="{% static 'js/area.js' %}"></script>
 {% endblock %}
