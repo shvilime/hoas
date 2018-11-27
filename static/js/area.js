@@ -2,9 +2,9 @@ var $ = jQuery.noConflict();
 
 // ================================= Common Events for html elements  =====================================
 (function ($) {
-    $(".btn-rosreestr-data").confirm({
+    $(".btn-rosreestrnet").confirm({
         title: 'Подтверждение',
-        content: 'Вы действительно хотите запросить данные с росрееста?',
+        content: 'Запросить бесплатные данные с сайта rosreestr.net?',
         buttons: {
             cancel: {
                 text: 'Отменить',
@@ -13,7 +13,7 @@ var $ = jQuery.noConflict();
             },
             confirm: {
                 text: 'Запросить',
-                btnClass: 'btn-red',
+                btnClass: 'btn-green',
                 action: function () {
                     let url = document.createElement('a');
                     url.href = this.$target.attr('href');
@@ -54,6 +54,29 @@ var $ = jQuery.noConflict();
                             console.log(errmsg);
                         }
                     });
+                }
+            },
+        }
+    });
+
+    $(".btn-apirosreestr").confirm({
+        title: 'Подтверждение',
+        content: 'Запросить ПЛАТНЫЕ данные с сайта apirosreestr.ru?',
+        buttons: {
+            cancel: {
+                text: 'Отменить',
+                action: function () {
+                }
+            },
+            confirm: {
+                text: 'Запросить',
+                btnClass: 'btn-red',
+                action: function () {
+                    let url = document.createElement('a');
+                    url.href = this.$target.attr('href');
+                    let params = $.urlParamsDecode(url.search);
+                    params['csrfmiddlewaretoken'] = $.getCookie('csrftoken');
+                    $.redirectPost(url.pathname, params);
                 }
             },
         }

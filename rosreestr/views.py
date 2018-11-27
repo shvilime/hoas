@@ -1,20 +1,37 @@
-from django.shortcuts import render
-from django.http import JsonResponse
+from django.shortcuts import redirect
+from django.http import JsonResponse, HttpResponseForbidden
 from decouple import config
 from .rosreestrnet import ClientRosreestrNet
 from .rosreestrapi import ClientApiRosreestr
+from .models import ApiRosreestrRequests
 
 
 # Create your views here.
 
 
-def rosreestr_getdata(request):
-    egrn = request.POST.get('egrn', False)
-    clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
-    clientapi.post(method='cadaster/objectInfoFull', query=egrn)
+def rosreestrnet_getdata(request):
+    if request.method=='POST':
+        egrn = request.POST.get('egrn', '')
+        client = ClientRosreestrNet(token=config('ROSREESTRNET_KEY'))
+        client.post(method='database.reload', egrn=egrn)
+        client.post(method='database.get', result='owners', egrn=egrn)
+        return JsonResponse(client.response, safe=False)
+    else:
+        return HttpResponseForbidden("Запрос данных возможно только методом POST")
 
 
-    client = ClientRosreestrNet(token=config('ROSREESTRNET_KEY'))
-    client.post(method='database.reload', egrn=egrn)
-    client.post(method='database.get', result='owners', egrn=egrn)
-    return JsonResponse(client.response, safe=False)
+def apirosreestr_getdata(request):
+    egrn = request.POST.get('egrn', '')
+    next = request.POST.get('next')
+    apirequest = ApiRosreestrRequests(cadastre=egrn)
+    apirequest.save()
+    apirequest.get_object_info()
+    apirequest.get_encoded_object()
+    apirequest.document_available()
+
+    # clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
+    # clientapi.post(method='cadaster/objectInfoFull', result='encoded_object', query=egrn)
+    # if clientapi.response['documents']['XZP']['available'] == True:
+    #     return
+
+    return redirect(next)

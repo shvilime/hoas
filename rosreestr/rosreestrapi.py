@@ -53,13 +53,14 @@ class ClientApiRosreestr:
 
     def check_result(self, json_string):
         parsed_json = json.loads(json_string)
-        if 'response' in parsed_json:
-            self.response = parsed_json['response']['data']
-            return True
-        if 'error' in parsed_json:
+        if parsed_json['error']:
             self.error_code = parsed_json['error']['code']
             self.error = parsed_json['error']['mess']
             return False
+        elif parsed_json['encoded_object']:
+            self.response = parsed_json
+            return True
+
 
     def get_data(self, **kwargs):
         self.params = kwargs
@@ -74,7 +75,7 @@ class ClientApiRosreestr:
             return ''
 
     # ============================= Вызываемые методы для получения данных ======================================
-    def post(self, method='account/info', result='', **kwargs):
+    def post(self, method='', result='', **kwargs):
         self.accepted_method = ('cadaster/objectInfoFull')
         self.api_method = method
         self.result_key = result

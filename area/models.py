@@ -3,6 +3,7 @@ from django.db import models
 from django.utils import formats
 from django.contrib.auth import get_user_model
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
+from rosreestr.models import ApiRosreestrRequests
 
 
 # Create your models here.
@@ -46,6 +47,9 @@ class Owner(models.Model):
                                   default=100,
                                   validators=[MinValueValidator(0.01), MaxValueValidator(100)],
                                   verbose_name='Доля собственности (от 0 до 100%)')
+    rosreestr = models.ForeignKey(ApiRosreestrRequests, on_delete=models.SET_NULL,
+                                  null=True, blank=True,
+                                  verbose_name='Проверочный запрос в росреестр')
     date_request = models.DateField(auto_now_add=True,
                                     verbose_name='Дата запроса')
     date_confirmation = models.DateField(null=True, blank=True,
@@ -54,7 +58,7 @@ class Owner(models.Model):
                                          verbose_name='Дата аннулирования')
     cancelid = models.ForeignKey('self', on_delete=models.SET_NULL,
                                  null=True, blank=True,
-                                 verbose_name='Ссылка на аннулирующую запись')
+                                 verbose_name='Аннулирующая запись')
 
     def __str__(self):
         return '{date},{owner},{area},{portion}'.format(date=formats.date_format(self.date_request),

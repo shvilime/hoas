@@ -4,7 +4,7 @@ from django.http import HttpResponseForbidden
 from django.contrib import messages
 from django.views.generic import ListView, DeleteView, UpdateView, DetailView
 from main.urls import redirect_next
-from .forms import ConfirmOwnerRequestForm
+from .forms import ConfirmOwnerRequestForm, SendAPIRosreestrRequestForm
 from .services import *
 from .models import Owner
 
@@ -16,7 +16,6 @@ class ListOwnerRequestView(ListView):
     template_name = 'ownerrequests.html'
     queryset = Owner.objects.filter(date_confirmation=None, date_cancellation=None)
     context_object_name = 'requests'
-
 
 # ======================= Подтверждение запроса на регистрацию собственности ======================
 class OwnerRequestView(UpdateView):
@@ -38,10 +37,18 @@ class OwnerRequestView(UpdateView):
         return super(OwnerRequestView, self).form_valid(form=form)
 
 # ============================== Проверка запроса по данным росреестра ==============================
-class CheckOwnerRequestView(DetailView):
+class _CheckOwnerRequestView(DetailView):
     template_name = 'checkrequest.html'
     model = Owner
     context_object_name = 'new_owner'
+
+class CheckOwnerRequestView(UpdateView):
+    template_name = 'checkrequest.html'
+    model = Owner
+    context_object_name = 'new_owner'
+    form_class = SendAPIRosreestrRequestForm
+    success_url = reverse_lazy('area:ownerrequests')
+
 
 
 # ======================= Удаление заявки на право собственности на помещение =======================

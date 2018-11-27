@@ -38,9 +38,9 @@ class ConfirmOwnerRequestForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(ConfirmOwnerRequestForm, self).clean()
-        new_owner_portion = self.instance.portion     # Размер доли, в новой заявке
+        new_owner_portion = self.instance.portion  # Размер доли, в новой заявке
         old_owners_portion = sum_previous_owners_portion(self.instance)  # Какая доля у предыдущих собственников
-        selected_owners_portion = sum_owners_portion(cleaned_data['ownerrequest'])   # Доля у выбранных собственников
+        selected_owners_portion = sum_owners_portion(cleaned_data['ownerrequest'])  # Доля у выбранных собственников
 
         if (new_owner_portion >= old_owners_portion) and (selected_owners_portion < old_owners_portion):
             raise ValidationError('Выбрано для анулирования владельцев меньше чем необходимо')
@@ -55,3 +55,17 @@ class ConfirmOwnerRequestForm(forms.ModelForm):
     class Meta:
         model = Owner
         fields = ['ownerrequest']
+
+
+# =========================== Форма подтверждения прав на помещение =============================
+class SendAPIRosreestrRequestForm(forms.ModelForm):
+    confirmation = forms.BooleanField(label='', widget=forms.CheckboxInput(
+        attrs={'class': 'bt-switch',
+               'data-on-text': 'Да, хочу',
+               'data-off-text': 'Нет',
+               'data-on-color': 'danger',
+               'data-off-color': 'default'}))
+
+    class Meta:
+        model = Owner
+        fields = ['confirmation']

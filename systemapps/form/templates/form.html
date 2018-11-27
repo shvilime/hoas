@@ -15,7 +15,7 @@
 {% for field in form.visible_fields %}
   <div class="col_full">
     {{ field.label_tag }}
-    {% render_field field class=field|input_class %}
+    {% render_field field class+=field|input_class %}
     {% for error in field.errors %}
       <div class="invalid-feedback">
         {{ error }}

@@ -4,6 +4,8 @@
 
 {% block stylesheet %}
     <link href="{% static '/js/jquery-confirm/jquery-confirm.min.css' %}" rel="stylesheet">
+    <!-- Bootstrap Switch CSS -->
+    <link href="{% static '/js/bootstrap-switches/bs-switches.css' %}" rel="stylesheet" type="text/css"/>
 {% endblock %}
 
 {% block content %}
@@ -13,11 +15,22 @@
     </div>
 
     <div class="col-md-12">
-        <p style="text-align: justify">Для оперативной сверки данных, вы можете запросить некоторые данные c информацией из росреестра
-            с неофициального сайта <strong>rosreestr.net</strong>. Данная информация не содержит сведения о ФИО
-            собственников помещений. <a href="{% url 'rosreestr:data' %}?egrn={{ new_owner.room.cadastre }}"
-               class="button button-mini button-circle nomargin btn-rosreestr-data">
-                <i class="icon-data"></i>Получить данные</a>
+        <p style="text-align: justify">Для оперативной сверки данных, вы можете запросить некоторые данные c бесплатной
+            информацией из росреестра с сайта <strong>rosreestr.net</strong>.
+            <a href="{% url 'rosreestr:rosreestrnet' %}?egrn={{ new_owner.room.cadastre }}"
+               class="button button-mini button-circle nomargin btn-rosreestrnet">
+                <i class="icon-data"></i>Бесплатные данные</a>
+            Данная информация может вообще не содержать сведения о собственниках помещений, либо содержать только дату и
+            номер регистрации прав собственности. Другой вариант проверить сведения - запрос платной выписки из
+            росрестра
+            с сайта <strong>apirosreestr.ru</strong>
+            {#            <a href="{% url 'rosreestr:apirosreestr' %}?egrn={{ new_owner.room.cadastre }}&next={% url 'area:ownerrequests' %}"#}
+            {#               class="button button-mini button-circle button-red nomargin btn-apirosreestr">#}
+            {#                <i class="icon-data"></i>Платные данные</a>#}
+            <a href="" class="button button-mini button-circle button-red nomargin " id="insert-request-button"
+               data-toggle="modal" data-target="#id-modal-apirosreestr"><i class="icon-data"></i>Платные данные</a>
+            Необходимо иметь ввиду, что с ТСЖ будет списано 90 рублей за каждый отправленный запрос. Получение выписки и
+            сверка данных может занять несколько дней.
         </p>
     </div>
 
@@ -93,10 +106,19 @@
     <a href="{% url 'area:ownerrequests' %}" class="button button-dark button-rounded topmargin-sm">Вернуться</a>
 
 
+    <!-- MODAL TO EDIT PHONE -->
+    {% include 'modal.html' with name="apirosreestr" size="sm" header="Отправить запрос" urlname="rosreestr:apirosreestr" maintext="Вы действительно хотите отправить ПЛАТНЫЙ запрос на сайт apirosreestr.ru ?" formname=form buttons="CS" %}
+
+
 {% endblock %}
 
 {% block javascript %}
     <script src="{% static 'js/jquery-confirm/jquery-confirm.min.js' %}"></script>
+    <!-- Bootstrap Switch Plugin -->
+    <script src="{% static 'js/bootstrap-switches/bs-switches.js' %}"></script>
     <script src="{% static 'js/common.js' %}"></script>
     <script src="{% static 'js/area.js' %}"></script>
+    <script>
+        jQuery(".bt-switch").bootstrapSwitch();
+    </script>
 {% endblock %}
