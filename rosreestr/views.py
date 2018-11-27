@@ -2,7 +2,6 @@ from django.shortcuts import redirect
 from django.http import JsonResponse, HttpResponseForbidden
 from decouple import config
 from .rosreestrnet import ClientRosreestrNet
-from .rosreestrapi import ClientApiRosreestr
 from .models import ApiRosreestrRequests
 
 
@@ -21,17 +20,17 @@ def rosreestrnet_getdata(request):
 
 
 def apirosreestr_getdata(request):
-    egrn = request.POST.get('egrn', '')
-    next = request.POST.get('next')
-    apirequest = ApiRosreestrRequests(cadastre=egrn)
-    apirequest.save()
-    apirequest.get_object_info()
-    apirequest.get_encoded_object()
-    apirequest.document_available()
+    # egrn = request.POST.get('egrn', '')
+    # next = request.POST.get('next')
+    # apirequest = ApiRosreestrRequests(cadastre=egrn)
+    # apirequest.save()
+    # apirequest.get_object_info()
+    # apirequest.get_encoded_object()
+    # apirequest.document_available()
 
     # clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
     # clientapi.post(method='cadaster/objectInfoFull', result='encoded_object', query=egrn)
     # if clientapi.response['documents']['XZP']['available'] == True:
     #     return
 
-    return redirect(next)
+    return redirect('area:ownerrequests')

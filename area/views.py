@@ -3,10 +3,11 @@ from django.urls import reverse_lazy
 from django.http import HttpResponseForbidden
 from django.contrib import messages
 from django.views.generic import ListView, DeleteView, UpdateView, DetailView
-from main.urls import redirect_next
+from rosreestr.models import ApiRosreestrRequests
 from .forms import ConfirmOwnerRequestForm, SendAPIRosreestrRequestForm
 from .services import *
 from .models import Owner
+
 
 
 # Create your views here.
@@ -48,6 +49,16 @@ class CheckOwnerRequestView(UpdateView):
     context_object_name = 'new_owner'
     form_class = SendAPIRosreestrRequestForm
     success_url = reverse_lazy('area:ownerrequests')
+
+    def form_valid(self, form):
+        apirequest = ApiRosreestrRequests(cadastre=form.instance.room.cadastre)
+        apirequest.save()
+        apirequest.get_object_info()
+        apirequest.get_encoded_object()
+        if apirequest.document_available():
+            apirequest=1
+        form.instance.rosreestr = apirequest
+        return super(CheckOwnerRequestView, self).form_valid(form=form)
 
 
 

@@ -16,16 +16,16 @@ class ApiRosreestrRequests(models.Model):
     cadastre = models.CharField(validators=[cadastre_regex], max_length=50,
                                 verbose_name='Кадастровый номер',
                                 help_text='Должен соответствовать формату АА:ВВ:CCCCСCC:ККККК')
-    objectinfo_response = models.TextField(null=True, blank=True,
+    objectinfo = models.TextField(null=True, blank=True,
                                 verbose_name='Ответ сервера - ObjectInfoFull')
-    response = models.TextField(null=True, blank=True,
-                                verbose_name='Ответ сайта')
+    order = models.TextField(null=True, blank=True,
+                                verbose_name='Ответ сервера - Save_order')
 
     def get_object_info(self):
         if self.objectinfo_response:
             return True
         clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
-        objectinfo = clientapi.post(method='cadaster/objectInfoFull', query=self.cadastre)
+        objectinfo = clientapi.post(method='Cadaster/objectInfoFull', query=self.cadastre)
         if not clientapi.error:
             self.objectinfo_response = json.dumps(objectinfo)
             self.save()
@@ -35,15 +35,22 @@ class ApiRosreestrRequests(models.Model):
 
     def get_encoded_object(self):
         if self.get_object_info():
-            encoded_json = json.loads(self.objectinfo_response)
+            encoded_json = json.loads(self.objectinfo)
             return encoded_json['encoded_object']
         else:
             return ''
 
     def document_available(self):
         if self.get_object_info():
-            encoded_json = json.loads(self.objectinfo_response)
+            encoded_json = json.loads(self.objectinfo)
             return encoded_json['documents']['XZP']['available']
+
+    def place_order(self):
+        if self.get_object_info():
+            encoded_object = self.get_encoded_object()
+            documents = ['XZP']
+
+        return
 
 
     def __str__(self):

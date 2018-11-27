@@ -107,7 +107,8 @@
 
 
     <!-- MODAL TO EDIT PHONE -->
-    {% include 'modal.html' with name="apirosreestr" size="sm" header="Отправить запрос" urlname="rosreestr:apirosreestr" maintext="Вы действительно хотите отправить ПЛАТНЫЙ запрос на сайт apirosreestr.ru ?" formname=form buttons="CS" %}
+    {% url 'area:checkowner' new_owner.id as action_url %}
+    {% include 'modal.html' with name="apirosreestr" size="sm" header="Отправить запрос" urlname=action_url maintext="Вы действительно хотите отправить ПЛАТНЫЙ запрос на сайт apirosreestr.ru ?" formname=form buttons="CS" %}
 
 
 {% endblock %}

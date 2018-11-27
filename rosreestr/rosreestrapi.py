@@ -76,7 +76,7 @@ class ClientApiRosreestr:
 
     # ============================= Вызываемые методы для получения данных ======================================
     def post(self, method='', result='', **kwargs):
-        self.accepted_method = ('cadaster/objectInfoFull')
+        self.accepted_method = ('cadaster/objectInfoFull','cadaster/Save_order')
         self.api_method = method
         self.result_key = result
         return self.get_data(**kwargs)

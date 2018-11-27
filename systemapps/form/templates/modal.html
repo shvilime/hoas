@@ -23,7 +23,7 @@ with Parameters:
                     {% endif %}
                     {% if formname %}
                         <form id="id-form-{{ name }}" name="name-form-{{ name }}" class="nobottommargin"
-                              action="{% url urlname %}" method="post">
+                              action="{{ urlname }}" method="post">
                             {% csrf_token %}
                             {% include 'form.html' with form=formname %}
                         </form>

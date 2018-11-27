@@ -5,7 +5,7 @@ from .models import ApiRosreestrRequests
 # Register your models here.
 
 class ApiRosreestrRequestsAdmin(admin.ModelAdmin):
-    list_display = ('__str__',)
+    list_display = ('date_request','cadastre')
 
 
 admin.site.register(ApiRosreestrRequests, ApiRosreestrRequestsAdmin)

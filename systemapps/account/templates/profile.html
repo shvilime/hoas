@@ -254,13 +254,14 @@
     </div>
 
     <!-- MODAL TO EDIT PHONE -->
-    {% include 'modal.html' with name="editphone" size="sm" header="Изменить телефон" urlname="account:profile" formname=phonechangeform buttons="CS" %}
+    {% url 'account:profile' as action_url %}
+    {% include 'modal.html' with name="editphone" size="sm" header="Изменить телефон" urlname=action_url formname=phonechangeform buttons="CS" %}
 
     <!-- MODAL TO INSERT OWNER REQUEST -->
-    {% include 'modal.html' with name="ownerrequest" size="lg" header="Послать запрос" urlname="account:profile" formname=sendownerrequestform buttons="CS" %}
+    {% include 'modal.html' with name="ownerrequest" size="lg" header="Послать запрос" urlname=action_url formname=sendownerrequestform buttons="CS" %}
 
     <!-- MODAL TO INSERT COUNTER VALUE -->
-    {% include 'modal.html' with name="countervalue" size="lg" header="Подать показания" urlname="account:profile" formname=sendcountervalueform buttons="CS" %}
+    {% include 'modal.html' with name="countervalue" size="lg" header="Подать показания" urlname=action_url formname=sendcountervalueform buttons="CS" %}
 
 
 {% endblock %}
