@@ -61,7 +61,6 @@ class ClientApiRosreestr:
             self.response = parsed_json
             return True
 
-
     def get_data(self, **kwargs):
         self.params = kwargs
         if self.api_method not in self.accepted_method:

@@ -1,6 +1,7 @@
+import json
 from django.db import models
 from django.core.validators import RegexValidator
-from .rosreestrapi import *
+from rosreestr.rosreestrapi import ClientApiRosreestr
 from decouple import config
 
 
@@ -18,39 +19,46 @@ class ApiRosreestrRequests(models.Model):
                                 help_text='Должен соответствовать формату АА:ВВ:CCCCСCC:ККККК')
     objectinfo = models.TextField(null=True, blank=True,
                                 verbose_name='Ответ сервера - ObjectInfoFull')
-    order = models.TextField(null=True, blank=True,
-                                verbose_name='Ответ сервера - Save_order')
+    orderinfo = models.TextField(null=True, blank=True,
+                                verbose_name='Ответ сервера - Transaction/info')
 
-    def get_object_info(self):
-        if self.objectinfo_response:
+    def get_object_info(self):     #  Получет от сервера общую информацию об объекте и сохраняет ее
+        if self.objectinfo:
             return True
         clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
         objectinfo = clientapi.post(method='Cadaster/objectInfoFull', query=self.cadastre)
         if not clientapi.error:
-            self.objectinfo_response = json.dumps(objectinfo)
+            self.objectinfo = json.dumps(objectinfo)
             self.save()
             return True
         else:
             return False
 
-    def get_encoded_object(self):
+    def get_encoded_object(self):    # Возвращает внутренний кодированный код объекта
         if self.get_object_info():
             encoded_json = json.loads(self.objectinfo)
             return encoded_json['encoded_object']
         else:
             return ''
 
-    def document_available(self):
+    def document_available(self):    # Возвращает доступность запроса выписки под объекту
         if self.get_object_info():
             encoded_json = json.loads(self.objectinfo)
             return encoded_json['documents']['XZP']['available']
 
     def place_order(self):
-        if self.get_object_info():
+        if self.get_object_info() and not self.order:
             encoded_object = self.get_encoded_object()
             documents = ['XZP']
-
-        return
+            clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
+            order = clientapi.post(method='Cadaster/Save_order', documents=documents)
+            if not clientapi.error:
+                self.order = json.dumps(order)
+                self.save()
+                return True
+            else:
+                return False
+        return False
 
 
     def __str__(self):

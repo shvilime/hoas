@@ -2,13 +2,12 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.http import HttpResponseForbidden
 from django.contrib import messages
-from django.views.generic import ListView, DeleteView, UpdateView, DetailView
+from django.core.exceptions import ValidationError
+from django.views.generic import ListView, DeleteView, UpdateView
 from rosreestr.models import ApiRosreestrRequests
 from .forms import ConfirmOwnerRequestForm, SendAPIRosreestrRequestForm
 from .services import *
 from .models import Owner
-
-
 
 # Create your views here.
 
@@ -38,11 +37,6 @@ class OwnerRequestView(UpdateView):
         return super(OwnerRequestView, self).form_valid(form=form)
 
 # ============================== Проверка запроса по данным росреестра ==============================
-class _CheckOwnerRequestView(DetailView):
-    template_name = 'checkrequest.html'
-    model = Owner
-    context_object_name = 'new_owner'
-
 class CheckOwnerRequestView(UpdateView):
     template_name = 'checkrequest.html'
     model = Owner
@@ -51,13 +45,18 @@ class CheckOwnerRequestView(UpdateView):
     success_url = reverse_lazy('area:ownerrequests')
 
     def form_valid(self, form):
-        apirequest = ApiRosreestrRequests(cadastre=form.instance.room.cadastre)
-        apirequest.save()
-        apirequest.get_object_info()
-        apirequest.get_encoded_object()
-        if apirequest.document_available():
-            apirequest=1
-        form.instance.rosreestr = apirequest
+        if not form.instance.rosreestr:
+            apirequest = ApiRosreestrRequests(cadastre=form.instance.room.cadastre)
+            apirequest.save()
+            if not apirequest.get_object_info():
+                raise ValidationError('Ошибка')
+            apirequest.get_encoded_object()
+            if apirequest.document_available():
+                if apirequest.place_order():
+                    form.instance.rosreestr = apirequest
+            messages.success(self.request, 'Запрос в apirosreestr.ru отправлен', 'icon-ok-sign')
+        else:
+            messages.error(self.request, 'Запрос в росреестр уже отправлялся', 'icon-remove-sign')
         return super(CheckOwnerRequestView, self).form_valid(form=form)
 
 
