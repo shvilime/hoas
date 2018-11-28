@@ -26,7 +26,7 @@ class ApiRosreestrRequests(models.Model):
         if self.objectinfo:
             return True
         clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
-        objectinfo = clientapi.post(method='Cadaster/objectInfoFull', query=self.cadastre)
+        objectinfo = clientapi.post(method='cadaster/objectInfoFull', query=self.cadastre)
         if not clientapi.error:
             self.objectinfo = json.dumps(objectinfo)
             self.save()
@@ -47,13 +47,13 @@ class ApiRosreestrRequests(models.Model):
             return encoded_json['documents']['XZP']['available']
 
     def place_order(self):
-        if self.get_object_info() and not self.order:
+        if self.get_object_info() and not self.orderinfo:
             encoded_object = self.get_encoded_object()
             documents = ['XZP']
             clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
-            order = clientapi.post(method='Cadaster/Save_order', documents=documents)
+            orderinfo = clientapi.post(method='cadaster/Save_order', documents=documents)
             if not clientapi.error:
-                self.order = json.dumps(order)
+                self.orderinfo = json.dumps(orderinfo)
                 self.save()
                 return True
             else:

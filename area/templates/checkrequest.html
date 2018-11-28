@@ -108,7 +108,7 @@
 
     <!-- MODAL TO EDIT PHONE -->
     {% url 'area:checkowner' new_owner.id as action_url %}
-    {% include 'modal.html' with name="apirosreestr" size="sm" header="Отправить запрос" urlname=action_url maintext="Вы действительно хотите отправить ПЛАТНЫЙ запрос на сайт apirosreestr.ru ?" formname=form buttons="CS" %}
+    {% include 'modal.html' with name="apirosreestr" size="lg" header="Отправить запрос" urlname=action_url maintext="Вы действительно хотите отправить ПЛАТНЫЙ запрос на сайт apirosreestr.ru ?" formname=form buttons="CS" %}
 
 
 {% endblock %}
@@ -122,4 +122,11 @@
     <script>
         jQuery(".bt-switch").bootstrapSwitch();
     </script>
+    {% if form.errors %}
+        <script>
+            jQuery(function ($) {
+                $("#id-modal-apirosreestr").modal("show");
+            });
+        </script>
+    {% endif %}
 {% endblock %}

@@ -46,17 +46,20 @@ class CheckOwnerRequestView(UpdateView):
 
     def form_valid(self, form):
         if not form.instance.rosreestr:
-            apirequest = ApiRosreestrRequests(cadastre=form.instance.room.cadastre)
-            apirequest.save()
-            if not apirequest.get_object_info():
-                raise ValidationError('Ошибка')
-            apirequest.get_encoded_object()
-            if apirequest.document_available():
-                if apirequest.place_order():
-                    form.instance.rosreestr = apirequest
-            messages.success(self.request, 'Запрос в apirosreestr.ru отправлен', 'icon-ok-sign')
-        else:
-            messages.error(self.request, 'Запрос в росреестр уже отправлялся', 'icon-remove-sign')
+            form.add_error(None, ValidationError('Can not be greater than one'))
+            return super(CheckOwnerRequestView, self).form_invalid(form=form)
+        #     apirequest = ApiRosreestrRequests(cadastre=form.instance.room.cadastre)
+        #     apirequest.save()
+        #     if not apirequest.get_object_info():
+        #
+        #
+        #     apirequest.get_encoded_object()
+        #     if apirequest.document_available():
+        #         if apirequest.place_order():
+        #             form.instance.rosreestr = apirequest
+        #     messages.success(self.request, 'Запрос в apirosreestr.ru отправлен', 'icon-ok-sign')
+        # else:
+        #     messages.error(self.request, 'Запрос в росреестр уже отправлялся', 'icon-remove-sign')
         return super(CheckOwnerRequestView, self).form_valid(form=form)
 
 
