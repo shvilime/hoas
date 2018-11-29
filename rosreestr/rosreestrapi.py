@@ -57,7 +57,7 @@ class ClientApiRosreestr:
             self.error_code = parsed_json['error']['code']
             self.error = parsed_json['error']['mess']
             return False
-        elif parsed_json['encoded_object']:
+        else:
             self.response = parsed_json
             return True
 

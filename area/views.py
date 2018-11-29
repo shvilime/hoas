@@ -46,16 +46,20 @@ class CheckOwnerRequestView(UpdateView):
 
     def form_valid(self, form):
         if not form.instance.rosreestr:
-            form.add_error(None, ValidationError('Can not be greater than one'))
-            return super(CheckOwnerRequestView, self).form_invalid(form=form)
-        #     apirequest = ApiRosreestrRequests(cadastre=form.instance.room.cadastre)
-        #     apirequest.save()
-        #     if not apirequest.get_object_info():
-        #
-        #
-        #     apirequest.get_encoded_object()
-        #     if apirequest.document_available():
-        #         if apirequest.place_order():
+            apirequest = ApiRosreestrRequests(cadastre=form.instance.room.cadastre)
+            if not apirequest.get_object_info():
+                form.add_error(None, ValidationError('Не удалось получить информацию о данном объекте'))
+                return super(CheckOwnerRequestView, self).form_invalid(form=form)
+            if not apirequest.document_available():
+                form.add_error(None, ValidationError('Для данного объекта запрос выписки недоступен'))
+                return super(CheckOwnerRequestView, self).form_invalid(form=form)
+            if not apirequest.place_order():
+                form.add_error(None, ValidationError('Не удалось разместить заказ выписки'))
+                return super(CheckOwnerRequestView, self).form_invalid(form=form)
+            if not apirequest.get_invoice():
+                form.add_error(None, ValidationError('Не удалось получить счет для оплаты'))
+                return super(CheckOwnerRequestView, self).form_invalid(form=form)
+
         #             form.instance.rosreestr = apirequest
         #     messages.success(self.request, 'Запрос в apirosreestr.ru отправлен', 'icon-ok-sign')
         # else:

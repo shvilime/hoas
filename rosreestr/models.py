@@ -18,43 +18,64 @@ class ApiRosreestrRequests(models.Model):
                                 verbose_name='Кадастровый номер',
                                 help_text='Должен соответствовать формату АА:ВВ:CCCCСCC:ККККК')
     objectinfo = models.TextField(null=True, blank=True,
-                                verbose_name='Ответ сервера - ObjectInfoFull')
+                                  verbose_name='Ответ сервера - ObjectInfoFull')
     orderinfo = models.TextField(null=True, blank=True,
-                                verbose_name='Ответ сервера - Transaction/info')
+                                 verbose_name='Ответ сервера - Save_order')
+    transactioninfo = models.TextField(null=True, blank=True,
+                                       verbose_name='Ответ сервера - Transaction/info')
 
-    def get_object_info(self):     #  Получет от сервера общую информацию об объекте и сохраняет ее
+    def get_object_info(self):  # Получет от сервера общую информацию об объекте и сохраняет ее
         if self.objectinfo:
             return True
         clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
         objectinfo = clientapi.post(method='cadaster/objectInfoFull', query=self.cadastre)
         if not clientapi.error:
             self.objectinfo = json.dumps(objectinfo)
-            self.save()
             return True
         else:
             return False
 
-    def get_encoded_object(self):    # Возвращает внутренний кодированный код объекта
+    def get_encoded_object(self):  # Возвращает внутренний кодированный код объекта
         if self.get_object_info():
             encoded_json = json.loads(self.objectinfo)
             return encoded_json['encoded_object']
         else:
             return ''
 
-    def document_available(self):    # Возвращает доступность запроса выписки под объекту
+    def document_available(self):  # Возвращает доступность запроса выписки под объекту
         if self.get_object_info():
             encoded_json = json.loads(self.objectinfo)
             return encoded_json['documents']['XZP']['available']
 
     def place_order(self):
-        if self.get_object_info() and not self.orderinfo:
+        if self.orderinfo:
+            return True
+        if self.get_object_info():
             encoded_object = self.get_encoded_object()
-            documents = ['XZP']
+            documents = 'XZP'
             clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
-            orderinfo = clientapi.post(method='cadaster/Save_order', documents=documents)
+            orderinfo = clientapi.post(method='cadaster/Save_order', documents=documents, encoded_object=encoded_object)
             if not clientapi.error:
                 self.orderinfo = json.dumps(orderinfo)
-                self.save()
+                return True
+            else:
+                return False
+        return False
+
+    def get_invoice_number(self):
+        if self.place_order():
+            encoded_json = json.loads(self.orderinfo)
+            return encoded_json['transaction_id']
+        else:
+            return ''
+
+    def get_invoice(self):
+        if self.orderinfo:
+            invoice = self.get_invoice_number()
+            clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
+            transaction = clientapi.post(method='transaction/info', id=invoice)
+            if not clientapi.error:
+                self.transactioninfo = json.dumps(transaction)
                 return True
             else:
                 return False
