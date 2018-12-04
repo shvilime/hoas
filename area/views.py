@@ -9,6 +9,7 @@ from .forms import ConfirmOwnerRequestForm, SendAPIRosreestrRequestForm
 from .services import *
 from .models import Owner
 
+
 # Create your views here.
 
 # =================== Просмотр списка запросов на регистрацию собственности =======================
@@ -16,6 +17,7 @@ class ListOwnerRequestView(ListView):
     template_name = 'ownerrequests.html'
     queryset = Owner.objects.filter(date_confirmation=None, date_cancellation=None)
     context_object_name = 'requests'
+
 
 # ======================= Подтверждение запроса на регистрацию собственности ======================
 class OwnerRequestView(UpdateView):
@@ -25,7 +27,7 @@ class OwnerRequestView(UpdateView):
     form_class = ConfirmOwnerRequestForm
     success_url = reverse_lazy('area:ownerrequests')
 
-    def get_form_kwargs(self):    # Передадим в форму параметр - помещение, на которое пришел запрос
+    def get_form_kwargs(self):  # Передадим в форму параметр - помещение, на которое пришел запрос
         kwargs = super(OwnerRequestView, self).get_form_kwargs()
         kwargs['room'] = self.get_object().room
         return kwargs
@@ -35,6 +37,7 @@ class OwnerRequestView(UpdateView):
         form.instance.confirm()  # Подтвердим нового собственника
         messages.success(self.request, 'Новый владелец подтвержден', 'icon-ok-sign')
         return super(OwnerRequestView, self).form_valid(form=form)
+
 
 # ============================== Проверка запроса по данным росреестра ==============================
 class CheckOwnerRequestView(UpdateView):
@@ -59,13 +62,17 @@ class CheckOwnerRequestView(UpdateView):
             if not apirequest.get_invoice():
                 form.add_error(None, ValidationError('Не удалось получить счет для оплаты'))
                 return super(CheckOwnerRequestView, self).form_invalid(form=form)
-
-        #             form.instance.rosreestr = apirequest
-        #     messages.success(self.request, 'Запрос в apirosreestr.ru отправлен', 'icon-ok-sign')
-        # else:
-        #     messages.error(self.request, 'Запрос в росреестр уже отправлялся', 'icon-remove-sign')
+            if not apirequest.pay_invoice():
+                form.add_error(None, ValidationError('Не удалось оплатить заказ'))
+                return super(CheckOwnerRequestView, self).form_invalid(form=form)
+            apirequest.save()
+            form.instance.rosreestr = apirequest
+            messages.success(self.request, 'Запрос в apirosreestr.ru отправлен', 'icon-ok-sign')
+        else:
+            apirequest = ApiRosreestrRequests.objects.get(pk=form.instance.rosreestr.id)
+            if apirequest.status == 5:
+                messages.error(self.request, 'Запрос в росреестр уже отправлялся', 'icon-remove-sign')
         return super(CheckOwnerRequestView, self).form_valid(form=form)
-
 
 
 # ======================= Удаление заявки на право собственности на помещение =======================
@@ -76,8 +83,8 @@ class DeleteOwnerRequest(DeleteView):
         return redirect('home')
 
     def dispatch(self, request, *args, **kwargs):
-        obj = self.get_object()   # Попробуем найти объект
-        if (not request.user.is_staff) and (request.user != obj.user):   # Если сотрудник или создатель, все гуд
+        obj = self.get_object()  # Попробуем найти объект
+        if (not request.user.is_staff) and (request.user != obj.user):  # Если сотрудник или создатель, все гуд
             return HttpResponseForbidden("Недостаточно прав для данного действия")
         return super(DeleteOwnerRequest, self).dispatch(request, *args, **kwargs)
 
