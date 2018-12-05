@@ -40,6 +40,7 @@ class ApiRosreestrRequests(models.Model):
         if not clientapi.error:
             self.objectinfo = json.dumps(objectinfo)
             self.status = 2
+            self.save()
             return True
         else:
             return False
@@ -63,28 +64,37 @@ class ApiRosreestrRequests(models.Model):
             if not clientapi.error:
                 self.orderinfo = json.dumps(orderinfo)
                 self.status = 3
+                self.save()
                 return True
             else:
                 return False
         return False
 
     def get_invoice(self):  # Получает от сервера информацию об инвойсе для оплаты ранее отосланного заказа
-        if self.transactioninfo:
-            return True
         if self.place_order():
             invoice = json.loads(self.orderinfo)['transaction_id']
             clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
             transaction = clientapi.post(method='transaction/info', id=invoice)
             if not clientapi.error:
                 self.transactioninfo = json.dumps(transaction)
-                self.status = 4
+                if not transaction['paid']:
+                    self.status = 4
+                self.save()
                 return True
             else:
                 return False
         return False
 
+    def invoice_id(self):  # Возвращает уникальный номер инвойса
+        if self.transactioninfo:
+            try:
+                return json.loads(self.transactioninfo)['id']
+            except:
+                return ''
+        return ''
+
     def get_confirm_code(self):  # Проверяет возможность оплаты инвойса и возвращает контрольный код оплаты
-        if self.get_invoice():
+        if self.transactioninfo:
             encoded_json = json.loads(self.transactioninfo)
             try:
                 payment_allowed = encoded_json['pay_methods']['PA']['allowed']  # Возможна ли оплата
@@ -96,14 +106,37 @@ class ApiRosreestrRequests(models.Model):
                 return payment_code
         return ''
 
+    def invoice_is_paid(self):  # Проверяет был ли оплачен ранее
+        if self.transactioninfo:
+            try:
+                return json.loads(self.transactioninfo)['paid']  # Статус оплаты
+            except:
+                return False
+        return False
+
     def pay_invoice(self):  # Оплачивает инвойс, посылая серверу контрольный код оплаты
         payment_code = self.get_confirm_code()
         if payment_code:
             invoice = json.loads(self.orderinfo)['transaction_id']
             clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
             confirmation = clientapi.post(method='transaction/pay', id=invoice, confirm=payment_code)
-            self.status = 5
-            return confirmation['paid']
+            if not clientapi.error:
+                self.status = 5
+                self.save()
+                return confirmation['paid']
+            else:
+                return False
+        return False
+
+    def order_info(self):
+        invoice = self.invoice_id()
+        if invoice:
+            clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
+            orderinfo = clientapi.post(method='cadaster/orders', id=invoice)
+            if not clientapi.error:
+                return True
+            else:
+                return False
         return False
 
     def __str__(self):

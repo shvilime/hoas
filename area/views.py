@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.http import HttpResponseForbidden
@@ -48,30 +49,25 @@ class CheckOwnerRequestView(UpdateView):
     success_url = reverse_lazy('area:ownerrequests')
 
     def form_valid(self, form):
-        if not form.instance.rosreestr:
-            apirequest = ApiRosreestrRequests(cadastre=form.instance.room.cadastre)
-            if not apirequest.get_object_info():
-                form.add_error(None, ValidationError('Не удалось получить информацию о данном объекте'))
-                return super(CheckOwnerRequestView, self).form_invalid(form=form)
-            if not apirequest.document_available():
-                form.add_error(None, ValidationError('Для данного объекта запрос выписки недоступен'))
-                return super(CheckOwnerRequestView, self).form_invalid(form=form)
-            if not apirequest.place_order():
-                form.add_error(None, ValidationError('Не удалось разместить заказ выписки'))
-                return super(CheckOwnerRequestView, self).form_invalid(form=form)
-            if not apirequest.get_invoice():
-                form.add_error(None, ValidationError('Не удалось получить счет для оплаты'))
-                return super(CheckOwnerRequestView, self).form_invalid(form=form)
-            if not apirequest.pay_invoice():
-                form.add_error(None, ValidationError('Не удалось оплатить заказ'))
-                return super(CheckOwnerRequestView, self).form_invalid(form=form)
-            apirequest.save()
-            form.instance.rosreestr = apirequest
-            messages.success(self.request, 'Запрос в apirosreestr.ru отправлен', 'icon-ok-sign')
-        else:
-            apirequest = ApiRosreestrRequests.objects.get(pk=form.instance.rosreestr.id)
-            if apirequest.status == 5:
-                messages.error(self.request, 'Запрос в росреестр уже отправлялся', 'icon-remove-sign')
+        apirequest, created = ApiRosreestrRequests.objects.get_or_create(cadastre=form.instance.room.cadastre,
+                                                                         date_request__date=datetime.date.today())
+        if not apirequest.get_object_info():
+            form.add_error(None, ValidationError('Не удалось получить информацию о данном объекте'))
+            return super(CheckOwnerRequestView, self).form_invalid(form=form)
+        if not apirequest.document_available():
+            form.add_error(None, ValidationError('Для данного объекта запрос выписки недоступен'))
+            return super(CheckOwnerRequestView, self).form_invalid(form=form)
+        if not apirequest.place_order():
+            form.add_error(None, ValidationError('Не удалось разместить заказ выписки'))
+            return super(CheckOwnerRequestView, self).form_invalid(form=form)
+        if not apirequest.get_invoice():
+            form.add_error(None, ValidationError('Не удалось получить счет для оплаты'))
+            return super(CheckOwnerRequestView, self).form_invalid(form=form)
+        if not apirequest.invoice_is_paid() and not apirequest.pay_invoice():
+            form.add_error(None, ValidationError('Не удалось оплатить заказ'))
+            return super(CheckOwnerRequestView, self).form_invalid(form=form)
+        form.instance.rosreestr = apirequest
+        messages.success(self.request, 'Запрос в apirosreestr.ru отправлен', 'icon-ok-sign')
         return super(CheckOwnerRequestView, self).form_valid(form=form)
 
 

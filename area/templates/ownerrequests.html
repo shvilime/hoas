@@ -24,6 +24,7 @@
                     <th>Помещение</th>
                     <th>Доля в имуществе(%)</th>
                     <th>Дата запроса</th>
+                    <th>Проверка</th>
                     <th>Действие</th>
                 </tr>
                 </thead>
@@ -35,6 +36,12 @@
                         <td>{{ request.room }}</td>
                         <td>{{ request.portion }}</td>
                         <td>{{ request.date_request }}</td>
+                        {% if request.rosreestr %}
+                            <td>{{ request.rosreestr.get_status_display }}</td>
+                        {% else %}
+                            <td>Не проверялся</td>
+                        {% endif %}
+
                         <td class="center">
                             <a class="i-small i-light i-rounded nobottommargin notopmargin icon-check"
                                title="Проверить"
