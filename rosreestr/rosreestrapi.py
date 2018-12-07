@@ -1,4 +1,5 @@
 import json
+import xml.etree.cElementTree as ET
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 from urllib.error import URLError
@@ -40,7 +41,8 @@ class ClientApiRosreestr:
         headers = {'Token': self.token}
         params = urlencode(self.params).encode()  # Перекодируем параметры в строку параметров запроса
         # params = bytes(json.dumps(self.params), encoding="utf-8")
-        request = Request(url=self.url + self.api_method, data=params, headers=headers)  # Сформируем полную строку запроса
+        request = Request(url=self.url + self.api_method, data=params,
+                          headers=headers)  # Сформируем полную строку запроса
         try:
             response = urlopen(request)  # Попытаемся открыть строку запроса
         except URLError as e:
@@ -51,14 +53,34 @@ class ClientApiRosreestr:
         else:
             return response.read().decode()
 
-    def check_result(self, json_string):
-        parsed_json = json.loads(json_string)
-        if parsed_json['error']:
-            self.error_code = parsed_json['error']['code']
-            self.error = parsed_json['error']['mess']
+    @staticmethod
+    def is_json(any_string):
+        try:
+            json_object = json.loads(any_string)
+        except ValueError:
             return False
-        else:
-            self.response = parsed_json
+        return True
+
+    @staticmethod
+    def is_xml(any_string):
+        try:
+            ET.fromstring(any_string)
+        except ET.ParseError:
+            return False
+        return True
+
+    def check_result(self, any_string):
+        if self.is_json(any_string):
+            parsed_json = json.loads(any_string)
+            if parsed_json['error']:
+                self.error_code = parsed_json['error']['code']
+                self.error = parsed_json['error']['mess']
+                return False
+            else:
+                self.response = parsed_json
+                return True
+        if self.is_xml(any_string):
+            self.response = any_string
             return True
 
     def get_data(self, **kwargs):
@@ -75,8 +97,9 @@ class ClientApiRosreestr:
 
     # ============================= Вызываемые методы для получения данных ======================================
     def post(self, method='', result='', **kwargs):
-        self.accepted_method = ('cadaster/objectInfoFull','cadaster/Save_order','cadaster/orders',
-                                'transaction/info','transaction/pay')
+        self.accepted_method = (
+            'cadaster/objectInfoFull', 'cadaster/Save_order', 'cadaster/orders', 'cadaster/download',
+            'transaction/info', 'transaction/pay')
         self.api_method = method
         self.result_key = result
         return self.get_data(**kwargs)

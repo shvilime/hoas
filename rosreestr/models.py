@@ -10,11 +10,12 @@ from decouple import config
 
 # ======================= База запросов на сайте apirosreestr.ru ==========================
 class ApiRosreestrRequests(models.Model):
-    STATUS_CODE = ((1, 'Создан'),
-                   (2, 'Объект идентифицирован'),
-                   (3, 'Отправлен заказ'),
-                   (4, 'Выставлен инвойс'),
-                   (5, 'Оплачен'))
+    STATUS_CODE = ((1, 'Создан запрос'),
+                   (2, 'Ожидает оплаты'),
+                   (3, 'Оплачено, в работе'),
+                   (4, 'Выполнено'),
+                   (5, 'Ошибка при обработке'),
+                   (6, 'Запрос отменен'))
     date_request = models.DateTimeField(auto_now_add=True,
                                         verbose_name='Дата и время запроса')
     cadastre_regex = RegexValidator(regex=r'^\d{2}:\d{2}:\d{6,7}:\d{1,35}$',
@@ -24,10 +25,17 @@ class ApiRosreestrRequests(models.Model):
                                 help_text='Должен соответствовать формату АА:ВВ:CCCCСCC:ККККК')
     objectinfo = models.TextField(null=True, blank=True,
                                   verbose_name='Ответ сервера - ObjectInfoFull')
-    orderinfo = models.TextField(null=True, blank=True,
-                                 verbose_name='Ответ сервера - Save_order')
-    transactioninfo = models.TextField(null=True, blank=True,
-                                       verbose_name='Ответ сервера - Transaction/info')
+    invoice = models.IntegerField(null=True, blank=True,
+                                  verbose_name='Номер заказа/счета для оплаты')
+    payment_allowed = models.BooleanField(default=False, verbose_name='Оплата разрешена')
+    sufficient_funds = models.BooleanField(default=False, verbose_name='Достаточно денег для оплаты')
+    payment_code = models.CharField(max_length=200, null=True, blank=True,
+                                    verbose_name='Код подтверждения оплаты счета')
+    price = models.DecimalField(max_digits=5, decimal_places=2, default=0,
+                                verbose_name='Стоимость заказа')
+    is_paid = models.BooleanField(default=False, verbose_name='Оплачен')
+    document = models.IntegerField(null=True, blank=True,
+                                  verbose_name='Номер документа для скачивания')
     status = models.SmallIntegerField(default=1,
                                       choices=STATUS_CODE,
                                       verbose_name='Статус заказа')
@@ -39,7 +47,6 @@ class ApiRosreestrRequests(models.Model):
         objectinfo = clientapi.post(method='cadaster/objectInfoFull', query=self.cadastre)
         if not clientapi.error:
             self.objectinfo = json.dumps(objectinfo)
-            self.status = 2
             self.save()
             return True
         else:
@@ -54,85 +61,75 @@ class ApiRosreestrRequests(models.Model):
                 return False
         return False
 
+    def encoded_object(self):  # Возвращает внутренний код объекта
+        if self.get_object_info():
+            encoded_json = json.loads(self.objectinfo)
+            try:
+                return encoded_json['encoded_object']
+            except:
+                return ''
+        return ''
+
     def place_order(self):  # Отправляет заявку на запрос выписки об объекте и получает данные о заказе
-        if self.orderinfo:
+        if self.invoice:
             return True
         if self.get_object_info():
-            encoded_object = json.loads(self.objectinfo)['encoded_object']
             clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
-            orderinfo = clientapi.post(method='cadaster/Save_order', documents='XZP', encoded_object=encoded_object)
+            orderinfo = clientapi.post(method='cadaster/Save_order', documents='XZP',
+                                       encoded_object=self.encoded_object())
             if not clientapi.error:
-                self.orderinfo = json.dumps(orderinfo)
-                self.status = 3
+                self.invoice = orderinfo['transaction_id']
+                self.status = 1
                 self.save()
                 return True
             else:
                 return False
         return False
 
-    def get_invoice(self):  # Получает от сервера информацию об инвойсе для оплаты ранее отосланного заказа
-        if self.place_order():
-            invoice = json.loads(self.orderinfo)['transaction_id']
+    def update_invoice_info(self):  # Получает текущую информацию от состоянии заказа
+        if self.invoice:
             clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
-            transaction = clientapi.post(method='transaction/info', id=invoice)
+            info = clientapi.post(method='transaction/info', id=self.invoice)
             if not clientapi.error:
-                self.transactioninfo = json.dumps(transaction)
-                if not transaction['paid']:
-                    self.status = 4
+                self.payment_code = info['pay_methods']['PA']['confirm_code']  # Сохраним контрольный код оплаты
+                self.payment_allowed = info['pay_methods']['PA']['allowed']  # Возможна ли оплата
+                self.sufficient_funds = info['pay_methods']['PA']['sufficient_funds']  # Достаточно ли денег на счете
+                self.is_paid = info['paid']  # Запишем статус оплаты
                 self.save()
                 return True
             else:
                 return False
         return False
 
-    def invoice_id(self):  # Возвращает уникальный номер инвойса
-        if self.transactioninfo:
-            try:
-                return json.loads(self.transactioninfo)['id']
-            except:
-                return ''
-        return ''
-
-    def get_confirm_code(self):  # Проверяет возможность оплаты инвойса и возвращает контрольный код оплаты
-        if self.transactioninfo:
-            encoded_json = json.loads(self.transactioninfo)
-            try:
-                payment_allowed = encoded_json['pay_methods']['PA']['allowed']  # Возможна ли оплата
-                money_enough = encoded_json['pay_methods']['PA']['sufficient_funds']  # Достаточно ли денег на счете
-                payment_code = encoded_json['pay_methods']['PA']['confirm_code']  # Какой контрольный код оплаты
-            except:
-                return ''
-            if payment_allowed and money_enough:
-                return payment_code
-        return ''
-
-    def invoice_is_paid(self):  # Проверяет был ли оплачен ранее
-        if self.transactioninfo:
-            try:
-                return json.loads(self.transactioninfo)['paid']  # Статус оплаты
-            except:
+    def update_order_info(self):
+        if self.invoice:
+            clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
+            orderinfo = clientapi.post(method='cadaster/orders', id=self.invoice)
+            if not clientapi.error:
+                self.price = orderinfo['documents'][0]['price']
+                self.status = orderinfo['documents'][0]['status']
+                self.document = orderinfo['documents'][0]['id']
+                self.save()
+                return True
+            else:
                 return False
         return False
 
     def pay_invoice(self):  # Оплачивает инвойс, посылая серверу контрольный код оплаты
-        payment_code = self.get_confirm_code()
-        if payment_code:
-            invoice = json.loads(self.orderinfo)['transaction_id']
+        if self.payment_allowed and self.sufficient_funds and self.payment_code:
             clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
-            confirmation = clientapi.post(method='transaction/pay', id=invoice, confirm=payment_code)
+            confirmation = clientapi.post(method='transaction/pay', id=self.invoice, confirm=self.payment_code)
             if not clientapi.error:
-                self.status = 5
-                self.save()
+                self.update_order_info()
                 return confirmation['paid']
             else:
                 return False
         return False
 
-    def order_info(self):
-        invoice = self.invoice_id()
-        if invoice:
+    def download_file(self):
+        if self.status == 4 and self.document:
             clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
-            orderinfo = clientapi.post(method='cadaster/orders', id=invoice)
+            file = clientapi.post(method='cadaster/download', document_id=self.document, format='XML')
             if not clientapi.error:
                 return True
             else:

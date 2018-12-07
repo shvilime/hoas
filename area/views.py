@@ -49,8 +49,12 @@ class CheckOwnerRequestView(UpdateView):
     success_url = reverse_lazy('area:ownerrequests')
 
     def form_valid(self, form):
-        apirequest, created = ApiRosreestrRequests.objects.get_or_create(cadastre=form.instance.room.cadastre,
-                                                                         date_request__date=datetime.date.today())
+        if form.instance.rosreestr:     # Если к заявке на собственность уже привязан запрос, то работаем с ним
+            apirequest = ApiRosreestrRequests.objects.get(pk=form.instance.rosreestr.id)
+        else:                           # Иначе создать новый запрос или получить созданный, но непривязанный
+            apirequest, created = ApiRosreestrRequests.objects.get_or_create(cadastre=form.instance.room.cadastre,
+                                                                             date_request__date=datetime.date.today())
+
         if not apirequest.get_object_info():
             form.add_error(None, ValidationError('Не удалось получить информацию о данном объекте'))
             return super(CheckOwnerRequestView, self).form_invalid(form=form)
@@ -60,12 +64,17 @@ class CheckOwnerRequestView(UpdateView):
         if not apirequest.place_order():
             form.add_error(None, ValidationError('Не удалось разместить заказ выписки'))
             return super(CheckOwnerRequestView, self).form_invalid(form=form)
-        if not apirequest.get_invoice():
-            form.add_error(None, ValidationError('Не удалось получить счет для оплаты'))
+        if not apirequest.update_invoice_info():
+            form.add_error(None, ValidationError('Не удалось получить информацию о состоянии инвойса'))
             return super(CheckOwnerRequestView, self).form_invalid(form=form)
-        if not apirequest.invoice_is_paid() and not apirequest.pay_invoice():
+        if not apirequest.is_paid and not apirequest.pay_invoice():
             form.add_error(None, ValidationError('Не удалось оплатить заказ'))
             return super(CheckOwnerRequestView, self).form_invalid(form=form)
+
+        apirequest.download_file()
+
+        apirequest.update_order_info()   #удалить потом
+
         form.instance.rosreestr = apirequest
         messages.success(self.request, 'Запрос в apirosreestr.ru отправлен', 'icon-ok-sign')
         return super(CheckOwnerRequestView, self).form_valid(form=form)
