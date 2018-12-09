@@ -7,7 +7,7 @@ from .models import User
 class UserAdmin(DjangoUserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('first_name', 'last_name', 'phone')}),
+        ('Personal info', {'fields': ('firstname', 'lastname', 'phone')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Important dates', {'fields': ('last_login',)}),
     )
@@ -18,8 +18,8 @@ class UserAdmin(DjangoUserAdmin):
         }),
     )
     list_display = ('__str__', 'phone', 'is_owner' ,'is_active')
-    search_fields = ('email', 'first_name', 'last_name')
-    ordering = ('last_name', 'first_name')
+    search_fields = ('email', 'firstname', 'lastname')
+    ordering = ('lastname', 'firstname')
     list_filter = ('is_owner','is_staff','is_active')
 
 admin.site.register(User, UserAdmin)

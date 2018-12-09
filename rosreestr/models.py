@@ -1,6 +1,8 @@
 import json
+import re
+import xmltodict
+from .services import find
 from django.db import models
-from django.core.validators import RegexValidator
 from rosreestr.rosreestrapi import ClientApiRosreestr
 from decouple import config
 
@@ -10,17 +12,15 @@ from decouple import config
 
 # ======================= База запросов на сайте apirosreestr.ru ==========================
 class ApiRosreestrRequests(models.Model):
-    STATUS_CODE = ((1, 'Создан запрос'),
-                   (2, 'Ожидает оплаты'),
-                   (3, 'Оплачено, в работе'),
-                   (4, 'Выполнено'),
-                   (5, 'Ошибка при обработке'),
-                   (6, 'Запрос отменен'))
+    CHECK_CODE = ((1, 'Создан запрос'),
+                  (2, 'Ожидает оплаты'),
+                  (3, 'Оплачено, в работе'),
+                  (4, 'Выполнено'),
+                  (5, 'Ошибка при обработке'),
+                  (6, 'Запрос отменен'))
     date_request = models.DateTimeField(auto_now_add=True,
                                         verbose_name='Дата и время запроса')
-    cadastre_regex = RegexValidator(regex=r'^\d{2}:\d{2}:\d{6,7}:\d{1,35}$',
-                                    message="Должен соответствовать формату АА:ВВ:CCCCСCC:КККККК")
-    cadastre = models.CharField(validators=[cadastre_regex], max_length=50,
+    cadastre = models.CharField(max_length=50,
                                 verbose_name='Кадастровый номер',
                                 help_text='Должен соответствовать формату АА:ВВ:CCCCСCC:ККККК')
     objectinfo = models.TextField(null=True, blank=True,
@@ -35,10 +35,13 @@ class ApiRosreestrRequests(models.Model):
                                 verbose_name='Стоимость заказа')
     is_paid = models.BooleanField(default=False, verbose_name='Оплачен')
     document = models.IntegerField(null=True, blank=True,
-                                  verbose_name='Номер документа для скачивания')
+                                   verbose_name='Номер документа для скачивания')
     status = models.SmallIntegerField(default=1,
-                                      choices=STATUS_CODE,
+                                      choices=CHECK_CODE,
                                       verbose_name='Статус заказа')
+    xml_file = models.TextField(null=True, blank=True,
+                                verbose_name='Скачанная выписка')
+    validated = models.BooleanField(default=False, verbose_name='Подтверждено')
 
     def get_object_info(self):  # Получет от сервера общую информацию об объекте и сохраняет ее
         if self.objectinfo:
@@ -86,7 +89,7 @@ class ApiRosreestrRequests(models.Model):
                 return False
         return False
 
-    def update_invoice_info(self):  # Получает текущую информацию от состоянии заказа
+    def update_invoice_info(self):  # Получает текущую информацию от состоянии инвойса
         if self.invoice:
             clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
             info = clientapi.post(method='transaction/info', id=self.invoice)
@@ -101,7 +104,7 @@ class ApiRosreestrRequests(models.Model):
                 return False
         return False
 
-    def update_order_info(self):
+    def update_order_info(self):  # Обновляет текущую информацию о состоянии заказа-ордера
         if self.invoice:
             clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
             orderinfo = clientapi.post(method='cadaster/orders', id=self.invoice)
@@ -126,15 +129,34 @@ class ApiRosreestrRequests(models.Model):
                 return False
         return False
 
-    def download_file(self):
-        if self.status == 4 and self.document:
+    def check_owner(self, username):    # Проверяет наличие имени пользователя в списке владельцев в отчете
+        if self.xml_file:
+            report_dict = xmltodict.parse(self.xml_file)
+            try:
+                owners = list(find('Person', report_dict['KPOKS']['Realty']))
+                for owner in owners:
+                    fullname = '{0} {1}'.format(owner['FamilyName'], owner['FirstName']).upper()
+                    if fullname == username:
+                        self.validated = True
+                        self.save()
+            except:
+                return self.validated
+        return self.validated
+
+    def download_file(self):  # Загрузить готовый отчет xml
+        if self.status == 4 and self.document and not self.xml_file:
             clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
             file = clientapi.post(method='cadaster/download', document_id=self.document, format='XML')
             if not clientapi.error:
+                self.xml_file = file.replace(re.search('https?://.*Common\.xsl', file)[0], '/static/xsl/Common.xsl')
+                self.save()
+                self.check_owner()
                 return True
             else:
                 return False
         return False
+
+
 
     def __str__(self):
         return '%s' % self.cadastre

@@ -1,7 +1,7 @@
 import datetime
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.http import HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.views.generic import ListView, DeleteView, UpdateView
@@ -71,9 +71,9 @@ class CheckOwnerRequestView(UpdateView):
             form.add_error(None, ValidationError('Не удалось оплатить заказ'))
             return super(CheckOwnerRequestView, self).form_invalid(form=form)
 
+        apirequest.update_order_info()
         apirequest.download_file()
-
-        apirequest.update_order_info()   #удалить потом
+        apirequest.check_owner(username=form.instance.user.get_full_name().upper())
 
         form.instance.rosreestr = apirequest
         messages.success(self.request, 'Запрос в apirosreestr.ru отправлен', 'icon-ok-sign')

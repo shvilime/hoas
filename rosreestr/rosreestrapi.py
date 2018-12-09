@@ -1,4 +1,5 @@
 import json
+import xmltodict
 import xml.etree.cElementTree as ET
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
@@ -56,7 +57,7 @@ class ClientApiRosreestr:
     @staticmethod
     def is_json(any_string):
         try:
-            json_object = json.loads(any_string)
+            json.loads(any_string)
         except ValueError:
             return False
         return True

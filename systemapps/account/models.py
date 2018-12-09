@@ -40,10 +40,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = None
     email = models.EmailField(verbose_name='Email',
                               unique=True, null=False)
-    first_name = models.CharField(verbose_name='Имя',
-                                  max_length=30, help_text='Имя (как в паспорте)')
-    last_name = models.CharField(verbose_name='Фамилия',
-                                 max_length=30, help_text='Фамилия (как в паспорте)')
+    firstname = models.CharField(verbose_name='Имя',
+                                 max_length=30, help_text='Имя (как в паспорте)')
+    lastname = models.CharField(verbose_name='Фамилия',
+                                max_length=30, help_text='Фамилия (как в паспорте)')
     account = models.CharField(verbose_name='Лицевой счет',
                                max_length=20, help_text='Номер лицевого счета')
     phone_regex = RegexValidator(regex=r'^((8|\+7)[\- ]?)(\(?\d{3}\)?[\- ]?)[\d\- ]{7,10}$',
@@ -78,10 +78,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = 'Пользователи'
 
     def __str__(self):
-        return '%s %s (%s)' % (self.last_name, self.first_name, self.email)
+        return '%s %s (%s)' % (self.lastname, self.firstname, self.email)
 
     def get_full_name(self):
-        full_name = '%s %s' % (self.last_name, self.first_name)
+        full_name = '%s %s' % (self.lastname, self.firstname)
         return full_name.strip()
 
     get_full_name.short_description = "Полное имя пользователя"

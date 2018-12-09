@@ -30,14 +30,20 @@
                 </thead>
                 <tbody>
                 {% for request in requests %}
-                    <tr>
+                    <tr {% if request.rosreestr.validated %}class="table-success"{% endif %}>
                         <td>{{ forloop.counter }}</td>
                         <td>{{ request.user.get_full_name }}</td>
                         <td>{{ request.room }}</td>
                         <td>{{ request.portion }}</td>
                         <td>{{ request.date_request }}</td>
                         {% if request.rosreestr %}
-                            <td>{{ request.rosreestr.get_status_display }}</td>
+                            <td><span>{{ request.rosreestr.get_status_display }}</span>
+                                {% if request.rosreestr.xml_file %}
+                                    <a class="i-small i-light i-rounded nobottommargin notopmargin icon-file-text"
+                                       title="Выписка из росреестра" target="_blank"
+                                       href="{% url 'rosreestr:showxml' request.rosreestr.id %}"></a>
+                                {% endif %}
+                            </td>
                         {% else %}
                             <td>Не проверялся</td>
                         {% endif %}

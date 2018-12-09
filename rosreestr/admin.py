@@ -6,7 +6,7 @@ from .models import ApiRosreestrRequests
 
 class ApiRosreestrRequestsAdmin(admin.ModelAdmin):
     readonly_fields = ('cadastre','objectinfo','is_paid','payment_code',
-                       'sufficient_funds','payment_allowed','price','status','document')
+                       'sufficient_funds','payment_allowed','price','status','document','xml_file')
     list_display = ('date_request','cadastre','price','status')
 
 

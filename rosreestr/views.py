@@ -1,6 +1,6 @@
-from django.shortcuts import redirect
-from django.http import JsonResponse, HttpResponseForbidden
+from django.http import JsonResponse, HttpResponse, HttpResponseForbidden
 from decouple import config
+from django.views.generic import View
 from .rosreestrnet import ClientRosreestrNet
 from .models import ApiRosreestrRequests
 
@@ -19,18 +19,17 @@ def rosreestrnet_getdata(request):
         return HttpResponseForbidden("Запрос данных возможно только методом POST")
 
 
-def apirosreestr_getdata(request):
-    # egrn = request.POST.get('egrn', '')
-    # next = request.POST.get('next')
-    # apirequest = ApiRosreestrRequests(cadastre=egrn)
-    # apirequest.save()
-    # apirequest.get_object_info()
-    # apirequest.get_encoded_object()
-    # apirequest.document_available()
+# ======================= Показать выписку, полученную из росреестра ================================
+class ShowXMLView(View):
+    id = None
 
-    # clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
-    # clientapi.post(method='cadaster/objectInfoFull', result='encoded_object', query=egrn)
-    # if clientapi.response['documents']['XZP']['available'] == True:
-    #     return
+    def dispatch(self, request, *args, **kwargs):
+        self.id = kwargs.get('pk',None)
+        return super(ShowXMLView, self).dispatch(request, args, kwargs)
 
-    return redirect('area:ownerrequests')
+    def get(self, request, *args, **kwargs):
+        apirequest = ApiRosreestrRequests.objects.get(pk=self.id)
+        xml = apirequest.xml_file.encode()
+        return HttpResponse(xml, content_type='text/xsl; charset=utf-8')
+
+
