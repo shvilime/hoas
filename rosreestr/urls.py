@@ -10,4 +10,7 @@ rosreestr_urlpatterns = [
     re_path(r'^showxml/(?P<pk>\d+)/$',
             staff_member_required(rosreestr_views.ShowXMLView.as_view(), login_url="account:login"),
             name='showxml'),
+    re_path(r'^hookevent/$',
+            rosreestr_views.HookEventView.as_view(),
+            name='hookevent'),
 ]

@@ -150,12 +150,10 @@ class ApiRosreestrRequests(models.Model):
             if not clientapi.error:
                 self.xml_file = file.replace(re.search('https?://.*Common\.xsl', file)[0], '/static/xsl/Common.xsl')
                 self.save()
-                self.check_owner()
                 return True
             else:
                 return False
         return False
-
 
 
     def __str__(self):
@@ -164,3 +162,4 @@ class ApiRosreestrRequests(models.Model):
     class Meta:
         verbose_name = 'Запрос'
         verbose_name_plural = 'Запросы'
+        indexes = [models.Index(fields=['invoice']),]
