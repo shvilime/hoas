@@ -38,16 +38,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'widget_tweaks',    #External django package django-widget-tweaks
-    'mptt',             #External package for Tree
+    'widget_tweaks',        # External django package django-widget-tweaks
+    'mptt',                 # External package for Tree
 
-    'systemapps.account',
-    'systemapps.menu',
-    'systemapps.form',
-    'main',             #Main page
-    'area',             #Flat
-    'counter',          #Counter
-    'rosreestr',        #Rosreestr API
+    'systemapps.account',   # Учетные записи пользователей
+    'systemapps.menu',      # Все виды меню сайта
+    'systemapps.form',      # Формы
+    'main',                 # Основное приложение
+    'area',                 # Помещения и собственники
+    'counter',              # Ввод показаний счетчиков
+    'voting',               # Голосование по актуальным вопросам
+    'rosreestr',            # Rosreestr API - запросы выписок из ЕГРП
 ]
 
 MIDDLEWARE = [

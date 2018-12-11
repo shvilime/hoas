@@ -74,8 +74,7 @@ class Owner(models.Model):
         self.cancelid = new_owner
         self.save()
 
-
-class Meta:
-    unique_together = (('room', 'user'),)
-    verbose_name = 'Владелец'
-    verbose_name_plural = 'Владельцы'
+    class Meta:
+        unique_together = (('room', 'user', 'date_request'),)
+        verbose_name = 'Владелец'
+        verbose_name_plural = 'Владельцы'
