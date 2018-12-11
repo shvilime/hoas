@@ -11,6 +11,9 @@ from .services import *
 from .models import Owner
 
 
+from rosreestr.services import FillAreasInitial
+
+
 # Create your views here.
 
 # =================== Просмотр списка запросов на регистрацию собственности =======================
@@ -49,6 +52,7 @@ class CheckOwnerRequestView(UpdateView):
     success_url = reverse_lazy('area:ownerrequests')
 
     def form_valid(self, form):
+        FillAreasInitial()
         if form.instance.rosreestr:     # Если к заявке на собственность уже привязан запрос, то работаем с ним
             apirequest = ApiRosreestrRequests.objects.get(pk=form.instance.rosreestr.id)
         else:                           # Иначе создать новый запрос или получить созданный, но непривязанный

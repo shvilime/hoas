@@ -100,7 +100,7 @@ class ClientApiRosreestr:
     def post(self, method='', result='', **kwargs):
         self.accepted_method = (
             'cadaster/objectInfoFull', 'cadaster/Save_order', 'cadaster/orders', 'cadaster/download',
-            'transaction/info', 'transaction/pay')
+            'cadaster/search','transaction/info', 'transaction/pay')
         self.api_method = method
         self.result_key = result
         return self.get_data(**kwargs)
