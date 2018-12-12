@@ -24,6 +24,7 @@ class Room(models.Model):
     cadastre_regex = RegexValidator(regex=r'^\d{2}:\d{2}:\d{6,7}:\d{1,35}$',
                                     message="Должен соответствовать формату АА:ВВ:CCCCСCC:КККККК")
     cadastre = models.CharField(validators=[cadastre_regex], max_length=50,
+                                unique=True,
                                 verbose_name='Кадастровый номер',
                                 help_text='Должен соответствовать формату АА:ВВ:CCCCСCC:ККККК')
 
@@ -31,7 +32,6 @@ class Room(models.Model):
         return '%s %s' % (self.get_type_display(), self.number)
 
     class Meta:
-        # ordering = ['number']
         verbose_name = 'Помещение'
         verbose_name_plural = 'Помещения'
 

@@ -65,11 +65,6 @@ class SendAPIRosreestrRequestForm(forms.ModelForm):
                'data-off-text': 'Нет',
                'data-on-color': 'danger',
                'data-off-color': 'default'}))
-
-    def clean(self):
-
-        return super(SendAPIRosreestrRequestForm, self).clean()
-
     class Meta:
         model = Owner
         fields = ['confirmation']

@@ -2,7 +2,8 @@ import re
 from rosreestr.rosreestrapi import ClientApiRosreestr
 from decouple import config
 
-#================================================================================================
+
+# ================================================================================================
 def find(key, dictionary):
     for k, v in dictionary.items():
         if k == key:
@@ -15,18 +16,27 @@ def find(key, dictionary):
                 for result in find(key, d):
                     yield result
 
-#================================================================================================
-def FillAreasInitial():
+
+# ================================================================================================
+def GetListAreasFromAddress(address=''):
     clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
-    listapp = clientapi.post(method='cadaster/search',
-                             query="Краснодар, Зиповская улица, д.3/3",
-                             grouped=0)
-    for flat in listapp['objects']:
-        flatnumber = re.search('кв[\. ]{0,}(\d+(?:[\.,]\d+)?)', flat['ADDRESS']).group(1)
-        cadastre = flat['CADNOMER']
-        square = re.search('\d+(?:[\.,]\d+)?', flat['AREA']).group(0)
+    listareas = clientapi.post(method='cadaster/search', query=address,
+                               grouped=0)
+    return listareas
 
 
-
-
-    return True
+def GetAreaInfo(cadastre=''):
+    result = list()
+    clientapi = ClientApiRosreestr(token=config('ROSREESTRAPI_KEY'))
+    fullinfo = clientapi.post(method='cadaster/objectInfoFull', query=cadastre, result='EGRN')
+    flatnumber = ''
+    square = 0
+    if not clientapi.error:
+        status = fullinfo['details']['Статус объекта'].upper()
+        if status == 'УЧТЕННЫЙ' or status == 'РАНЕЕ УЧТЕННЫЙ':
+            square = fullinfo['details']["Площадь ОКС'а"]
+            search = re.findall('\d+', fullinfo['details']['Адрес'])
+            if search:
+                flatnumber = search[-1]
+                result.append((flatnumber, cadastre, square))
+    return result

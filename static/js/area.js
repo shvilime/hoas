@@ -82,4 +82,39 @@ var $ = jQuery.noConflict();
         }
     });
 
+    $(".btn-initialization").confirm({
+        title: 'Подтверждение',
+        content: 'Начать загрузку данных с росреестра?',
+        buttons: {
+            cancel: {
+                text: 'Отменить',
+                action: function () {
+                }
+            },
+            confirm: {
+                text: 'Запросить',
+                btnClass: 'btn-green',
+                action: function () {
+                    let url = document.createElement('a');
+                    url.href = this.$target.attr('href');
+                    let params = $.urlParamsDecode(url.search);
+                    params['csrfmiddlewaretoken'] = $.getCookie('csrftoken');
+                    $.ajax({
+                        url: url.pathname,
+                        type: "POST",
+                        dataType: 'json',
+                        data: params,
+                        success: function (data) {
+                            json = data;
+                        },
+                        error: function (xhr, errmsg, err) {
+                            console.log(errmsg);
+                        }
+                    });
+
+                }
+            },
+        }
+    });
+
 })(jQuery);

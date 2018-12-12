@@ -2,21 +2,48 @@ from django.http import JsonResponse, HttpResponse, HttpResponseForbidden
 from decouple import config
 from django.views.generic import View
 from .rosreestrnet import ClientRosreestrNet
+from .services import GetListAreasFromAddress, GetAreaInfo
 from .models import ApiRosreestrRequests
 
 
 # Create your views here.
 # ==================== Получить данные с rosreestr.net и вернуть их в JSON ==========================
-def rosreestrnet_getdata(request):
-    if request.method == 'POST':
-        egrn = request.POST.get('egrn', '')
-        client = ClientRosreestrNet(token=config('ROSREESTRNET_KEY'))
-        client.post(method='database.reload', egrn=egrn)
-        client.post(method='database.get', result='owners', egrn=egrn)
-        return JsonResponse(client.response, safe=False)
-    else:
+class RosreestrNet_GetData(View):
+    egrn = ''
+    
+    def dispatch(self, request, *args, **kwargs):
+        self.egrn = request.POST.get('egrn', '')
+        return super(RosreestrNet_GetData, self).dispatch(request, *args, **kwargs)
+    
+    def get(self, request, *args, **kwargs):
         return HttpResponseForbidden("Запрос данных возможно только методом POST")
 
+    def post(self, request, *args, **kwargs):
+        client = ClientRosreestrNet(token=config('ROSREESTRNET_KEY'))
+        client.post(method='database.reload', egrn=self.egrn)
+        client.post(method='database.get', result='owners', egrn=self.egrn)
+        return JsonResponse(client.response, safe=False)
+    
+# =================== Получить данные с apirosreestr.ru и вернуть их в JSON =========================
+class ApiRosreestr_GetData(View):
+    cadastre = ''
+
+    def dispatch(self, request, *args, **kwargs):
+        self.cadastre = request.POST.get('cadastre', '')
+        return super(ApiRosreestr_GetData, self).dispatch(request, args, kwargs)
+    
+    def get(self, request, *args, **kwargs):
+        return HttpResponseForbidden("Запрос данных возможно только методом POST")
+
+    def post(self, request, *args, **kwargs):
+        response = dict()
+        if not request.user.is_superuser:
+            return HttpResponseForbidden("Получать данные может только администратор")
+        if not self.cadastre:
+            response = GetListAreasFromAddress('Краснодар, Зиповская улица, д.3/3')
+        else:
+            response = GetAreaInfo(self.cadastre)
+        return JsonResponse(response, safe=False)
 
 # ======================= Показать выписку, полученную из росреестра ================================
 class ShowXMLView(View):

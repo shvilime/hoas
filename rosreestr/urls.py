@@ -5,8 +5,11 @@ from rosreestr import views as rosreestr_views
 
 rosreestr_urlpatterns = [
     re_path(r'^rosreestrnet/$',
-            staff_member_required(rosreestr_views.rosreestrnet_getdata, login_url="account:login"),
+            staff_member_required(rosreestr_views.RosreestrNet_GetData.as_view(), login_url="account:login"),
             name='rosreestrnet'),
+    re_path(r'^apirosreestr/$',
+            staff_member_required(rosreestr_views.ApiRosreestr_GetData.as_view(), login_url="account:login"),
+            name='apirosreestr'),
     re_path(r'^showxml/(?P<pk>\d+)/$',
             staff_member_required(rosreestr_views.ShowXMLView.as_view(), login_url="account:login"),
             name='showxml'),

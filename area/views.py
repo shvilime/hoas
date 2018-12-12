@@ -4,14 +4,13 @@ from django.urls import reverse_lazy
 from django.http import HttpResponse, HttpResponseForbidden
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.views.generic import ListView, DeleteView, UpdateView
+from django.views.generic import TemplateView, ListView, DeleteView, UpdateView
 from rosreestr.models import ApiRosreestrRequests
 from .forms import ConfirmOwnerRequestForm, SendAPIRosreestrRequestForm
 from .services import *
-from .models import Owner
+from .models import Owner, Room
 
 
-from rosreestr.services import FillAreasInitial
 
 
 # Create your views here.
@@ -52,7 +51,6 @@ class CheckOwnerRequestView(UpdateView):
     success_url = reverse_lazy('area:ownerrequests')
 
     def form_valid(self, form):
-        FillAreasInitial()
         if form.instance.rosreestr:     # Если к заявке на собственность уже привязан запрос, то работаем с ним
             apirequest = ApiRosreestrRequests.objects.get(pk=form.instance.rosreestr.id)
         else:                           # Иначе создать новый запрос или получить созданный, но непривязанный
@@ -104,3 +102,16 @@ class DeleteOwnerRequest(DeleteView):
     def get_success_url(self):
         self.success_url = self.request.POST.get('next', None)
         return super(DeleteOwnerRequest, self).get_success_url()
+
+
+# ================ Заполнить список помещений первоначальными значениями по поиску ==================
+class InitializationView(TemplateView):
+    template_name = 'initialization.html'
+
+    def post(self, request, *args, **kwargs):
+        for flat in flats:
+            room = Room(number=flat[0], cadastre=flat[1], square=flat[2], type='FL')
+            room.save()
+
+        return HttpResponse('OK')
+

@@ -39,6 +39,8 @@ class ClientApiRosreestr:
 
     def post_request(self):
         self.set_access_params()
+        self.error = ''
+        self.error_code = 0
         headers = {'Token': self.token}
         params = urlencode(self.params).encode()  # Перекодируем параметры в строку параметров запроса
         # params = bytes(json.dumps(self.params), encoding="utf-8")
