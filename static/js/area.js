@@ -98,16 +98,40 @@ var $ = jQuery.noConflict();
                     let url = document.createElement('a');
                     url.href = this.$target.attr('href');
                     let params = $.urlParamsDecode(url.search);
-                    params['csrfmiddlewaretoken'] = $.getCookie('csrftoken');
+                    // params['csrfmiddlewaretoken'] = $.getCookie('csrftoken');
                     params['X-CSRFToken'] = $.getCookie('csrftoken');
-                    $.getJSON(url.pathname, params, function (err, data) {
+                    $('#init_message').html('Запрашиваем реестр помещений...');
+                    $.getJSON(url.pathname, params, function (err, json) {
                         if (err != null) {
                             console.error(err);
                         } else {
-                            let json = data;
+                            if (json.hasOwnProperty('objects')) {
+                                let max_len = json['objects'].length;
+                                let progress = 0;
+                                $('#init_message').html('Получина информация о ' + max_len + ' объектах');
+                                $.each(json['objects'], function (index, value) {
+                                    params['cadastre'] = value['CADNOMER'];
+                                    $.getJSON(url.pathname, params, function (err, data) {
+                                        if (err != null) {
+                                            console.error(err);
+                                        } else {
+                                            if (progress === max_len) {
+                                                $(".progress-bar").css("width", '0%');
+                                                $('#init_message').html('');
+                                            } else {
+                                                $(".progress-bar").css("width",
+                                                    Math.round(progress / max_len * 100 + '%'));
+                                                $('#init_message').html(value['ADDRESS']);
+                                            }
+                                            progress++;
+                                        }
+                                    });
+                                });
+                            } else {
+                                $('#init_message').html('');
+                            }
                         }
                     });
-
                 }
             },
         }

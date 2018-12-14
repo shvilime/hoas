@@ -22,18 +22,18 @@ $.getJSON = function (url, args, callback) {
     xhr.responseType = 'json';
     xhr.onload = function () {
         let status = xhr.status;
-        if (status == 200) {
+        if (status === 200) {
             callback(null, xhr.response);
         } else {
             callback(status);
         }
     };
-    let formData = new FormData();
+    // let formData = new FormData();
     $.each(args, function (key, value) {
-        formData.append(key, value);
+        // formData.append(key, value);
         xhr.setRequestHeader(key, value);
     });
-    xhr.send(formData);
+    xhr.send();
 };
 
 
