@@ -15,6 +15,27 @@ $.redirectPost = function (location, args) {
     $(form).appendTo('body').submit();
 };
 
+$.getJSON = function (url, args, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', url, true);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.responseType = 'json';
+    xhr.onload = function () {
+        let status = xhr.status;
+        if (status == 200) {
+            callback(null, xhr.response);
+        } else {
+            callback(status);
+        }
+    };
+    let formData = new FormData();
+    $.each(args, function (key, value) {
+        formData.append(key, value);
+        xhr.setRequestHeader(key, value);
+    });
+    xhr.send(formData);
+};
+
 
 $.urlParamsDecode = function (url) {
     let params = {};

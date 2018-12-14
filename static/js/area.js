@@ -99,10 +99,14 @@ var $ = jQuery.noConflict();
                     url.href = this.$target.attr('href');
                     let params = $.urlParamsDecode(url.search);
                     params['csrfmiddlewaretoken'] = $.getCookie('csrftoken');
-                    let json = $.redirectPost(url.pathname, params);
-                    if (json.hasOwnProperty('Objects')) {
-
-                    }
+                    params['X-CSRFToken'] = $.getCookie('csrftoken');
+                    $.getJSON(url.pathname, params, function (err, data) {
+                        if (err != null) {
+                            console.error(err);
+                        } else {
+                            let json = data;
+                        }
+                    });
 
                 }
             },
