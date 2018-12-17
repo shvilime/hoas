@@ -95,35 +95,46 @@ var $ = jQuery.noConflict();
                 text: 'Запросить',
                 btnClass: 'btn-green',
                 action: function () {
-                    let url = document.createElement('a');
-                    url.href = this.$target.attr('href');
-                    let params = $.urlParamsDecode(url.search);
-                    // params['csrfmiddlewaretoken'] = $.getCookie('csrftoken');
-                    params['X-CSRFToken'] = $.getCookie('csrftoken');
+                    // let url = document.createElement('a');
+                    // url.href = this.$target.attr('href');
+                    // let params = $.urlParamsDecode(url.search);
+                    let params = {
+                        'X-CSRFToken': $.getCookie('csrftoken')
+                    };
                     $('#init_message').html('Запрашиваем реестр помещений...');
-                    $.getJSON(url.pathname, params, function (err, json) {
+                    $.getJSON('/rosreestr/apirosreestr/', params, function (err, json) {
                         if (err != null) {
                             console.error(err);
                         } else {
                             if (json.hasOwnProperty('objects')) {
                                 let max_len = json['objects'].length;
                                 let progress = 0;
-                                $('#init_message').html('Получина информация о ' + max_len + ' объектах');
-                                $.each(json['objects'], function (index, value) {
-                                    params['cadastre'] = value['CADNOMER'];
-                                    $.getJSON(url.pathname, params, function (err, data) {
+                                $('#init_message').html('Получена информация о ' + max_len + ' объектах');
+                                $.each(json['objects'], function (index, area) {
+                                    params['cadastre'] = area['CADNOMER'];
+                                    $.getJSON('/rosreestr/apirosreestr/', params, function (err, flat) {
                                         if (err != null) {
                                             console.error(err);
                                         } else {
-                                            if (progress === max_len) {
+                                            if (progress === max_len - 1) {
                                                 $(".progress-bar").css("width", '0%');
-                                                $('#init_message').html('');
+                                                $('#init_message').html('Завершено');
                                             } else {
                                                 $(".progress-bar").css("width",
-                                                    Math.round(progress / max_len * 100 + '%'));
-                                                $('#init_message').html(value['ADDRESS']);
+                                                    Math.round(progress / max_len * 100) + '%');
+                                                $('#init_message').html(area['ADDRESS']);
                                             }
                                             progress++;
+                                            let flatparams = {
+                                                'number': flat[0][0],
+                                                'cadastre': flat[0][1],
+                                                'square': flat[0][2]
+                                            };
+                                            $.getJSON('/area/addarea/', flatparams, function (err, data) {
+                                                if (err != null) {
+                                                    console.error(err);
+                                                }
+                                            });
                                         }
                                     });
                                 });

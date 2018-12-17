@@ -4,13 +4,11 @@ from django.urls import reverse_lazy
 from django.http import HttpResponse, HttpResponseForbidden
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.views.generic import TemplateView, ListView, DeleteView, UpdateView
+from django.views.generic import View, TemplateView, ListView, DeleteView, UpdateView
 from rosreestr.models import ApiRosreestrRequests
 from .forms import ConfirmOwnerRequestForm, SendAPIRosreestrRequestForm
 from .services import *
 from .models import Owner, Room
-
-
 
 
 # Create your views here.
@@ -73,6 +71,7 @@ class CheckOwnerRequestView(UpdateView):
             form.add_error(None, ValidationError('Не удалось оплатить заказ'))
             return super(CheckOwnerRequestView, self).form_invalid(form=form)
 
+        # !!!!!!!!!!!!!!!!!!! Удалить потом эти три строчки
         apirequest.update_order_info()
         apirequest.download_file()
         apirequest.check_owner(username=form.instance.user.get_full_name().upper())
@@ -104,14 +103,21 @@ class DeleteOwnerRequest(DeleteView):
         return super(DeleteOwnerRequest, self).get_success_url()
 
 
-# ================ Заполнить список помещений первоначальными значениями по поиску ==================
+# ============== Показать страницу заполнения помещений первоначальными значениями ==================
 class InitializationView(TemplateView):
     template_name = 'initialization.html'
 
+# =================== Добавить помещение по переданным первоначальным значениям =====================
+class AddAreaView(View):
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return HttpResponseForbidden("Недостаточно прав для данного действия")
+        return super(AddAreaView, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponseForbidden("Добавление помещения возможно только методом POST")
+
     def post(self, request, *args, **kwargs):
-        for flat in flats:
-            room = Room(number=flat[0], cadastre=flat[1], square=flat[2], type='FL')
-            room.save()
-
+        # room = Room(number=flat[0], cadastre=flat[1], square=flat[2], type='FL')
+        # room.save()
         return HttpResponse('OK')
-

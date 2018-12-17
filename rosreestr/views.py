@@ -62,11 +62,11 @@ class ShowXMLView(View):
 # ================== Обработать Hook с apirosreestr.ru и изменить статус запроса ====================
 class HookEventView(View):
     key = None
-    data = None
+    invoice_id = None
     
     def dispatch(self, request, *args, **kwargs):
         self.key = request.POST.get('secret_key', None)
-        self.data = request.POST.getlist('data', None)
+        self.invoice_id = request.POST.get('data[transaction_id]', None)
         return super(HookEventView, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -74,6 +74,8 @@ class HookEventView(View):
 
     def post(self, request, *args, **kwargs):
         if self.key and self.key == config('HOOK_KEY'):
-            rosreestr = ApiRosreestrRequests.objects.get(invoice=self.data['transaction_id'])
+            rosreestr = ApiRosreestrRequests.objects.get(invoice=self.invoice_id)
             rosreestr.update_order_info()
+            rosreestr.check_owner(username=request.user.get_full_name().upper())
+            rosreestr.download_file()
         return HttpResponse('OK')

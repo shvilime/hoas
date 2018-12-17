@@ -28,12 +28,12 @@ $.getJSON = function (url, args, callback) {
             callback(status);
         }
     };
-    // let formData = new FormData();
+    let formData = '';
     $.each(args, function (key, value) {
-        // formData.append(key, value);
+        formData = formData + key + '=' + encodeURIComponent(value) + '&';
         xhr.setRequestHeader(key, value);
     });
-    xhr.send();
+    xhr.send(formData);
 };
 
 

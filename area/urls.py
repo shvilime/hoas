@@ -16,7 +16,11 @@ area_urlpatterns = [
     re_path(r'^deleteowner/(?P<pk>\d+)/$',
             login_required(area_views.DeleteOwnerRequest.as_view(), login_url='account:login'),
             name='deleteowner'),
+
     re_path(r'^initialization/$',
             staff_member_required(area_views.InitializationView.as_view(), login_url="account:login"),
             name='initialization'),
+    re_path(r'^addarea/$',
+            staff_member_required(area_views.AddAreaView.as_view(), login_url="account:login"),
+            name='addarea'),
 ]

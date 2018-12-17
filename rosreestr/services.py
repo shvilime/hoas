@@ -35,7 +35,7 @@ def GetAreaInfo(cadastre=''):
         status = fullinfo['details']['Статус объекта'].upper()
         if status == 'УЧТЕННЫЙ' or status == 'РАНЕЕ УЧТЕННЫЙ':
             square = fullinfo['details']["Площадь ОКС'а"]
-            search = re.findall('\d+', fullinfo['details']['Адрес'])
+            search = re.findall('\d+', fullinfo['object']['ADDRESS'])
             if search:
                 flatnumber = search[-1]
                 result.append((flatnumber, cadastre, square))
