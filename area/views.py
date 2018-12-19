@@ -1,7 +1,7 @@
 import datetime
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.views.generic import View, TemplateView, ListView, DeleteView, UpdateView
@@ -118,6 +118,8 @@ class AddAreaView(View):
         return HttpResponseForbidden("Добавление помещения возможно только методом POST")
 
     def post(self, request, *args, **kwargs):
-        # room = Room(number=flat[0], cadastre=flat[1], square=flat[2], type='FL')
-        # room.save()
-        return HttpResponse('OK')
+        room = Room(number=request.POST.get('number', None),
+                    cadastre=request.POST.get('cadastre', None),
+                    square=request.POST.get('square', 0), type='FL')
+        room.save()
+        return JsonResponse('OK', safe=False)

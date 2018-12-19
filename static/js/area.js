@@ -126,6 +126,7 @@ var $ = jQuery.noConflict();
                                             }
                                             progress++;
                                             let flatparams = {
+                                                'X-CSRFToken': $.getCookie('csrftoken'),
                                                 'number': flat[0][0],
                                                 'cadastre': flat[0][1],
                                                 'square': flat[0][2]
