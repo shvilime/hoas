@@ -11,7 +11,20 @@ def area_total_number():
 # =======================================================================================
 # Возвращает общую площадь зарегистрированных помещений
 def area_total_square():
-    return Room.objects.aggregate(Sum('square'))
+    return Room.objects.aggregate(Sum('square'))['square__sum']
+
+
+# =======================================================================================
+# Возвращает общее количество активных собственников
+def owner_total_number():
+    return Owner.objects.filter(date_confirmation__isnull=False, date_cancellation__isnull=True).count()
+
+
+# =======================================================================================
+# Возвращает общее количество активных собственников
+def owner_total_square():
+    return Owner.objects.filter(date_confirmation__isnull=False,
+                                date_cancellation__isnull=True).aggregate(Sum('room__square'))['room__square__sum']
 
 
 # =======================================================================================

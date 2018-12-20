@@ -27,7 +27,15 @@
             <div>Запрашиваемая доля:
                 <div class="float-right"><span class="new-portion">{{ new_owner.portion }}</span>%</div>
             </div>
-
+            <div>Статус проверки:
+                <div class="float-right">
+                    {% if new_owner.rosreestr %}
+                        <i class="i-small icon-ok-circle nomargin"></i>
+                    {% else %}
+                        <i class="i-small icon-remove-circle nomargin"></i>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
 

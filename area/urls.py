@@ -17,6 +17,11 @@ area_urlpatterns = [
             login_required(area_views.DeleteOwnerRequest.as_view(), login_url='account:login'),
             name='deleteowner'),
 
+    re_path(r'^statistics/$',
+            staff_member_required(area_views.StatisticHoasView.as_view(), login_url="account:login"),
+            name='statistics'),
+
+
     re_path(r'^initialization/$',
             staff_member_required(area_views.InitializationView.as_view(), login_url="account:login"),
             name='initialization'),

@@ -103,6 +103,19 @@ class DeleteOwnerRequest(DeleteView):
         return super(DeleteOwnerRequest, self).get_success_url()
 
 
+# ================== Показать страницу общей статистики по ТСЖ для администратора ===================
+class StatisticHoasView(TemplateView):
+    template_name = 'statistichoas.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(StatisticHoasView, self).get_context_data(**kwargs)
+        context['area_total_number'] = area_total_number()
+        context['area_total_square'] = area_total_square()
+        context['owner_total_number'] = owner_total_number()
+        context['owner_total_square'] = owner_total_square()
+        return context
+
+
 # ============== Показать страницу заполнения помещений первоначальными значениями ==================
 class InitializationView(TemplateView):
     template_name = 'initialization.html'

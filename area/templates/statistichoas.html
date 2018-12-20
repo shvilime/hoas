@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block stylesheet %}
+    <link href="{% static 'css/responsive.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+    <div class="col_one_fourth nobottommargin center">
+        <i class="i-plain i-xlarge divcenter nobottommargin icon-building"></i>
+        <div class="counter counter-large" style="color: #1abc9c;">
+            <span data-from="1" data-to="{{ area_total_number }}" data-refresh-interval="50" data-speed="2000"></span>
+        </div>
+        <h5>Всего помещений</h5>
+    </div>
+
+    <div class="col_one_fourth nobottommargin center">
+        <i class="i-plain i-xlarge divcenter nobottommargin icon-measure"></i>
+        <div class="counter counter-large" style="color: #1abc9c;">
+            <span data-from="1" data-to="{{ area_total_square|floatformat:"0" }}" data-refresh-interval="50"
+                  data-speed="2000"></span>
+        </div>
+        <h5>Общая площадь (кв.м.)</h5>
+    </div>
+
+    <div class="divider"><i class="icon-circle"></i></div>
+
+    <div class="col_one_fourth nobottommargin center">
+        <i class="i-plain i-xlarge divcenter nobottommargin icon-user2"></i>
+        <div class="counter counter-large" style="color: #123fbc;">
+            <span data-from="1" data-to="{{ owner_total_number }}" data-refresh-interval="50"
+                  data-speed="2000"></span>
+        </div>
+        <h5>Собственников</h5>
+    </div>
+
+    <div class="col_one_fourth nobottommargin center">
+        <i class="i-plain i-xlarge divcenter nobottommargin icon-file"></i>
+        <div class="counter counter-large" style="color: #123fbc;">
+            <span data-from="1" data-to="{{ owner_total_square|floatformat:"0" }}" data-refresh-interval="50"
+                  data-speed="2000"></span>
+        </div>
+        <h5>Площадь в собственности (кв.м.)</h5>
+    </div>
+
+    <div class="col_one_fourth nobottommargin center">
+        <i class="i-plain i-xlarge divcenter nobottommargin icon-line2-pie-chart"></i>
+        <div class="counter counter-large" style="color: #123fbc;">
+            {% widthratio owner_total_square area_total_square 1 as portion %}
+            {% widthratio portion 1 100 as percent %}
+            <span data-from="0" data-to="{{ percent|floatformat:"0" }}" data-refresh-interval="50"
+                  data-speed="2000"></span>%
+        </div>
+        <h5>Доля собственности в общей площади</h5>
+    </div>
+
+
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}

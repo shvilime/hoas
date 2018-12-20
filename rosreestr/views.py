@@ -24,6 +24,7 @@ class RosreestrNet_GetData(View):
         client.post(method='database.get', result='owners', egrn=self.egrn)
         return JsonResponse(client.response, safe=False)
     
+
 # =================== Получить данные с apirosreestr.ru и вернуть их в JSON =========================
 class ApiRosreestr_GetData(View):
     cadastre = ''
@@ -44,6 +45,7 @@ class ApiRosreestr_GetData(View):
         else:
             response = GetAreaInfo(self.cadastre)
         return JsonResponse(response, safe=False)
+
 
 # ======================= Показать выписку, полученную из росреестра ================================
 class ShowXMLView(View):
