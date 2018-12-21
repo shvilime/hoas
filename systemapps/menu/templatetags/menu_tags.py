@@ -4,16 +4,19 @@ from importlib import import_module
 from systemapps.menu.models import Menu, MenuItem
 from django import template
 from django.core.exceptions import ImproperlyConfigured
+from django.core.cache import cache
 
 register = template.Library()
 
+
 @register.tag(name='menu')
-def buildmenu(parser, token):
+def build_menu(parser, token):
     try:
         tag_name, menu_name = token.split_contents()
     except ValueError:
         raise template.TemplateSyntaxError("%r tag requires a single argument" % token.contents.split()[0])
     return MenuObject(menu_name)
+
 
 class MenuObject(template.Node):
     def __init__(self, menu_name):
@@ -21,7 +24,19 @@ class MenuObject(template.Node):
         self.request = None
 
     def get_menuitems(self):
-        menuitems = MenuItem.objects.filter(menu__name = self.menu_name)
+        from django.conf import settings
+        cache_time = getattr(settings, 'MENU_CACHE_TIME', 1800)
+        debug = getattr(settings, 'DEBUG', False)
+        cache_key = 'menu-items/{menu_name}'.format(menu_name=self.menu_name)
+
+        menuitems = []
+        if cache_time >= 0 and not debug:
+            menuitems = cache.get(cache_key, [])
+        if not menuitems:
+            menuitems = MenuItem.objects.filter(menu__name=self.menu_name)
+            if cache_time >= 0 and not debug:
+                cache.set(cache_key, menuitems, cache_time)
+
         return menuitems
 
     def get_callable(self, func_or_path):
@@ -76,4 +91,3 @@ class MenuObject(template.Node):
         self.request = context['request']
         context['nodes'] = self.generate_menu()
         return ''
-
