@@ -76,5 +76,8 @@ class Owner(models.Model):
 
     class Meta:
         unique_together = (('room', 'user', 'date_request'),)
+        index_together = [
+            ['date_confirmation', "date_cancellation"],
+        ]
         verbose_name = 'Владелец'
         verbose_name_plural = 'Владельцы'

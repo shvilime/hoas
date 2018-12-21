@@ -55,7 +55,16 @@ def sum_previous_owners_portion(new_owner):
 
 
 # =======================================================================================
+# Проверяет статус пользователя как владельца и обновляет его
+def check_user_status_as_owner(user):
+    user.is_owner = owner_requests_history(user, active=True).exists()    # Есть ли активные записи о собственности
+    user.save()
+    return user.is_owner
+
+
+# =======================================================================================
 # Анулирует доли предыдущих владельцев в помещении перед подтверждением нового запроса
 def cancel_list_owners(queryset_owners, new_owner):
-    for owner in queryset_owners:
-        owner.cancel(new_owner)
+    for owner in queryset_owners:      # Для каждого предыдущего владельца в списке
+        owner.cancel(new_owner)        # Анулируем запись о владении
+        check_user_status_as_owner(owner.user)    # Проверим и обновим статус пользователя как владельца

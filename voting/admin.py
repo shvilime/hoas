@@ -5,7 +5,8 @@ from .models import Competence, Question
 
 
 class CompetenceAdmin(admin.ModelAdmin):
-    list_display = ('number', 'shortname', 'name', 'min_criteria')
+    list_display = ('number', 'shortname', 'criteria', 'criteria_base', 'active')
+    list_filter = ('active', 'government')
 
 
 admin.site.register(Competence, CompetenceAdmin)

@@ -72,9 +72,9 @@ class CheckOwnerRequestView(UpdateView):
             return super(CheckOwnerRequestView, self).form_invalid(form=form)
 
         # !!!!!!!!!!!!!!!!!!! Удалить потом эти три строчки
-        apirequest.update_order_info()
-        apirequest.download_file()
-        apirequest.check_owner(username=form.instance.user.get_full_name().upper())
+        # apirequest.update_order_info()
+        # apirequest.download_file()
+        # apirequest.check_owner(username=form.instance.user.get_full_name().upper())
 
         form.instance.rosreestr = apirequest
         messages.success(self.request, 'Запрос в apirosreestr.ru отправлен', 'icon-ok-sign')
