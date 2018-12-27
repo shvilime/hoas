@@ -37,13 +37,20 @@ class MyUserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    PRIVATE = 0
+    ENTITY = 1
+    USER_TYPE = (
+        (PRIVATE, 'Физическое лицо'),
+        (ENTITY, 'Юридическое лицо'),
+    )
     username = None
     email = models.EmailField(verbose_name='Email',
                               unique=True, null=False)
-    firstname = models.CharField(verbose_name='Имя',
-                                 max_length=30, help_text='Имя (как в паспорте)')
-    lastname = models.CharField(verbose_name='Фамилия',
-                                max_length=30, help_text='Фамилия (как в паспорте)')
+    type = models.PositiveSmallIntegerField(choices=USER_TYPE, default=PRIVATE,
+                                            verbose_name='Тип пользователя')
+    fullname = models.CharField(max_length=100,
+                                verbose_name='Наименование',
+                                help_text='Фамили, Имя, Отчество (для физ.лиц), Краткое наименование (для юр.лиц)')
     account = models.CharField(verbose_name='Лицевой счет',
                                max_length=20, help_text='Номер лицевого счета')
     phone_regex = RegexValidator(regex=r'^((8|\+7)[\- ]?)(\(?\d{3}\)?[\- ]?)[\d\- ]{7,10}$',
@@ -53,15 +60,17 @@ class User(AbstractBaseUser, PermissionsMixin):
                              help_text='Сотовый телефон для связи и подтверждения действий')
     phone_confirmed = models.BooleanField(verbose_name='Телефон подтвержден', default=False)
     date_joined = models.DateTimeField(verbose_name='Дата регистрации', auto_now_add=True)
+    is_member = models.BooleanField(verbose_name='Член ТСЖ', default=False,
+                                    help_text='Является членом ТСЖ')
     is_owner = models.BooleanField(verbose_name='Владелец', default=False,
                                    help_text='Является владельцем помещений')
-    is_staff = models.BooleanField('Статус сотрудника', default=False,
+    is_staff = models.BooleanField(verbose_name='Сотрудник', default=False,
                                    help_text='Позволяет сотруднику получить доступ к администрированию сайта')
     is_active = models.BooleanField(default=True, verbose_name='Активность')
 
     def avatar__path(instance, filename):
         file_name, file_ext = os.path.splitext(filename)
-        username = slugify(instance.get_full_name())
+        username = slugify(instance.fullname)
         randomstr = get_random_string(length=10, allowed_chars='abcdefghijklmnopqrstuvwxyz')
         return 'avatars/{user}-[{randomstring}]{ext}'.format(user=username, randomstring=randomstr, ext=file_ext)
 
@@ -78,13 +87,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = 'Пользователи'
 
     def __str__(self):
-        return '%s %s (%s)' % (self.lastname, self.firstname, self.email)
+        return '%s (%s)' % (self.fullname, self.email)
 
-    def get_full_name(self):
-        full_name = '%s %s' % (self.lastname, self.firstname)
-        return full_name.strip()
-
-    get_full_name.short_description = "Полное имя пользователя"
+    # def get_full_name(self):
+    #     full_name = '%s %s' % (self.lastname, self.firstname)
+    #     return full_name.strip()
+    #
+    # get_full_name.short_description = "Полное имя пользователя"
 
     def email2user(self, subj, text, from_address=None, **kwargs):
         send_mail(subject=subj,

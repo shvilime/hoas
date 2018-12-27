@@ -7,9 +7,9 @@ from .models import User
 class UserAdmin(DjangoUserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
-        ('Personal info', {'fields': ('firstname', 'lastname', 'phone')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-        ('Important dates', {'fields': ('last_login',)}),
+        ('Персональная информация', {'fields': ('fullname', 'phone')}),
+        ('Разрешения', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Даты', {'fields': ('last_login',)}),
     )
     add_fieldsets = (
         (None, {
@@ -17,9 +17,9 @@ class UserAdmin(DjangoUserAdmin):
             'fields': ('email', 'password1', 'password2'),
         }),
     )
-    list_display = ('__str__', 'phone', 'is_owner' ,'is_active')
-    search_fields = ('email', 'firstname', 'lastname')
-    ordering = ('lastname', 'firstname')
-    list_filter = ('is_owner','is_staff','is_active')
+    list_display = ('__str__', 'phone', 'is_owner', 'is_member' ,'is_active')
+    search_fields = ('email', 'fullname')
+    ordering = ('fullname',)
+    list_filter = ('is_owner','is_member','is_staff','is_active')
 
 admin.site.register(User, UserAdmin)

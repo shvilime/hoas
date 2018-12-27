@@ -20,7 +20,7 @@
             </a>
             <div class="heading-block noborder">
                 <h3>{{ user.email }} </h3>
-                <span>{{ user.get_full_name }}</span>
+                <span>{{ user.fullname }}</span>
             </div>
             <div class="clear"></div>
 
@@ -71,7 +71,25 @@
                                                title="Изменить">
                                                 <sup><i class="icon-edit"> </i></sup>
                                             </a>
-
+                                        </h3>
+                                    </div>
+                                </div>
+                                <div class="col_one_third col_last">
+                                    <div class="feature-box fbox-rounded fbox-effect fbox-light">
+                                        <div class="fbox-icon">
+                                            <i class="icon-users2 i-alt"></i>
+                                        </div>
+                                        <h3>Членство в ТСЖ</h3>
+                                        <h3>
+                                            {% if user.is_member %}
+                                                <span>Да</span>
+                                            {% else %}
+                                                <span>Нет</span>
+                                            {% endif %}
+                                            <a href="#" data-toggle="modal" data-target="#id-modal-editmember"
+                                               title="Изменить">
+                                                <sup><i class="icon-edit"> </i></sup>
+                                            </a>
                                         </h3>
                                     </div>
                                 </div>

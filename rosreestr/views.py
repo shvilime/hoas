@@ -78,6 +78,6 @@ class HookEventView(View):
         if self.key and self.key == config('HOOK_KEY'):
             rosreestr = ApiRosreestrRequests.objects.get(invoice=self.invoice_id)
             rosreestr.update_order_info()
-            rosreestr.check_owner(username=request.user.get_full_name().upper())
+            rosreestr.check_owner(username=request.user.fullname.upper())
             rosreestr.download_file()
         return HttpResponse('OK')

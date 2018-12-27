@@ -45,7 +45,7 @@
                         <li><a href="{% url 'home' %}">Домой</a></li>
 
                         {% if user.is_authenticated %}  {# Если пользователь авторизован #}
-                            <li><a href="{% url 'home' %}"> {{ user.get_full_name }} </a>
+                            <li><a href="{% url 'home' %}"> {{ user.email }} </a>
                                 {% menu usermenu %}
                                 <ul>
                                     {% recursetree nodes %}

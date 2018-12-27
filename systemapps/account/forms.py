@@ -10,16 +10,9 @@ class SignupForm(UserCreationForm):
     prefix = 'signup'
     email = forms.EmailField(max_length=254,
                              help_text='Обязательное поле. Введите реально существующий адрес')
-    first_name = forms.CharField(label='Имя',
-                                 max_length=30,
-                                 help_text='Ваше имя (как в паспорте)')
-    last_name = forms.CharField(label='Фамилия',
-                                max_length=30,
-                                help_text='Ваша фамилия (как в паспорте)')
-
     class Meta:
         model = get_user_model()
-        fields = ('email', 'firstname', 'lastname', 'password1', 'password2',)
+        fields = ('email', 'type', 'fullname', 'password1', 'password2',)
 
 
 class LoginForm(AuthenticationForm):
@@ -67,4 +60,3 @@ class EmailChangeForm(forms.ModelForm):
     def clean(self):
         self.cleaned_data = super(EmailChangeForm, self).clean()
         self.cleaned_data['phone'] = re.sub('[- \(\)]', '', self.cleaned_data.get('phone'))
-
