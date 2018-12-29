@@ -9,4 +9,14 @@ class CompetenceAdmin(admin.ModelAdmin):
     list_filter = ('active', 'government')
 
 
+class QuestionAdmin(admin.ModelAdmin):
+    list_display = ('type', 'competence', 'shortname', 'date_start', 'date_end')
+    list_filter = ('date_start',)
+
+    def render_change_form(self, request, context, *args, **kwargs):
+        context['adminform'].form.fields['competence'].queryset = Competence.objects.filter(active=True)
+        return super(QuestionAdmin, self).render_change_form(request, context, *args, **kwargs)
+
+
 admin.site.register(Competence, CompetenceAdmin)
+admin.site.register(Question, QuestionAdmin)

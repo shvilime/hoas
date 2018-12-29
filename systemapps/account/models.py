@@ -50,7 +50,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                                             verbose_name='Тип пользователя')
     fullname = models.CharField(max_length=100,
                                 verbose_name='Наименование',
-                                help_text='Фамили, Имя, Отчество (для физ.лиц), Краткое наименование (для юр.лиц)')
+                                help_text='Фамили, Имя, Отчество (для физ.лиц), Наименование (для юр.лиц)')
     account = models.CharField(verbose_name='Лицевой счет',
                                max_length=20, help_text='Номер лицевого счета')
     phone_regex = RegexValidator(regex=r'^((8|\+7)[\- ]?)(\(?\d{3}\)?[\- ]?)[\d\- ]{7,10}$',
