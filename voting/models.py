@@ -71,18 +71,21 @@ class Question(models.Model):
 class Candidate(models.Model):
     question = models.ForeignKey(Question,
                                  on_delete=models.CASCADE,
+                                 related_name='questions',
                                  verbose_name='Вопрос на голосование')
-    user_candidate = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,
-                                       verbose_name='Кандидат')
-    who_nominate = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,
-                                     verbose_name='Кем номинирован')
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,
+                             related_name='candidates',
+                             verbose_name='Кандидат')
+    nominator = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,
+                                  related_name='nominators',
+                                  verbose_name='Кем номинирован')
     date_nominate = models.DateField(auto_now_add=True,
                                      verbose_name='Дата выдвижения')
     date_cancellation = models.DateField(null=True, blank=True,
                                          verbose_name='Дата отказа от участия')
 
     def __str__(self):
-        return '%s' % self.user_candidate
+        return '%s' % self.user
 
     class Meta:
         verbose_name = 'Кандидат'
@@ -107,6 +110,7 @@ class Vote(models.Model):
         return '{question} - {date} - {user}'.format(date=self.date_voting,
                                                      question=self.question,
                                                      user=self.owner.user)
+
     class Meta:
         verbose_name = 'Голос'
         verbose_name_plural = 'Голоса'
