@@ -1,5 +1,7 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.contrib.auth import get_user_model
+from area.models import Owner
 
 
 # Create your models here.
@@ -63,3 +65,48 @@ class Question(models.Model):
     class Meta:
         verbose_name = 'Вопрос'
         verbose_name_plural = 'Вопросы'
+
+
+# ======================= Кандидаты, при голосовании по вопросам списочного типа ==========================
+class Candidate(models.Model):
+    question = models.ForeignKey(Question,
+                                 on_delete=models.CASCADE,
+                                 verbose_name='Вопрос на голосование')
+    user_candidate = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,
+                                       verbose_name='Кандидат')
+    who_nominate = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,
+                                     verbose_name='Кем номинирован')
+    date_nominate = models.DateField(auto_now_add=True,
+                                     verbose_name='Дата выдвижения')
+    date_cancellation = models.DateField(null=True, blank=True,
+                                         verbose_name='Дата отказа от участия')
+
+    def __str__(self):
+        return '%s' % self.user_candidate
+
+    class Meta:
+        verbose_name = 'Кандидат'
+        verbose_name_plural = 'Кандидаты'
+
+
+# ============================== Голоса, отданные по вопросам голосования =================================
+class Vote(models.Model):
+    question = models.ForeignKey(Question,
+                                 on_delete=models.CASCADE,
+                                 verbose_name='Вопрос на голосование')
+    candidate = models.ForeignKey(Candidate, null=True, blank=True,
+                                  on_delete=models.SET_NULL,
+                                  verbose_name='Кандидат')
+    owner = models.ForeignKey(Owner,
+                              on_delete=models.CASCADE,
+                              verbose_name='Владелец')
+    date_voting = models.DateField(auto_now_add=True,
+                                   verbose_name='Дата голосования')
+
+    def __str__(self):
+        return '{question} - {date} - {user}'.format(date=self.date_voting,
+                                                     question=self.question,
+                                                     user=self.owner.user)
+    class Meta:
+        verbose_name = 'Голос'
+        verbose_name_plural = 'Голоса'
