@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block stylesheet %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="fancy-title title-bottom-border">
+        <h3>Вопросы, по которым идет <span>голосование</span></h3>
+    </div>
+
+    {% if questions %}
+        {% for question in questions %}
+        {% endfor %}
+    {% else %}
+        <p>В настоящее время нет вопросов по которым идет голосование.</p>
+    {% endif %}
+
+{% endblock %}
+
+{% block javascript %}
+{% endblock %}

@@ -23,6 +23,7 @@ from systemapps.account.urls import accounts_urlpatterns
 from area.urls import area_urlpatterns
 from counter.urls import counter_urlpatterns
 from rosreestr.urls import rosreestr_urlpatterns
+from voting.urls import voting_urlpatterns
 
 urlpatterns = [
     re_path('^', include(main_urlpatterns)),
@@ -30,6 +31,7 @@ urlpatterns = [
     re_path('^area/', include((area_urlpatterns,'area'), namespace='area')),
     re_path('^counter/', include((counter_urlpatterns, 'counter'), namespace='counter')),
     re_path('^rosreestr/', include((rosreestr_urlpatterns, 'rosreestr'), namespace='rosreestr')),
+    re_path('^voting/', include((voting_urlpatterns, 'voting'), namespace='voting')),
     path('admin/', admin.site.urls),
 ]
 
