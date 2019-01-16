@@ -7,12 +7,62 @@
 {% block content %}
 
     <div class="fancy-title title-bottom-border">
-        <h3>Вопросы, по которым идет <span>голосование</span></h3>
+        <h3>Вопросы, по которым проводится <span>голосование</span></h3>
     </div>
 
+
     {% if questions %}
-        {% for question in questions %}
-        {% endfor %}
+        <div class="row grid-container" data-layout="masonry" style="overflow: visible">
+            {% for question in questions %}
+                <div class="col-lg-4 mb-4">
+                    <div class="flip-card text-center">
+                        <div class="flip-card-front dark" data-height-xl="300"
+                                {% if question.type == 0 %}
+                                    style="background-image: url({% static 'images/hands.png' %});"
+                                {% elif question.type == 1 %}
+                                    style="background-image: url({% static 'images/candidates.png' %});"
+                                {% endif %}>
+                            <div class="flip-card-inner">
+                                <div class="card nobg noborder text-center">
+                                    <div class="card-body">
+                                        {% if question.type == 0 %}
+                                            <i class="icon-balance-scale h1"></i>
+                                        {% elif question.type == 1 %}
+                                            <i class="icon-user-check h1"></i>
+                                        {% endif %}
+                                        <h4 class="card-title">{{ question.shortname }}</h4>
+                                        <p class="card-text">{{ question.competence|stringformat:"s"|slice:"0:80" }}</p>
+                                    </div>
+                                {% now "Y-m-d" as todays %}
+                                {% if question.date_start|date:"Y-m-d" > todays %}
+                                    {% if question.type == 1 %}
+                                        <h5 class="card-footer">
+                                            Сбор кандидатур до {{ question.date_start|date:"d.m.Y" }} г.
+                                        </h5>
+                                    {% else %}
+                                        <h5 class="card-footer">
+                                            Начало голосования {{ question.date_start|date:"d.m.Y" }} г.
+                                        </h5>
+                                    {% endif %}
+                                {% else %}
+                                    <h5 class="card-footer">
+                                        Идет голосование до {{ question.date_end|date:"d.m.Y" }} г.
+                                    </h5>
+                                {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flip-card-back bg-info" data-height-xl="300">
+                            <div class="flip-card-inner">
+                                <p class="mb-2 text-white">{{ question.name|slice:"0:200" }}</p>
+                                <button type="button" class="btn btn-outline-light mt-2">Голосовать</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
     {% else %}
         <p>В настоящее время нет вопросов по которым идет голосование.</p>
     {% endif %}
