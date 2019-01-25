@@ -56,7 +56,7 @@
                         <div class="flip-card-back bg-info" data-height-xl="300">
                             <div class="flip-card-inner">
                                 <p class="mb-2 text-white">{{ question.name|slice:"0:200" }}</p>
-                                <button type="button" class="btn btn-outline-light mt-2">Голосовать</button>
+                                <a href="{% url 'voting:questions' question.id %}" class="btn btn-outline-light mt-2">Подробнее</a>
                             </div>
                         </div>
                     </div>

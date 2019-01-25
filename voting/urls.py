@@ -4,6 +4,9 @@ from django.contrib.auth.decorators import login_required
 from voting import views as voting_views
 
 voting_urlpatterns = [
+    re_path(r'^questions/(?P<pk>\d+)$',
+            login_required(voting_views.DetailQuestionView.as_view(), login_url='account:login'),
+            name='questions'),
     re_path(r'^questions/$',
             login_required(voting_views.ListQuestion4VotingView.as_view(), login_url='account:login'),
             name='questions'),

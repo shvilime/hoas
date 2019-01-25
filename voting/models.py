@@ -71,7 +71,7 @@ class Question(models.Model):
 class Candidate(models.Model):
     question = models.ForeignKey(Question,
                                  on_delete=models.CASCADE,
-                                 related_name='questions',
+                                 related_name='candidates',
                                  verbose_name='Вопрос на голосование')
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,
                              related_name='candidates',
