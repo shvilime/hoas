@@ -40,7 +40,7 @@
         <!-- Выведем список кандидатов-->
         {% if candidates %}
             {% for candidate in candidates %}
-                <h5 class="nomargin">{{ forloop.counter }}. {{ candidate.user.fullname }}</h5>
+                <h4>{{ forloop.counter }}. {{ candidate.user.fullname }}</h4>
             {% endfor %}
         {% else %}
             <p>До настоящего момента, ни одна кандидатура не добавлялась.</p>
@@ -49,7 +49,7 @@
         <!-- Если еще есть время на сбор кандидатур, добавим форму для ввода кандидата -->
         {% if question.date_start|date:"Y-m-d" > todays %}
             <a href="#" class="button button-circle" id="add-candidate-button" data-toggle="modal"
-               data-target="#id-modal-addcandidate">Добавить кандидатуру</a>
+               data-target="#id-modal-addcandidate">Добавить</a>
 
             {% url 'voting:questions' question.id as action_url %}
             {% include 'modal.html' with name="addcandidate" size="lg" header="Добавить кандидата" urlname=action_url formname=addcandidateform buttons="CS" %}
@@ -59,4 +59,11 @@
 {% endblock %}
 
 {% block javascript %}
+    {% if addcandidateform.errors %}
+        <script>
+            jQuery(function ($) {
+                $("#id-modal-addcandidate").modal("show");
+            });
+        </script>
+    {% endif %}
 {% endblock %}

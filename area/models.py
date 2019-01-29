@@ -62,7 +62,7 @@ class Owner(models.Model):
 
     def __str__(self):
         return '{date},{owner},{area},{portion}'.format(date=formats.date_format(self.date_request),
-                                                        owner=self.user.get_full_name(),
+                                                        owner=self.user.fullname,
                                                         area=self.room, portion=self.portion)
 
     def confirm(self):

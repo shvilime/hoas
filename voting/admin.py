@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Competence, Question
+from .models import Competence, Question, Candidate
 
 # Register your models here.
 
@@ -17,6 +17,10 @@ class QuestionAdmin(admin.ModelAdmin):
         context['adminform'].form.fields['competence'].queryset = Competence.objects.filter(active=True)
         return super(QuestionAdmin, self).render_change_form(request, context, *args, **kwargs)
 
+class CandidateAdmin(admin.ModelAdmin):
+    list_display = ('question', 'user')
+
 
 admin.site.register(Competence, CompetenceAdmin)
 admin.site.register(Question, QuestionAdmin)
+admin.site.register(Candidate, CandidateAdmin)
