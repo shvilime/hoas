@@ -96,12 +96,15 @@ class Candidate(models.Model):
 class Vote(models.Model):
     question = models.ForeignKey(Question,
                                  on_delete=models.CASCADE,
+                                 related_name='votes',
                                  verbose_name='Вопрос на голосование')
     candidate = models.ForeignKey(Candidate, null=True, blank=True,
                                   on_delete=models.SET_NULL,
+                                  related_name='votes',
                                   verbose_name='Кандидат')
     owner = models.ForeignKey(Owner,
                               on_delete=models.CASCADE,
+                              related_name='votes',
                               verbose_name='Владелец')
     date_voting = models.DateField(auto_now_add=True,
                                    verbose_name='Дата голосования')

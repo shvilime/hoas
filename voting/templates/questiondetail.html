@@ -2,6 +2,8 @@
 {% load static %}
 
 {% block stylesheet %}
+    <!-- Radio Checkbox Plugin -->
+    <link rel="stylesheet" href="{% static 'css/radio-checkbox.css' %}" type="text/css"/>
 {% endblock %}
 
 {% block content %}
@@ -35,12 +37,44 @@
     <!-- Если у нас списочное голосование -->
     {% if question.type == 1 %}
         <div class="divider divider-border divider-left"><i class="icon-paperclip"></i></div>
-        <h3>Кандадиты для голосования</h3>
+        <h3>Кандадиты для голосования
+            <!-- Если еще есть время на сбор кандидатур, добавим кнопку для добавления кандидата -->
+            {% if question.date_start|date:"Y-m-d" > todays %}
+                <a href="#" class="button button-mini button-circle" id="add-candidate-button" data-toggle="modal"
+                   data-target="#id-modal-addcandidate"><i class="icon-plus"></i><span>Добавить</span></a>
+            {% endif %}
+        </h3>
 
         <!-- Выведем список кандидатов-->
         {% if candidates %}
             {% for candidate in candidates %}
-                <h4>{{ forloop.counter }}. {{ candidate.user.fullname }}</h4>
+                <div class="col_one_third {% if forloop.counter|divisibleby:"3" %}col_last{% endif %}">
+                    <div class="feature-box fbox-center fbox-bg fbox-light fbox-effect">
+                        <div class="fbox-icon">
+                            <a href="#"><i class="icon-user"></i></a>
+                        </div>
+                        <h3>{{ candidate.user.fullname }}
+                            <span class="subtitle bottommargin-sm">Выдвинут: {{ candidate.date_nominate }}</span>
+                        </h3>
+
+                        <div class="text-left">
+                            <input id="yes-{{ candidate.id }}" class="radio-style"
+                                   name="radio-group-{{ forloop.counter }}" type="radio" value="1">
+                            <label for="yes-{{ candidate.id }}" class="radio-style-3-label">За</label>
+                        </div>
+                        <div class="text-left">
+                            <input id="no-{{ candidate.id }}" class="radio-style"
+                                   name="radio-group-{{ forloop.counter }}" type="radio" value="2">
+                            <label for="no-{{ candidate.id }}" class="radio-style-3-label">Против</label>
+                        </div>
+                        <div class="text-left">
+                            <input id="abs-{{ candidate.id }}" class="radio-style"
+                                   name="radio-group-{{ forloop.counter }}" type="radio" value="3">
+                            <label for="abs-{{ candidate.id }}"
+                                   class="radio-style-3-label">Воздержался</label>
+                        </div>
+                    </div>
+                </div>
             {% endfor %}
         {% else %}
             <p>До настоящего момента, ни одна кандидатура не добавлялась.</p>
@@ -48,9 +82,6 @@
 
         <!-- Если еще есть время на сбор кандидатур, добавим форму для ввода кандидата -->
         {% if question.date_start|date:"Y-m-d" > todays %}
-            <a href="#" class="button button-circle" id="add-candidate-button" data-toggle="modal"
-               data-target="#id-modal-addcandidate">Добавить</a>
-
             {% url 'voting:questions' question.id as action_url %}
             {% include 'modal.html' with name="addcandidate" size="lg" header="Добавить кандидата" urlname=action_url formname=addcandidateform buttons="CS" %}
         {% endif %}
