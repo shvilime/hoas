@@ -33,7 +33,7 @@ class AddCandidateForm(forms.ModelForm):
         except model.DoesNotExist:
             raise ValidationError('Кандидат не найден')
 
-        if Candidate.objects.filter(question=cleaned_data['question'], user=cleaned_data['user']).count() > 0:
+        if Candidate.objects.filter(question=cleaned_data['question'], user=owner).count() > 0:
             raise ValidationError('Данный кандидат уже добавлялся ранее')
 
         if not check_user_status_as_owner(owner):   # Если кандидат не является собственником

@@ -60,7 +60,7 @@ class Question(models.Model):
                                 verbose_name='Дата окончания')
 
     def __str__(self):
-        return '%s' % self.shortname
+        return '({start} - {end}) {name}'.format(start=self.date_start, end=self.date_end, name=self.shortname)
 
     class Meta:
         verbose_name = 'Вопрос'
