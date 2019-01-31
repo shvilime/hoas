@@ -26,7 +26,7 @@ class AddCandidateForm(forms.ModelForm):
         cleaned_data = super(AddCandidateForm, self).clean()
         model = get_user_model()
         try:  # Проверим, существует ли пользователь
-            owner = model.objects.get(fullname__icontains=cleaned_data['candidate'])
+            owner = model.objects.get(fullname__iexact=cleaned_data['candidate'])
         except model.DoesNotExist:
             raise ValidationError('Кандидат не найден')
         if Candidate.objects.filter(question=cleaned_data['question'], user=owner).count() > 0:

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Competence, Question, Candidate
+from .models import Competence, Question, Candidate, Vote
 
 # Register your models here.
 
@@ -20,7 +20,11 @@ class QuestionAdmin(admin.ModelAdmin):
 class CandidateAdmin(admin.ModelAdmin):
     list_display = ('question', 'user')
 
+class VoteAdmin(admin.ModelAdmin):
+    list_display = ('question', 'candidate', 'owner')
+
 
 admin.site.register(Competence, CompetenceAdmin)
 admin.site.register(Question, QuestionAdmin)
 admin.site.register(Candidate, CandidateAdmin)
+admin.site.register(Vote, VoteAdmin)

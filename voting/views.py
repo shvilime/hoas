@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect, HttpResponseRedirect, get_object_or_404
 from django.views.generic import ListView, View
-from .models import Question
+from .models import Question, Vote
 from .forms import AddCandidateForm
 
 # Create your views here.
@@ -26,7 +26,7 @@ class DetailQuestionView(View):
 
     def get(self, request, *args, **kwargs):
         self.context['question'] = get_object_or_404(Question, pk=kwargs.get('pk', None))
-        self.context['candidates'] = self.context['question'].candidates.all()
+        self.context['candidates'] = self.context['question'].candidates.all().filter(votes__candidate__isnull=True)
         self.context['addcandidateform'] = AddCandidateForm(initial={'nominator': request.user,
                                                                      'question': self.context['question']})
         return render(request, self.template_name, self.context)
